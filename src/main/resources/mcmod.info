@@ -1,0 +1,16 @@
+[
+{
+  "modid": "elysian",
+  "name": "Elysian",
+  "description": "Spoilers",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Darkhax", "Subaraki", "lclc98"],
+  "credits": "VydaX for some textures.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
