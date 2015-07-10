@@ -7,6 +7,7 @@ import net.epoxide.elysian.handler.ConfigurationHandler;
 import net.epoxide.elysian.handler.GuiHandler;
 import net.epoxide.elysian.items.ItemHandler;
 import net.epoxide.elysian.lib.Constants;
+import net.minecraft.creativetab.CreativeTabs;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -24,6 +25,8 @@ public class Elysian {
     
     @Instance(Constants.MOD_ID)
     public static Elysian instance;
+    
+    public static CreativeTabs tabElysian = new CreativeTabElysian();
     
     @EventHandler
     public void preInit (FMLPreInitializationEvent pre) {
