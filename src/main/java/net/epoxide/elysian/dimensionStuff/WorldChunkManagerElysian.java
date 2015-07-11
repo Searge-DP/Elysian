@@ -286,4 +286,4 @@
 //		MinecraftForge.TERRAIN_GEN_BUS.post(event);
 //		return event.newBiomeGens;
 //	}
-//}
+// }
