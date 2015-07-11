@@ -3,6 +3,8 @@ package net.epoxide.elysian;
 import net.epoxide.elysian.blocks.BlockHandler;
 import net.epoxide.elysian.common.ProxyCommon;
 import net.epoxide.elysian.common.packet.PacketHandler;
+import net.epoxide.elysian.dimensionStuff.Dimension;
+import net.epoxide.elysian.dimensionStuff.WorldTypeElysian;
 import net.epoxide.elysian.handler.ConfigurationHandler;
 import net.epoxide.elysian.handler.GuiHandler;
 import net.epoxide.elysian.items.ItemHandler;
@@ -37,6 +39,9 @@ public class Elysian {
         new PacketHandler();
         new BlockHandler();
         new ItemHandler();
+        
+        WorldTypeElysian.addCustomWorldTypes();
+        new Dimension().registerWorldProvider().registerDimensions();
     }
     
     @EventHandler
