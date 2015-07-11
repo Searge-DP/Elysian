@@ -26,12 +26,13 @@ public class WorldTypeElysian extends WorldType{
 
 	@Override
 	public WorldChunkManager getChunkManager(World world) {
-		return new WorldChunkManagerHell(BiomeGenBase.megaTaiga, 0.5F);
+		return new WorldChunkManagerHell(BiomeGenBase.plains, 0.5F);
 	}
 
 	@Override
 	public IChunkProvider getChunkGenerator(World world, String generatorOptions) {
-		return new ChunkProviderGenerate(world, world.getSeed(), world.getWorldInfo().isMapFeaturesEnabled());
+//		return new ChunkProviderGenerate(world, world.getSeed(), world.getWorldInfo().isMapFeaturesEnabled());
+		return new ChunkProviderElysian(world, world.getSeed());
 	}
 
 	@Override
