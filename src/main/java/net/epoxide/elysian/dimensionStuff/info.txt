@@ -1,0 +1,2 @@
+This folder has to be sub-devided. will put all dimension files in this folder until
+ the dimension works, to keep any files close and easier to delete when necessairy. 

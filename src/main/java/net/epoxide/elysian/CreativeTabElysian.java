@@ -2,6 +2,7 @@ package net.epoxide.elysian;
 
 import java.util.List;
 
+import net.epoxide.elysian.blocks.BlockHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -36,5 +37,7 @@ public class CreativeTabElysian extends CreativeTabs {
         list.add(new ItemStack(Items.golden_helmet));
         list.add(new ItemStack(Items.golden_apple));
         list.add(new ItemStack(Items.mushroom_stew));
+        list.add(new ItemStack(BlockHandler.block));
+
     }
 }
