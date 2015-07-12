@@ -5,7 +5,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 
 public class BlockHandler {
     
-    public static final Block transporter = new BlockElysianPort();
+    public static final Block transporter = new BlockElysianPortal();
     
     public BlockHandler() {
     
