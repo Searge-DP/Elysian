@@ -29,6 +29,7 @@ public class WorldChunkManagerElysian extends WorldChunkManager {
     
         this.elysianBiomeCache = new BiomeCache(this);
         this.biomesToSpawnIn.add(ElysianBiomes.biomeElysian);
+        
     }
     
     public WorldChunkManagerElysian(long seed, WorldType worldType) {

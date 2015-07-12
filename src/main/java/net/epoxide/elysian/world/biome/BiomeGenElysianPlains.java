@@ -2,6 +2,7 @@ package net.epoxide.elysian.world.biome;
 
 import java.util.List;
 
+import net.epoxide.elysian.blocks.BlockHandler;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -15,11 +16,12 @@ public class BiomeGenElysianPlains extends BiomeGenBase {
         this.setBiomeName("Elysian Plains");
         
         // TODO Top and Fillers don't actually work
-        this.topBlock = Blocks.hay_block;
+        //TODO > filler block doesnt work because the biome isnt recognized. overworld biomes are all over the dimension !
+        this.topBlock = BlockHandler.grass;
         this.fillerBlock = Blocks.emerald_block;
         this.setDisableRain();
-        this.waterColorMultiplier = 0xE42D17;
-        this.setColor(0xE42D17);
+        this.waterColorMultiplier = 0xff0000; //0xE42D17;
+        this.setColor(0xff0000);
         
         // TODO replace with our own lists. This is not too hard actually.
         this.spawnableMonsterList.clear();
