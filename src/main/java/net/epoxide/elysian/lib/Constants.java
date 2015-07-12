@@ -15,6 +15,4 @@ public class Constants {
     public static final String FACTORY = "net.epoxide.elysian.client.gui.GuiFactoryElysian";
     public static final Random RANDOM = new Random();
     public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
-    public static final int DIM_ID = 5; // this id can surely be set by forge. can't remember
-                                        // how
 }

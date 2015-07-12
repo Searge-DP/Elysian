@@ -1,8 +1,7 @@
-package net.epoxide.elysian.dimensionStuff;
+package net.epoxide.elysian.world.biome;
 
 import net.minecraft.world.biome.BiomeGenBase;
 
-//TODO make more biomes
 public class ElysianBiomes {
     
     public static BiomeGenBase biomeElysian;

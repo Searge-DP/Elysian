@@ -3,13 +3,13 @@ package net.epoxide.elysian;
 import net.epoxide.elysian.blocks.BlockHandler;
 import net.epoxide.elysian.common.ProxyCommon;
 import net.epoxide.elysian.common.packet.PacketHandler;
-import net.epoxide.elysian.dimensionStuff.Dimension;
-import net.epoxide.elysian.dimensionStuff.WorldTypeElysian;
 import net.epoxide.elysian.handler.ConfigurationHandler;
 import net.epoxide.elysian.handler.GuiHandler;
 import net.epoxide.elysian.items.ItemHandler;
 import net.epoxide.elysian.lib.Constants;
+import net.epoxide.elysian.world.WorldProviderElysian;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -40,8 +40,8 @@ public class Elysian {
         new BlockHandler();
         new ItemHandler();
         
-        WorldTypeElysian.addCustomWorldTypes();
-        new Dimension().registerWorldProvider().registerDimensions();
+        DimensionManager.registerProviderType(ConfigurationHandler.dimensionID, WorldProviderElysian.class, true);
+        DimensionManager.registerDimension(ConfigurationHandler.dimensionID, ConfigurationHandler.dimensionID);
     }
     
     @EventHandler

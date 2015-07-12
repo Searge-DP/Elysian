@@ -37,7 +37,7 @@ public class CreativeTabElysian extends CreativeTabs {
         list.add(new ItemStack(Items.golden_helmet));
         list.add(new ItemStack(Items.golden_apple));
         list.add(new ItemStack(Items.mushroom_stew));
-        list.add(new ItemStack(BlockHandler.block));
+        list.add(new ItemStack(BlockHandler.transporter));
         
     }
 }

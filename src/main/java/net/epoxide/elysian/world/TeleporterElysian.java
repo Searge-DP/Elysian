@@ -1,4 +1,4 @@
-package net.epoxide.elysian.dimensionStuff;
+package net.epoxide.elysian.world;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,39 +19,30 @@ import net.minecraft.world.WorldServer;
 public class TeleporterElysian extends Teleporter {
     
     private final WorldServer worldServerInstance;
-    /** A private Random() function in Teleporter */
-    private final Random random;
-    /** Stores successful portal placement locations for rapid lookup. */
     private final LongHashMap destinationCoordinateCache = new LongHashMap();
-    /**
-     * A list of valid keys for the destinationCoordainteCache. These are based on the X & Z of
-     * the players initial location.
-     */
     private final List destinationCoordinateKeys = new ArrayList();
+    private final Random random;
     
-    public TeleporterElysian(WorldServer par1WorldServer) {
+    public TeleporterElysian(WorldServer world) {
     
-        super(par1WorldServer);
-        this.worldServerInstance = par1WorldServer;
-        this.random = new Random(par1WorldServer.getSeed());
+        super(world);
+        this.worldServerInstance = world;
+        this.random = new Random(world.getSeed());
     }
     
-    /**
-     * Place an entity in a nearby portal, creating one if necessary.
-     */
     @Override
-    public void placeInPortal (Entity par1Entity, double par2, double par4, double par6, float par8) {
+    public void placeInPortal (Entity entity, double posX, double posY, double posZ, float yaw) {
     
         if (this.worldServerInstance.provider.dimensionId != 1) {
-            if (!this.placeInExistingPortal(par1Entity, par2, par4, par6, par8)) {
-                this.makePortal(par1Entity);
-                this.placeInExistingPortal(par1Entity, par2, par4, par6, par8);
+            if (!this.placeInExistingPortal(entity, posX, posY, posZ, yaw)) {
+                this.makePortal(entity);
+                this.placeInExistingPortal(entity, posX, posY, posZ, yaw);
             }
         }
         else {
-            int i = MathHelper.floor_double(par1Entity.posX);
-            int j = MathHelper.floor_double(par1Entity.posY) - 1;
-            int k = MathHelper.floor_double(par1Entity.posZ);
+            int i = MathHelper.floor_double(entity.posX);
+            int j = MathHelper.floor_double(entity.posY) - 1;
+            int k = MathHelper.floor_double(entity.posZ);
             byte b0 = 1;
             byte b1 = 0;
             
@@ -67,24 +58,21 @@ public class TeleporterElysian extends Teleporter {
                 }
             }
             
-            par1Entity.setLocationAndAngles(i, j, k, par1Entity.rotationYaw, 0.0F);
-            par1Entity.motionX = par1Entity.motionY = par1Entity.motionZ = 0.0D;
+            entity.setLocationAndAngles(i, j, k, entity.rotationYaw, 0.0F);
+            entity.motionX = entity.motionY = entity.motionZ = 0.0D;
         }
     }
     
-    /**
-     * Place an entity in a nearby portal which already exists.
-     */
     @Override
-    public boolean placeInExistingPortal (Entity par1Entity, double par2, double par4, double par6, float par8) {
+    public boolean placeInExistingPortal (Entity entity, double posX, double posY, double posZ, float yaw) {
     
         short short1 = 128;
         double d3 = -1.0D;
         int i = 0;
         int j = 0;
         int k = 0;
-        int l = MathHelper.floor_double(par1Entity.posX);
-        int i1 = MathHelper.floor_double(par1Entity.posZ);
+        int l = MathHelper.floor_double(entity.posX);
+        int i1 = MathHelper.floor_double(entity.posZ);
         long j1 = ChunkCoordIntPair.chunkXZ2Int(l, i1);
         boolean flag = true;
         double d7;
@@ -101,18 +89,18 @@ public class TeleporterElysian extends Teleporter {
         }
         else {
             for (l3 = l - short1; l3 <= l + short1; ++l3) {
-                double d4 = (double) l3 + 0.5D - par1Entity.posX;
+                double d4 = (double) l3 + 0.5D - entity.posX;
                 for (int l1 = i1 - short1; l1 <= i1 + short1; ++l1) {
-                    double d5 = (double) l1 + 0.5D - par1Entity.posZ;
+                    double d5 = (double) l1 + 0.5D - entity.posZ;
                     
                     for (int i2 = this.worldServerInstance.getActualHeight() - 1; i2 >= 0; --i2) {
                         
-                        if (this.worldServerInstance.getBlock(l3, i2, l1) == BlockHandler.block) {
-                            while (this.worldServerInstance.getBlock(l3, i2 - 1, l1) == BlockHandler.block) {
+                        if (this.worldServerInstance.getBlock(l3, i2, l1) == BlockHandler.transporter) {
+                            while (this.worldServerInstance.getBlock(l3, i2 - 1, l1) == BlockHandler.transporter) {
                                 --i2;
                             }
                             
-                            d7 = i2 + 0.5D - par1Entity.posY;
+                            d7 = i2 + 0.5D - entity.posY;
                             double d8 = d4 * d4 + d7 * d7 + d5 * d5;
                             
                             if (d3 < 0.0D || d8 < d3) {
@@ -138,23 +126,23 @@ public class TeleporterElysian extends Teleporter {
             d7 = k + 0.5D;
             int i4 = -1;
             
-            if (this.worldServerInstance.getBlock(i - 1, j, k) == BlockHandler.block) {
+            if (this.worldServerInstance.getBlock(i - 1, j, k) == BlockHandler.transporter) {
                 i4 = 2;
             }
             
-            if (this.worldServerInstance.getBlock(i + 1, j, k) == BlockHandler.block) {
+            if (this.worldServerInstance.getBlock(i + 1, j, k) == BlockHandler.transporter) {
                 i4 = 0;
             }
             
-            if (this.worldServerInstance.getBlock(i, j, k - 1) == BlockHandler.block) {
+            if (this.worldServerInstance.getBlock(i, j, k - 1) == BlockHandler.transporter) {
                 i4 = 3;
             }
             
-            if (this.worldServerInstance.getBlock(i, j, k + 1) == BlockHandler.block) {
+            if (this.worldServerInstance.getBlock(i, j, k + 1) == BlockHandler.transporter) {
                 i4 = 1;
             }
             
-            int j2 = par1Entity.getTeleportDirection();
+            int j2 = entity.getTeleportDirection();
             
             if (i4 > -1) {
                 int k2 = Direction.rotateLeft[i4];
@@ -217,17 +205,17 @@ public class TeleporterElysian extends Teleporter {
                     f6 = 1.0F;
                 }
                 
-                double d9 = par1Entity.motionX;
-                double d10 = par1Entity.motionZ;
-                par1Entity.motionX = d9 * f3 + d10 * f6;
-                par1Entity.motionZ = d9 * f5 + d10 * f4;
-                par1Entity.rotationYaw = par8 - j2 * 90 + i4 * 90;
+                double d9 = entity.motionX;
+                double d10 = entity.motionZ;
+                entity.motionX = d9 * f3 + d10 * f6;
+                entity.motionZ = d9 * f5 + d10 * f4;
+                entity.rotationYaw = yaw - j2 * 90 + i4 * 90;
             }
             else {
-                par1Entity.motionX = par1Entity.motionY = par1Entity.motionZ = 0.0D;
+                entity.motionX = entity.motionY = entity.motionZ = 0.0D;
             }
             
-            par1Entity.setLocationAndAngles(d11, d6, d7, par1Entity.rotationYaw, par1Entity.rotationPitch);
+            entity.setLocationAndAngles(d11, d6, d7, entity.rotationYaw, entity.rotationPitch);
             return true;
         }
         else {
@@ -236,13 +224,13 @@ public class TeleporterElysian extends Teleporter {
     }
     
     @Override
-    public boolean makePortal (Entity par1Entity) {
+    public boolean makePortal (Entity entity) {
     
         byte b0 = 16;
         double d0 = -1.0D;
-        int i = MathHelper.floor_double(par1Entity.posX);
-        int j = MathHelper.floor_double(par1Entity.posY);
-        int k = MathHelper.floor_double(par1Entity.posZ);
+        int i = MathHelper.floor_double(entity.posX);
+        int j = MathHelper.floor_double(entity.posY);
+        int k = MathHelper.floor_double(entity.posZ);
         int l = i;
         int i1 = j;
         int j1 = k;
@@ -265,10 +253,10 @@ public class TeleporterElysian extends Teleporter {
         double d4;
         
         for (i2 = i - b0; i2 <= i + b0; ++i2) {
-            d1 = i2 + 0.5D - par1Entity.posX;
+            d1 = i2 + 0.5D - entity.posX;
             
             for (k2 = k - b0; k2 <= k + b0; ++k2) {
-                d2 = k2 + 0.5D - par1Entity.posZ;
+                d2 = k2 + 0.5D - entity.posZ;
                 label274 :
                 
                 for (i3 = this.worldServerInstance.getActualHeight() - 1; i3 >= 0; --i3) {
@@ -300,7 +288,7 @@ public class TeleporterElysian extends Teleporter {
                                 }
                             }
                             
-                            d3 = i3 + 0.5D - par1Entity.posY;
+                            d3 = i3 + 0.5D - entity.posY;
                             d4 = d1 * d1 + d3 * d3 + d2 * d2;
                             
                             if (d0 < 0.0D || d4 < d0) {
@@ -318,10 +306,10 @@ public class TeleporterElysian extends Teleporter {
         
         if (d0 < 0.0D) {
             for (i2 = i - b0; i2 <= i + b0; ++i2) {
-                d1 = i2 + 0.5D - par1Entity.posX;
+                d1 = i2 + 0.5D - entity.posX;
                 
                 for (k2 = k - b0; k2 <= k + b0; ++k2) {
-                    d2 = k2 + 0.5D - par1Entity.posZ;
+                    d2 = k2 + 0.5D - entity.posZ;
                     label222 :
                     
                     for (i3 = this.worldServerInstance.getActualHeight() - 1; i3 >= 0; --i3) {
@@ -346,7 +334,7 @@ public class TeleporterElysian extends Teleporter {
                                     }
                                 }
                                 
-                                d3 = i3 + 0.5D - par1Entity.posY;
+                                d3 = i3 + 0.5D - entity.posY;
                                 d4 = d1 * d1 + d3 * d3 + d2 * d2;
                                 
                                 if (d0 < 0.0D || d4 < d0) {
@@ -404,21 +392,17 @@ public class TeleporterElysian extends Teleporter {
             }
             this.worldServerInstance.setBlock(k5, j2 - 3, k2, Blocks.clay);
         }
-        this.worldServerInstance.setBlock(k5, j2, k2, BlockHandler.block);
+        this.worldServerInstance.setBlock(k5, j2, k2, BlockHandler.transporter);
         
         return true;
     }
     
-    /**
-     * called periodically to remove out-of-date portal locations from the cache list. Argument
-     * par1 is a WorldServer.getTotalWorldTime() value.
-     */
     @Override
-    public void removeStalePortalLocations (long par1) {
+    public void removeStalePortalLocations (long time) {
     
-        if (par1 % 100L == 0L) {
+        if (time % 100L == 0L) {
             Iterator iterator = this.destinationCoordinateKeys.iterator();
-            long j = par1 - 600L;
+            long j = time - 600L;
             
             while (iterator.hasNext()) {
                 Long olong = (Long) iterator.next();
@@ -434,13 +418,12 @@ public class TeleporterElysian extends Teleporter {
     
     public class PortalPosition extends ChunkCoordinates {
         
-        /** The worldtime at which this PortalPosition was last verified */
         public long lastUpdateTime;
         
-        public PortalPosition(int par2, int par3, int par4, long par5) {
+        public PortalPosition(int posX, int posY, int posZ, long updateTime) {
         
-            super(par2, par3, par4);
-            this.lastUpdateTime = par5;
+            super(posX, posY, posZ);
+            this.lastUpdateTime = updateTime;
         }
     }
 }
