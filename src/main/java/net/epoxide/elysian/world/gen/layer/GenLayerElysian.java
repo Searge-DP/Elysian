@@ -29,4 +29,10 @@ public abstract class GenLayerElysian extends GenLayer {
         
         return new GenLayer[] { biomes, zoomedLayer };
     }
+    
+    @Override
+    public int[] getInts (int posX, int posZ, int width, int depth) {
+    
+        return null;
+    }
 }

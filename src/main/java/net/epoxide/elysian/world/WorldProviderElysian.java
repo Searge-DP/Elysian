@@ -1,5 +1,6 @@
 package net.epoxide.elysian.world;
 
+import net.epoxide.elysian.handler.ConfigurationHandler;
 import net.epoxide.elysian.world.biome.WorldChunkManagerElysian;
 import net.epoxide.elysian.world.gen.ChunkProviderElysian;
 import net.minecraft.world.WorldProvider;
@@ -12,8 +13,15 @@ public class WorldProviderElysian extends WorldProvider {
     
     public WorldProviderElysian() {
     
-        this.hasNoSky = true;
+        registerWorldChunkManager();
+    }
+    
+    @Override
+    public void registerWorldChunkManager () {
+    
         this.worldChunkMgr = new WorldChunkManagerElysian();
+        this.hasNoSky = true;
+        this.dimensionId = ConfigurationHandler.dimensionID;
     }
     
     @Override
