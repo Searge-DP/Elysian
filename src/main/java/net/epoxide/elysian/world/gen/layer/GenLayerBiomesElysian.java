@@ -8,7 +8,6 @@ import net.minecraft.world.gen.layer.IntCache;
 public class GenLayerBiomesElysian extends GenLayer {
     
     protected BiomeGenBase[] allowedBiomes = { ElysianBiomes.biomeElysian };
-    //, BiomeGenBase.forest, BiomeGenBase.hell //removed these from the list
     
     public GenLayerBiomesElysian(long seed, GenLayer genlayer) {
     

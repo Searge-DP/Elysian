@@ -7,11 +7,10 @@ public class BlockHandler {
     
     public static final Block transporter = new BlockElysianPortal();
     public static final Block grass = new BlockElysianGrass();
-
+    
     public BlockHandler() {
     
         GameRegistry.registerBlock(transporter, "portal");
-        GameRegistry.registerBlock(grass, "elysian_grass");
-
+        GameRegistry.registerBlock(grass, "grass");
     }
 }
