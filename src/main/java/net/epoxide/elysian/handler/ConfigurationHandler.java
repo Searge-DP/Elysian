@@ -3,6 +3,9 @@ package net.epoxide.elysian.handler;
 import java.io.File;
 
 import net.epoxide.elysian.lib.Constants;
+import net.epoxide.elysian.lib.Utilities;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -33,11 +36,16 @@ public class ConfigurationHandler {
      */
     private void syncConfigData () {
     
-        dimensionID = config.getInt("dimensionID", config.CATEGORY_GENERAL, dimensionID, 0, 10000, "The dimension ID for the Elysian dimension. If you have succesfully launched a world with the Elysian mod once, do not change this!");
+        dimensionID = config.getInt("dimensionID", config.CATEGORY_GENERAL, DimensionManager.getNextFreeDimId(), -10000, 10000, "The dimension ID for the Elysian dimension. If you have succesfully launched a world with the Elysian mod once, do not change this!");
+        biomeTestID = config.getInt("biomeTestID", "Biomes", Utilities.getAvailableBiomeID(), 0, BiomeGenBase.getBiomeGenArray().length, "The biome ID for the test1 biome. If you have successfully launched a world with the Elysian mod once, do not change this!");
+        biomeTestID2 = config.getInt("biomeTestID", "Biomes", Utilities.getAvailableBiomeID(), 0, BiomeGenBase.getBiomeGenArray().length, "The biome ID for the test2 biome. If you have successfully launched a world with the Elysian mod once, do not change this!");
         
         if (config.hasChanged())
             config.save();
     }
     
-    public static int dimensionID = 8632;
+    public static int dimensionID;
+    
+    public static int biomeTestID;
+    public static int biomeTestID2;
 }

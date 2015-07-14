@@ -1,13 +1,13 @@
 package net.epoxide.elysian.world.gen.layer;
 
-import net.epoxide.elysian.world.biome.ElysianBiomes;
+import net.epoxide.elysian.world.biome.BiomeHandler;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
 
 public class GenLayerBiomesElysian extends GenLayer {
     
-    protected BiomeGenBase[] allowedBiomes = { ElysianBiomes.biomeElysian, BiomeGenBase.hell };
+    protected Object[] allowedBiomes = BiomeHandler.elysianBiomes.toArray();
     
     public GenLayerBiomesElysian(long seed, GenLayer genlayer) {
     
@@ -30,7 +30,8 @@ public class GenLayerBiomesElysian extends GenLayer {
             for (int distantX = 0; distantX < width; distantX++) {
                 
                 this.initChunkSeed(distantX + posX, distantZ + posZ);
-                positions[(distantX + distantZ * width)] = this.allowedBiomes[nextInt(this.allowedBiomes.length)].biomeID;
+                BiomeGenBase biome = (BiomeGenBase) BiomeHandler.elysianBiomes.toArray()[nextInt(this.allowedBiomes.length)];
+                positions[(distantX + distantZ * width)] = biome.biomeID;
             }
         }
         

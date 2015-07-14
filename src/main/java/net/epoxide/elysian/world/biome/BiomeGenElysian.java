@@ -2,29 +2,27 @@ package net.epoxide.elysian.world.biome;
 
 import java.util.List;
 
-import net.epoxide.elysian.blocks.BlockHandler;
+import net.minecraft.block.Block;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.BiomeGenBase;
 
-public class BiomeGenElysianPlains extends BiomeGenBase {
+public class BiomeGenElysian extends BiomeGenBase {
     
-    public BiomeGenElysianPlains(int biomeID) {
+    public static Block fluid = Blocks.water;
+    public static Block barrier = Blocks.bedrock;
+    public static Block filler = Blocks.obsidian;
+    public static Block topBlock = Blocks.quartz_block;
+    
+    public BiomeGenElysian(int biomeID) {
     
         super(biomeID);
-        
-        this.setBiomeName("Elysian Plains");
-        
-        this.topBlock = BlockHandler.grass;
-        this.fillerBlock = Blocks.emerald_block;
-        this.setDisableRain();
-        this.waterColorMultiplier = 0xff0000;
-        this.setColor(0xff0000);
         
         this.spawnableMonsterList.clear();
         this.spawnableCreatureList.clear();
         this.spawnableWaterCreatureList.clear();
         this.spawnableCaveCreatureList.clear();
+        this.setDisableRain();
     }
     
     @Override

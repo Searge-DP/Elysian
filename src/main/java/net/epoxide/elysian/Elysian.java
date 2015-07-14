@@ -8,7 +8,7 @@ import net.epoxide.elysian.handler.GuiHandler;
 import net.epoxide.elysian.items.ItemHandler;
 import net.epoxide.elysian.lib.Constants;
 import net.epoxide.elysian.world.WorldProviderElysian;
-import net.epoxide.elysian.world.biome.ElysianBiomes;
+import net.epoxide.elysian.world.biome.BiomeHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.common.DimensionManager;
 import cpw.mods.fml.common.Mod;
@@ -40,7 +40,7 @@ public class Elysian {
         new PacketHandler();
         new BlockHandler();
         new ItemHandler();
-        new ElysianBiomes();
+        new BiomeHandler();
         
         DimensionManager.registerProviderType(ConfigurationHandler.dimensionID, WorldProviderElysian.class, true);
         DimensionManager.registerDimension(ConfigurationHandler.dimensionID, ConfigurationHandler.dimensionID);
