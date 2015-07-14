@@ -2,11 +2,9 @@ package net.epoxide.elysian;
 
 import java.util.List;
 
-import net.epoxide.elysian.blocks.BlockHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 
 public class CreativeTabElysian extends CreativeTabs {
     
@@ -31,6 +29,6 @@ public class CreativeTabElysian extends CreativeTabs {
     @Override
     public void displayAllReleventItems (List list) {
     
-        super.displayAllReleventItems(list);       
+        super.displayAllReleventItems(list);
     }
 }
