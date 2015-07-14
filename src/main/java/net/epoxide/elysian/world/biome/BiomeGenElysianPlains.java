@@ -15,23 +15,18 @@ public class BiomeGenElysianPlains extends BiomeGenBase {
         
         this.setBiomeName("Elysian Plains");
         
-        // TODO Top and Fillers don't actually work
-        // TODO > filler block doesnt work because the biome isnt recognized. overworld biomes
-        // are all over the dimension !
         this.topBlock = BlockHandler.grass;
         this.fillerBlock = Blocks.emerald_block;
         this.setDisableRain();
-        this.waterColorMultiplier = 0xff0000; // 0xE42D17;
+        this.waterColorMultiplier = 0xff0000;
         this.setColor(0xff0000);
         
-        // TODO replace with our own lists. This is not too hard actually.
         this.spawnableMonsterList.clear();
         this.spawnableCreatureList.clear();
         this.spawnableWaterCreatureList.clear();
         this.spawnableCaveCreatureList.clear();
     }
     
-    // TODO switch to work off of custom spawning lists.
     @Override
     public List getSpawnableList (EnumCreatureType creatureType) {
     

@@ -76,7 +76,6 @@ public class ChunkProviderElysian implements IChunkProvider {
     public void prepareChunk (int chunkX, int chunkZ, Block[] chunkBlocks) {
     
         this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, chunkX * 4 - 2, chunkZ * 4 - 2, 10, 10);
-        BiomeGenBase biome = this.worldObj.getBiomeGenForCoords(chunkX, chunkZ);
         
         byte b0 = 4;
         byte b1 = 32;
@@ -97,7 +96,6 @@ public class ChunkProviderElysian implements IChunkProvider {
                     double d6 = (this.noiseField[((i1 + 0) * l + j1 + 1) * b2 + k1 + 1] - d2) * d0;
                     double d7 = (this.noiseField[((i1 + 1) * l + j1 + 0) * b2 + k1 + 1] - d3) * d0;
                     double d8 = (this.noiseField[((i1 + 1) * l + j1 + 1) * b2 + k1 + 1] - d4) * d0;
-                    
                     for (int l1 = 0; l1 < 8; ++l1) {
                         double d9 = 0.25D;
                         double d10 = d1;
@@ -114,12 +112,14 @@ public class ChunkProviderElysian implements IChunkProvider {
                             
                             for (int k2 = 0; k2 < 4; ++k2) {
                                 Block block = null;
-                                
+                                BiomeGenBase biome = this.worldObj.getBiomeGenForCoords(chunkX, chunkZ);
                                 if (k1 * 8 + l1 < b1) {
-                                    block = Blocks.water; // TODO custom water block
+                                    block = biome.topBlock; // TODO custom water block
                                 }
                                 
                                 if (d15 > 0.0D) {
+                                    // System.out.println(biome.biomeName);
+                                    
                                     block = biome.fillerBlock; // TODO filler
                                 }
                                 
