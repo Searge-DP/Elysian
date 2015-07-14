@@ -31,13 +31,6 @@ public class CreativeTabElysian extends CreativeTabs {
     @Override
     public void displayAllReleventItems (List list) {
     
-        list.add(new ItemStack(Items.nether_star));
-        list.add(new ItemStack(Items.nether_wart));
-        list.add(new ItemStack(Items.gold_nugget));
-        list.add(new ItemStack(Items.golden_helmet));
-        list.add(new ItemStack(Items.golden_apple));
-        list.add(new ItemStack(Items.mushroom_stew));
-        list.add(new ItemStack(BlockHandler.transporter));
-        
+        super.displayAllReleventItems(list);       
     }
 }
