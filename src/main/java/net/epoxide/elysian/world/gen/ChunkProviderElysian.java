@@ -32,6 +32,7 @@ public class ChunkProviderElysian implements IChunkProvider {
     private Random rand;
     private World worldObj;
     private MapGenBase elysianCaveGenerator = new MapGenCavesHell();
+    private BiomeGenBase[] biomesForGeneration;
     
     private double[] noiseField;
     
@@ -74,6 +75,7 @@ public class ChunkProviderElysian implements IChunkProvider {
     
     public void prepareChunk (int chunkX, int chunkZ, Block[] chunkBlocks) {
     
+        this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, chunkX * 4 - 2, chunkZ * 4 - 2, 10, 10);
         BiomeGenBase biome = this.worldObj.getBiomeGenForCoords(chunkX, chunkZ);
         
         byte b0 = 4;
@@ -213,15 +215,15 @@ public class ChunkProviderElysian implements IChunkProvider {
         this.rand.setSeed((long) posX * 341873128712L + (long) posZ * 132897987541L);
         Block[] chunkBlocks = new Block[32768];
         byte[] chunkMetas = new byte[chunkBlocks.length];
-        BiomeGenBase[] possibleBiomes = this.worldObj.getWorldChunkManager().loadBlockGeneratorData((BiomeGenBase[]) null, posX * 16, posZ * 16, 16, 16);
         this.prepareChunk(posX, posZ, chunkBlocks);
-        this.replaceBiomeBlocks(posX, posZ, chunkBlocks, chunkMetas, possibleBiomes);
+        this.biomesForGeneration = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, posX * 16, posZ * 16, 16, 16);
+        this.replaceBiomeBlocks(posX, posZ, chunkBlocks, chunkMetas, this.biomesForGeneration);
         this.elysianCaveGenerator.func_151539_a(this, this.worldObj, posX, posZ, chunkBlocks);
         Chunk chunk = new Chunk(this.worldObj, chunkBlocks, chunkMetas, posX, posZ);
         byte[] chunkBiomes = chunk.getBiomeArray();
         
         for (int currentBiomePos = 0; currentBiomePos < chunkBiomes.length; ++currentBiomePos)
-            chunkBiomes[currentBiomePos] = (byte) possibleBiomes[currentBiomePos].biomeID;
+            chunkBiomes[currentBiomePos] = (byte) this.biomesForGeneration[currentBiomePos].biomeID;
         
         chunk.resetRelightChecks();
         return chunk;

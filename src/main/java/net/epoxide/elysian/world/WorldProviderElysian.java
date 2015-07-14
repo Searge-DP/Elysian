@@ -11,15 +11,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class WorldProviderElysian extends WorldProvider {
     
-    public WorldProviderElysian() {
-    
-        registerWorldChunkManager();
-    }
-    
     @Override
     public void registerWorldChunkManager () {
     
-        this.worldChunkMgr = new WorldChunkManagerElysian();
+        this.worldChunkMgr = new WorldChunkManagerElysian(this.worldObj.getSeed(), this.terrainType);
         this.hasNoSky = true;
         this.dimensionId = ConfigurationHandler.dimensionID;
     }

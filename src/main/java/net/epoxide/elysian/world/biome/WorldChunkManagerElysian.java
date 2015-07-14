@@ -1,12 +1,10 @@
 package net.epoxide.elysian.world.biome;
 
-import static net.minecraft.world.biome.BiomeGenBase.forest;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import net.epoxide.elysian.world.gen.layer.GenLayerElysian;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.util.ReportedException;
@@ -18,116 +16,94 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.terraingen.WorldTypeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-//TODO this class needs some changes to work.
 public class WorldChunkManagerElysian extends WorldChunkManager {
     
-    public static ArrayList<BiomeGenBase> spawnBiomes = new ArrayList<BiomeGenBase>(Arrays.asList(forest));
     private GenLayer genBiomes;
-    private GenLayer elysianBiomeIndexLayer;
-    private BiomeCache elysianBiomeCache;;
-    private List biomesToSpawnIn;
+    private GenLayer biomeIndexLayer;
+    private BiomeCache biomeCache;
+    private List<BiomeGenBase> biomesToSpawnIn;
     
     public WorldChunkManagerElysian() {
     
-        this.elysianBiomeCache = new BiomeCache(this);
+        this.biomeCache = new BiomeCache(this);
         this.biomesToSpawnIn = new ArrayList();
         this.biomesToSpawnIn.addAll(allowedBiomes);
     }
     
-    public WorldChunkManagerElysian(long par1, WorldType par3WorldType) {
+    public WorldChunkManagerElysian(long seed, WorldType worldType) {
     
         this();
-        GenLayer[] agenlayer = GenLayer.initializeAllBiomeGenerators(par1, par3WorldType);
-        agenlayer = getModdedBiomeGenerators(par3WorldType, par1, agenlayer);
+        GenLayer[] agenlayer = GenLayerElysian.makeTheWorld(seed, worldType);
+        agenlayer = getModdedBiomeGenerators(worldType, seed, agenlayer);
         this.genBiomes = agenlayer[0];
-        this.elysianBiomeIndexLayer = agenlayer[1];
+        this.biomeIndexLayer = agenlayer[1];
     }
     
-    public WorldChunkManagerElysian(World par1World) {
+    public WorldChunkManagerElysian(World world) {
     
-        this(par1World.getSeed(), par1World.getWorldInfo().getTerrainType());
+        this(world.getSeed(), world.getWorldInfo().getTerrainType());
     }
     
-    /**
-     * Gets the list of valid biomes for the player to spawn in.
-     */
-    public List getBiomesToSpawnIn () {
+    @Override
+    public List<BiomeGenBase> getBiomesToSpawnIn () {
     
         return this.biomesToSpawnIn;
     }
     
-    /**
-     * Returns the BiomeGenBase related to the x, z position on the world.
-     */
-    public BiomeGenBase getBiomeGenAt (int par1, int par2) {
+    @Override
+    public BiomeGenBase getBiomeGenAt (int x, int z) {
     
-        BiomeGenBase biome = this.elysianBiomeCache.getBiomeGenAt(par1, par2);
-        
-        if (biome == null) {
-            
-            return ElysianBiomes.biomeElysian;
-        }
-        
-        return biome;
+        return this.biomeCache.getBiomeGenAt(x, z);
     }
     
-    /**
-     * Returns a list of rainfall values for the specified blocks. Args: listToReuse, x, z,
-     * width, length.
-     */
-    public float[] getRainfall (float[] par1ArrayOfFloat, int par2, int par3, int par4, int par5) {
+    @Override
+    public float[] getRainfall (float[] listToReuse, int x, int z, int width, int length) {
     
         IntCache.resetIntCache();
         
-        if (par1ArrayOfFloat == null || par1ArrayOfFloat.length < par4 * par5) {
-            par1ArrayOfFloat = new float[par4 * par5];
+        if (listToReuse == null || listToReuse.length < width * length) {
+            listToReuse = new float[width * length];
         }
         
-        int[] aint = this.elysianBiomeIndexLayer.getInts(par2, par3, par4, par5);
+        int[] aint = this.biomeIndexLayer.getInts(x, z, width, length);
         
-        for (int i1 = 0; i1 < par4 * par5; ++i1) {
+        for (int i1 = 0; i1 < width * length; ++i1) {
             try {
-                float f = BiomeGenBase.getBiome(aint[i1]).getIntRainfall() / 65536.0F;
+                float f = (float) BiomeGenBase.getBiome(aint[i1]).getIntRainfall() / 65536.0F;
                 
                 if (f > 1.0F) {
                     f = 1.0F;
                 }
                 
-                par1ArrayOfFloat[i1] = f;
+                listToReuse[i1] = f;
             }
             catch (Throwable throwable) {
                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Invalid Biome id");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("DownfallBlock");
                 crashreportcategory.addCrashSection("biome id", Integer.valueOf(i1));
-                crashreportcategory.addCrashSection("downfalls[] size", Integer.valueOf(par1ArrayOfFloat.length));
-                crashreportcategory.addCrashSection("x", Integer.valueOf(par2));
-                crashreportcategory.addCrashSection("z", Integer.valueOf(par3));
-                crashreportcategory.addCrashSection("w", Integer.valueOf(par4));
-                crashreportcategory.addCrashSection("h", Integer.valueOf(par5));
+                crashreportcategory.addCrashSection("downfalls[] size", Integer.valueOf(listToReuse.length));
+                crashreportcategory.addCrashSection("x", Integer.valueOf(x));
+                crashreportcategory.addCrashSection("z", Integer.valueOf(z));
+                crashreportcategory.addCrashSection("w", Integer.valueOf(width));
+                crashreportcategory.addCrashSection("h", Integer.valueOf(length));
                 throw new ReportedException(crashreport);
             }
         }
         
-        return par1ArrayOfFloat;
+        return listToReuse;
     }
     
-    /**
-     * Return an adjusted version of a given temperature based on the y height
-     */
+    @Override
     @SideOnly(Side.CLIENT)
     public float getTemperatureAtHeight (float par1, int par2) {
     
         return par1;
     }
     
-    /**
-     * Returns an array of biomes for the location input.
-     */
+    @Override
     public BiomeGenBase[] getBiomesForGeneration (BiomeGenBase[] par1ArrayOfBiomeGenBase, int par2, int par3, int par4, int par5) {
     
         IntCache.resetIntCache();
@@ -139,16 +115,8 @@ public class WorldChunkManagerElysian extends WorldChunkManager {
         int[] aint = this.genBiomes.getInts(par2, par3, par4, par5);
         
         try {
-            
-            for (int i1 = 0; i1 < par4 * par5; ++i1) {
-                
-                if (aint[i1] >= 0) {
-                    
-                    par1ArrayOfBiomeGenBase[i1] = BiomeGenBase.getBiome(aint[i1]);
-                }
-                
-                else
-                    par1ArrayOfBiomeGenBase[i1] = ElysianBiomes.biomeElysian;
+            for (int i = 0; i < par4 * par5; ++i) {
+                par1ArrayOfBiomeGenBase[i] = BiomeGenBase.getBiome(aint[i]);
             }
             
             return par1ArrayOfBiomeGenBase;
@@ -165,61 +133,44 @@ public class WorldChunkManagerElysian extends WorldChunkManager {
         }
     }
     
-    /**
-     * Returns biomes to use for the blocks and loads the other data like temperature and
-     * humidity onto the WorldChunkManager Args: oldBiomeList, x, z, width, depth
-     */
-    public BiomeGenBase[] loadBlockGeneratorData (BiomeGenBase[] par1ArrayOfBiomeGenBase, int par2, int par3, int par4, int par5) {
+    @Override
+    public BiomeGenBase[] loadBlockGeneratorData (BiomeGenBase[] oldBiomeList, int x, int z, int width, int depth) {
     
-        return this.getBiomeGenAt(par1ArrayOfBiomeGenBase, par2, par3, par4, par5, true);
+        return this.getBiomeGenAt(oldBiomeList, x, z, width, depth, true);
     }
     
-    /**
-     * Return a list of biomes for the specified blocks. Args: listToReuse, x, y, width,
-     * length, cacheFlag (if false, don't check biomeCache to avoid infinite loop in
-     * BiomeCacheBlock)
-     */
-    public BiomeGenBase[] getBiomeGenAt (BiomeGenBase[] par1ArrayOfBiomeGenBase, int par2, int par3, int par4, int par5, boolean par6) {
+    @Override
+    public BiomeGenBase[] getBiomeGenAt (BiomeGenBase[] listToReuse, int x, int y, int width, int length, boolean cacheFlag) {
     
         IntCache.resetIntCache();
         
-        if (par1ArrayOfBiomeGenBase == null || par1ArrayOfBiomeGenBase.length < par4 * par5) {
-            par1ArrayOfBiomeGenBase = new BiomeGenBase[par4 * par5];
+        if (listToReuse == null || listToReuse.length < width * length) {
+            listToReuse = new BiomeGenBase[width * length];
         }
         
-        if (par6 && par4 == 16 && par5 == 16 && (par2 & 15) == 0 && (par3 & 15) == 0) {
-            BiomeGenBase[] abiomegenbase1 = this.elysianBiomeCache.getCachedBiomes(par2, par3);
-            System.arraycopy(abiomegenbase1, 0, par1ArrayOfBiomeGenBase, 0, par4 * par5);
-            return par1ArrayOfBiomeGenBase;
+        if (cacheFlag && width == 16 && length == 16 && (x & 15) == 0 && (y & 15) == 0) {
+            BiomeGenBase[] abiomegenbase1 = this.biomeCache.getCachedBiomes(x, y);
+            System.arraycopy(abiomegenbase1, 0, listToReuse, 0, width * length);
+            return listToReuse;
         }
         else {
-            int[] aint = this.elysianBiomeIndexLayer.getInts(par2, par3, par4, par5);
+            int[] aint = this.biomeIndexLayer.getInts(x, y, width, length);
             
-            for (int i1 = 0; i1 < par4 * par5; ++i1) {
-                
-                if (aint[i1] >= 0) {
-                    
-                    par1ArrayOfBiomeGenBase[i1] = BiomeGenBase.getBiome(aint[i1]);
-                }
-                
-                else
-                    par1ArrayOfBiomeGenBase[i1] = ElysianBiomes.biomeElysian;
+            for (int i = 0; i < width * length; ++i) {
+                listToReuse[i] = BiomeGenBase.getBiome(aint[i]);
             }
-            
-            return par1ArrayOfBiomeGenBase;
+            return listToReuse;
         }
     }
     
-    /**
-     * checks given Chunk's Biomes against List of allowed ones
-     */
-    public boolean areBiomesViable (int par1, int par2, int par3, List par4List) {
+    @Override
+    public boolean areBiomesViable (int x, int y, int z, List par4List) {
     
         IntCache.resetIntCache();
-        int l = par1 - par3 >> 2;
-        int i1 = par2 - par3 >> 2;
-        int j1 = par1 + par3 >> 2;
-        int k1 = par2 + par3 >> 2;
+        int l = x - z >> 2;
+        int i1 = y - z >> 2;
+        int j1 = x + z >> 2;
+        int k1 = y + z >> 2;
         int l1 = j1 - l + 1;
         int i2 = k1 - i1 + 1;
         int[] aint = this.genBiomes.getInts(l, i1, l1, i2);
@@ -239,21 +190,22 @@ public class WorldChunkManagerElysian extends WorldChunkManager {
             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Invalid Biome id");
             CrashReportCategory crashreportcategory = crashreport.makeCategory("Layer");
             crashreportcategory.addCrashSection("Layer", this.genBiomes.toString());
-            crashreportcategory.addCrashSection("x", Integer.valueOf(par1));
-            crashreportcategory.addCrashSection("z", Integer.valueOf(par2));
-            crashreportcategory.addCrashSection("radius", Integer.valueOf(par3));
+            crashreportcategory.addCrashSection("x", Integer.valueOf(x));
+            crashreportcategory.addCrashSection("z", Integer.valueOf(y));
+            crashreportcategory.addCrashSection("radius", Integer.valueOf(z));
             crashreportcategory.addCrashSection("allowed", par4List);
             throw new ReportedException(crashreport);
         }
     }
     
-    public ChunkPosition findBiomePosition (int p_150795_1_, int p_150795_2_, int p_150795_3_, List p_150795_4_, Random p_150795_5_) {
+    @Override
+    public ChunkPosition findBiomePosition (int x, int y, int z, List par4List, Random random) {
     
         IntCache.resetIntCache();
-        int l = p_150795_1_ - p_150795_3_ >> 2;
-        int i1 = p_150795_2_ - p_150795_3_ >> 2;
-        int j1 = p_150795_1_ + p_150795_3_ >> 2;
-        int k1 = p_150795_2_ + p_150795_3_ >> 2;
+        int l = x - z >> 2;
+        int i1 = y - z >> 2;
+        int j1 = x + z >> 2;
+        int k1 = y + z >> 2;
         int l1 = j1 - l + 1;
         int i2 = k1 - i1 + 1;
         int[] aint = this.genBiomes.getInts(l, i1, l1, i2);
@@ -265,7 +217,7 @@ public class WorldChunkManagerElysian extends WorldChunkManager {
             int i3 = i1 + k2 / l1 << 2;
             BiomeGenBase biomegenbase = BiomeGenBase.getBiome(aint[k2]);
             
-            if (p_150795_4_.contains(biomegenbase) && (chunkposition == null || p_150795_5_.nextInt(j2 + 1) == 0)) {
+            if (par4List.contains(biomegenbase) && (chunkposition == null || random.nextInt(j2 + 1) == 0)) {
                 chunkposition = new ChunkPosition(l2, 0, i3);
                 ++j2;
             }
@@ -274,18 +226,9 @@ public class WorldChunkManagerElysian extends WorldChunkManager {
         return chunkposition;
     }
     
-    /**
-     * Calls the WorldChunkManager's biomeCache.cleanupCache()
-     */
+    @Override
     public void cleanupCache () {
     
-        this.elysianBiomeCache.cleanupCache();
-    }
-    
-    public GenLayer[] getModdedBiomeGenerators (WorldType worldType, long seed, GenLayer[] original) {
-    
-        WorldTypeEvent.InitBiomeGens event = new WorldTypeEvent.InitBiomeGens(worldType, seed, original);
-        MinecraftForge.TERRAIN_GEN_BUS.post(event);
-        return event.newBiomeGens;
+        this.biomeCache.cleanupCache();
     }
 }
