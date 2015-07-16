@@ -1,5 +1,6 @@
 package net.epoxide.elysian.world.biome;
 
+import net.epoxide.elysian.blocks.BlockHandler;
 import net.epoxide.elysian.handler.ConfigurationHandler;
 import net.minecraft.init.Blocks;
 
@@ -13,7 +14,7 @@ public class BiomeTest2 extends BiomeGenElysian {
         this.barrier = Blocks.clay;
         this.fillerBlock = Blocks.dirt;
         this.fluid = Blocks.water;
-        this.topBlock = Blocks.cake;
+        this.topBlock = BlockHandler.grass;
         this.waterColorMultiplier = 0x66FFCC;
         this.setColor(0x66FFCC);
     }

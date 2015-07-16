@@ -175,37 +175,42 @@ public class ChunkProviderElysian implements IChunkProvider {
 
 					if (posY < 127 - this.rand.nextInt(5) && posY > 0 + this.rand.nextInt(5)) {
 						Block block2 = chunkBlocks[blockPos];
-						if (block2 != null && block2.getMaterial() != Material.air) { //if not air
-							if (block2 == biome.fillerBlock) 
-							{
-								if (minusOne == -1){
-									if (posY >= waterLevel - 4 && posY <= waterLevel + 1) {
-										block = biome.fillerBlock;
-										block1 = biome.fillerBlock;
-									}
+						if(block2 != null){
+							if (block2.getMaterial() != Material.air) { //if not air
+								if (block2 == biome.fillerBlock) 
+								{
+									if (minusOne == -1){
+										if (posY >= waterLevel - 4 && posY <= waterLevel + 1) {
+											block = biome.fillerBlock;
+											block1 = biome.fillerBlock;
+										}
 
-									if (posY < waterLevel && (block == null || block.getMaterial() == Material.air)) {
-										block = biome.fluid; 
-									}
+										if (posY < waterLevel && (block == null || block.getMaterial() == Material.air)) {
+											block = biome.fluid; 
+										}
 
-									if (posY >= waterLevel - 1) {
-										chunkBlocks[blockPos] = block;
+										if (posY >= waterLevel - 1) {
+											chunkBlocks[blockPos] = block;
+										}
+										else {
+											chunkBlocks[blockPos] = block1;
+										}
 									}
-									else {
+									else if (minusOne > 0) {
+										--minusOne;
 										chunkBlocks[blockPos] = block1;
 									}
+//									System.out.println(chunkBlocks[blockPos] + " "+ chunkBlocks[blockPos+1]);
+									if(chunkBlocks[blockPos+1]== null){
+										//										System.out.println(chunkBlocks[blockPos] + " "+ chunkBlocks[blockPos+1]);
+										chunkBlocks[blockPos] = biome.topBlock;
+										System.out.println("filler replaced with top");
+									}
 								}
-								else if (minusOne > 0) {
-									--minusOne;
-									chunkBlocks[blockPos] = block1;
-								}
-							}else if(chunkBlocks[blockPos].getMaterial() == Material.air || chunkBlocks[blockPos] == null){
-								if(chunkBlocks[blockPos -1] != null && chunkBlocks[blockPos -1] == biome.fillerBlock)
-									chunkBlocks[blockPos-1] = biome.topBlock;
 							}
-						}
-						else {
-							minusOne = -1;
+							else {
+								minusOne = -1;
+							}
 						}
 					}
 					else {
