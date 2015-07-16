@@ -5,6 +5,7 @@ import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.NETH
 import java.util.List;
 import java.util.Random;
 
+import net.epoxide.elysian.world.biome.BiomeGenElysian;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.material.Material;
@@ -112,15 +113,16 @@ public class ChunkProviderElysian implements IChunkProvider {
                             
                             for (int k2 = 0; k2 < 4; ++k2) {
                                 Block block = null;
-                                BiomeGenBase biome = this.worldObj.getBiomeGenForCoords(chunkX, chunkZ);
+                                //TODO make a proper check for our biome
+                                BiomeGenElysian biome = (BiomeGenElysian)this.worldObj.getBiomeGenForCoords(chunkX, chunkZ);
+                                
                                 if (k1 * 8 + l1 < b1) {
-                                    block = biome.topBlock; // TODO custom water block
+                                    block = biome.fluid;
                                 }
+                                 //TODO topblock !
                                 
                                 if (d15 > 0.0D) {
-                                    // System.out.println(biome.biomeName);
-                                    
-                                    block = biome.fillerBlock; // TODO filler
+                                    block = biome.fillerBlock; 
                                 }
                                 
                                 chunkBlocks[j2] = block;

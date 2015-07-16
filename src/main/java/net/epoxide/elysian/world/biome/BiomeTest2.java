@@ -11,7 +11,7 @@ public class BiomeTest2 extends BiomeGenElysian {
         
         this.setBiomeName("Elysian Plains 2");
         this.barrier = Blocks.clay;
-        this.fillerBlock = Blocks.gold_block;
+        this.fillerBlock = Blocks.glass;
         this.fluid = Blocks.water;
         this.topBlock = Blocks.grass;
         this.waterColorMultiplier = 0x66FFCC;

@@ -9,10 +9,11 @@ import net.minecraft.world.biome.BiomeGenBase;
 
 public class BiomeGenElysian extends BiomeGenBase {
     
-    public static Block fluid = Blocks.water;
-    public static Block barrier = Blocks.bedrock;
-    public static Block filler = Blocks.obsidian;
-    public static Block topBlock = Blocks.quartz_block;
+	//these should not be in any way static !! that would mean that all biomes would be the same !!
+    public Block fluid = Blocks.water;
+    public Block barrier = Blocks.bedrock;
+    public Block filler = Blocks.obsidian;
+    public Block topBlock = Blocks.quartz_block;
     
     public BiomeGenElysian(int biomeID) {
     
