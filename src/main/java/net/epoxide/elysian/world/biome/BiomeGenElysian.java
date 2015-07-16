@@ -12,8 +12,6 @@ public class BiomeGenElysian extends BiomeGenBase {
 	//these should not be in any way static !! that would mean that all biomes would be the same !!
     public Block fluid = Blocks.water;
     public Block barrier = Blocks.bedrock;
-    public Block filler = Blocks.obsidian;
-    public Block topBlock = Blocks.quartz_block;
     
     public BiomeGenElysian(int biomeID) {
     
