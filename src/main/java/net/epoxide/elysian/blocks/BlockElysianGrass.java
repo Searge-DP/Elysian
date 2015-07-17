@@ -34,8 +34,8 @@ public class BlockElysianGrass extends Block {
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons (IIconRegister reg) {
     
-        this.blockIcon = sides = reg.registerIcon("elysian:grass_side");
-        top = reg.registerIcon("elysian:grass_top");
-        bottom = reg.registerIcon("elysian:grass_bottom");
+        this.blockIcon = sides = reg.registerIcon("elysian:elysian_grass_side");
+        top = reg.registerIcon("elysian:elysian_grass_top");
+        bottom = reg.registerIcon("elysian:elysian_dirt");
     }
 }
