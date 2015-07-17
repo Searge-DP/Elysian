@@ -86,6 +86,8 @@ public class ChunkProviderElysian implements IChunkProvider {
 		
 		this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, chunkX * 4 - 2, chunkZ * 4 - 2, 2, 2);
 
+		System.out.println(biomesForGeneration);
+		
 		byte b0 = 4;
 		byte waterLevel = 32;
 		int k = b0 + 1;
@@ -159,9 +161,12 @@ public class ChunkProviderElysian implements IChunkProvider {
 		if(! (base instanceof BiomeGenElysian))
 			return;
 		
-		biome = (BiomeGenElysian)base;
+		biome = (BiomeGenElysian)base; //TODO biome only reflects one biome, instead of thsoe we have, altough the world detects both biomes
 		
-		
+		System.out.println(biome.biomeName);
+		System.out.println(biome.fillerBlock);
+		System.out.println(biome.topBlock);
+
 		byte waterLevel = 32;
 		double d0 = 0.03125D;
 
@@ -248,10 +253,11 @@ public class ChunkProviderElysian implements IChunkProvider {
 	// TODO Add an appropriate Javadoc
 	private double[] initializeNoiseField (double[] noiseField, int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ) {
 
-		ChunkProviderEvent.InitNoiseField event = new ChunkProviderEvent.InitNoiseField(this, noiseField, posX, posY, posZ, sizeX, sizeY, sizeZ);
-		MinecraftForge.EVENT_BUS.post(event);
-		if (event.getResult() == Result.DENY)
-			return event.noisefield;
+		//TODO remove forge events
+//		ChunkProviderEvent.InitNoiseField event = new ChunkProviderEvent.InitNoiseField(this, noiseField, posX, posY, posZ, sizeX, sizeY, sizeZ);
+//		MinecraftForge.EVENT_BUS.post(event);
+//		if (event.getResult() == Result.DENY)
+//			return event.noisefield;
 
 		if (noiseField == null)
 			noiseField = new double[sizeX * sizeY * sizeZ];
