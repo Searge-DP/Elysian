@@ -11,12 +11,12 @@ import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.client.config.GuiConfig;
 import cpw.mods.fml.client.config.IConfigElement;
 
-public class GuiConfigMusica extends GuiConfig {
+public class GuiConfigElysian extends GuiConfig {
     
     static Configuration cfg = ConfigurationHandler.config;
     static ConfigurationHandler cfgh;
     
-    public GuiConfigMusica(GuiScreen parent) {
+    public GuiConfigElysian(GuiScreen parent) {
     
         super(parent, generateConfigList(), Constants.MOD_ID, false, false, GuiConfig.getAbridgedConfigPath(ConfigurationHandler.config.toString()));
     }
