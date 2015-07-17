@@ -42,6 +42,8 @@ public class Elysian {
         new ItemHandler();
         new BiomeHandler();
         
+        new net.epoxide.elysian.handler.ElysianEventHandler();
+        
         DimensionManager.registerProviderType(ConfigurationHandler.dimensionID, WorldProviderElysian.class, true);
         DimensionManager.registerDimension(ConfigurationHandler.dimensionID, ConfigurationHandler.dimensionID);
     }
