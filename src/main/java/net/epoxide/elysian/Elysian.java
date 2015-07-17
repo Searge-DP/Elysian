@@ -36,7 +36,7 @@ public class Elysian {
     public void preInit (FMLPreInitializationEvent pre) {
     
         proxy.preInit();
-        new ConfigurationHandler(pre.getModConfigurationDirectory());
+        new ConfigurationHandler(pre.getSuggestedConfigurationFile());
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
         new PacketHandler();
         new BlockHandler();
