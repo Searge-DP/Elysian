@@ -156,6 +156,12 @@ public class ChunkProviderElysian implements IChunkProvider {
 	public void replaceBiomeBlocks (int chunkX, int chunkZ, Block[] chunkBlocks, byte[] chunkMetas, BiomeGenBase[] possibleBiomes) {
 
 		BiomeGenBase base = this.worldObj.getBiomeGenForCoords(chunkX, chunkZ);
+		
+		for(BiomeGenBase b : possibleBiomes)
+			System.out.println(b.biomeName);
+		
+		System.out.println("1 "+base.biomeName);
+		
 		BiomeGenElysian biome;
 		
 		if(! (base instanceof BiomeGenElysian))
@@ -163,7 +169,7 @@ public class ChunkProviderElysian implements IChunkProvider {
 		
 		biome = (BiomeGenElysian)base; //TODO biome only reflects one biome, instead of thsoe we have, altough the world detects both biomes
 		
-		System.out.println(biome.biomeName);
+		System.out.println(2 + biome.biomeName);
 		System.out.println(biome.fillerBlock);
 		System.out.println(biome.topBlock);
 
