@@ -1,12 +1,15 @@
 package net.epoxide.elysian.blocks;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public class BlockHandler {
     
+	public static final Material fluid = new ElysianBlockMaterial();
+	
     public static final Block transporter = new BlockElysianPortal();
     public static final Block grass = new BlockElysianGrass();
     public static final Block dirt = new BlockElysianDirt();

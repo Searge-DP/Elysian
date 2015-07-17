@@ -15,9 +15,4 @@ public class ItemElysianBucket extends ItemBucket {
 		setTextureName("elysian:bucket_water");
 	}
 
-//	@Override
-//	public void registerIcons(IIconRegister par1IconRegister) {
-//		super.registerIcons(par1IconRegister);
-//		itemIcon = Items.water_bucket.getIconFromDamage(0);
-//	}
 }

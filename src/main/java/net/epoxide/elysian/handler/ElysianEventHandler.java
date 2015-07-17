@@ -27,7 +27,6 @@ public class ElysianEventHandler {
 	
 	@SubscribeEvent
 	public void onBucketFill(FillBucketEvent evt){
-		System.out.println("bucket 2");
 
 		ItemStack result = fillCustomBucket(evt.world, evt.target);
 
