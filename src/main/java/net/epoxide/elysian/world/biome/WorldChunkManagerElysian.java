@@ -30,7 +30,7 @@ public class WorldChunkManagerElysian extends WorldChunkManager {
     
         this.biomeCache = new BiomeCache(this);
         this.biomesToSpawnIn = new ArrayList();
-        this.biomesToSpawnIn.addAll(allowedBiomes);
+        this.biomesToSpawnIn.addAll(BiomeHandler.elysianBiomes);
     }
     
     public WorldChunkManagerElysian(long seed, WorldType worldType) {
@@ -104,27 +104,27 @@ public class WorldChunkManagerElysian extends WorldChunkManager {
     }
     
     @Override
-    public BiomeGenBase[] getBiomesForGeneration (BiomeGenBase[] par1ArrayOfBiomeGenBase, int par2, int par3, int par4, int par5) {
+    public BiomeGenBase[] getBiomesForGeneration (BiomeGenBase[] biomesArray, int par2, int par3, int par4, int par5) {
     
         IntCache.resetIntCache();
         
-        if (par1ArrayOfBiomeGenBase == null || par1ArrayOfBiomeGenBase.length < par4 * par5) {
-            par1ArrayOfBiomeGenBase = new BiomeGenBase[par4 * par5];
+        if (biomesArray == null || biomesArray.length < par4 * par5) {
+            biomesArray = new BiomeGenBase[par4 * par5];
         }
         
         int[] aint = this.genBiomes.getInts(par2, par3, par4, par5);
         
         try {
             for (int i = 0; i < par4 * par5; ++i) {
-                par1ArrayOfBiomeGenBase[i] = BiomeGenBase.getBiome(aint[i]);
+                biomesArray[i] = BiomeGenBase.getBiome(aint[i]);
             }
             
-            return par1ArrayOfBiomeGenBase;
+            return biomesArray;
         }
         catch (Throwable throwable) {
             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Invalid Biome id");
             CrashReportCategory crashreportcategory = crashreport.makeCategory("RawBiomeBlock");
-            crashreportcategory.addCrashSection("biomes[] size", Integer.valueOf(par1ArrayOfBiomeGenBase.length));
+            crashreportcategory.addCrashSection("biomes[] size", Integer.valueOf(biomesArray.length));
             crashreportcategory.addCrashSection("x", Integer.valueOf(par2));
             crashreportcategory.addCrashSection("z", Integer.valueOf(par3));
             crashreportcategory.addCrashSection("w", Integer.valueOf(par4));

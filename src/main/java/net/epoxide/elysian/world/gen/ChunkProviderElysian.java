@@ -84,7 +84,7 @@ public class ChunkProviderElysian implements IChunkProvider {
 		
 		biome = (BiomeGenElysian)base;
 		
-		this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, chunkX * 4 - 2, chunkZ * 4 - 2, 10, 10);
+		this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, chunkX * 4 - 2, chunkZ * 4 - 2, 2, 2);
 
 		byte b0 = 4;
 		byte waterLevel = 32;

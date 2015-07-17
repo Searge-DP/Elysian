@@ -17,11 +17,13 @@ public class BiomeHandler {
     
         registerBiome(elysianTest1, BiomeDictionary.Type.MAGICAL, BiomeDictionary.Type.DEAD);
         registerBiome(elysianTest2, BiomeDictionary.Type.SPOOKY, BiomeDictionary.Type.MAGICAL);
+        BiomeDictionary.registerAllBiomes();
     }
     
     public void registerBiome (BiomeGenBase biome, Type... types) {
     
         elysianBiomes.add(biome);
         BiomeDictionary.registerBiomeType(biome, types);
+       
     }
 }
