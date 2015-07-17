@@ -16,7 +16,7 @@ public class GuiFactoryElysian implements IModGuiFactory {
     @Override
     public Class<? extends GuiScreen> mainConfigGuiClass () {
     
-        return GuiConfigMusica.class;
+        return GuiConfigElysian.class;
     }
     
     @Override

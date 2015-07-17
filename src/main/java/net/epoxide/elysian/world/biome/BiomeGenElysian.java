@@ -9,7 +9,8 @@ import net.minecraft.world.biome.BiomeGenBase;
 
 public class BiomeGenElysian extends BiomeGenBase {
     
-	//these should not be in any way static !! that would mean that all biomes would be the same !!
+    // these should not be in any way static !! that would mean that all biomes would be the
+    // same !!
     public Block fluid = Blocks.water;
     public Block barrier = Blocks.bedrock;
     
@@ -29,5 +30,5 @@ public class BiomeGenElysian extends BiomeGenBase {
     
         return creatureType == EnumCreatureType.monster ? this.spawnableMonsterList : (creatureType == EnumCreatureType.creature ? this.spawnableCreatureList : (creatureType == EnumCreatureType.waterCreature ? this.spawnableWaterCreatureList : (creatureType == EnumCreatureType.ambient ? this.spawnableCaveCreatureList : null)));
     }
-
+    
 }

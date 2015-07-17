@@ -24,6 +24,6 @@ public class BiomeHandler {
     
         elysianBiomes.add(biome);
         BiomeDictionary.registerBiomeType(biome, types);
-       
+        
     }
 }

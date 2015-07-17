@@ -47,7 +47,7 @@ public class Elysian {
         DimensionManager.registerDimension(ConfigurationHandler.dimensionID, ConfigurationHandler.dimensionID);
         
         new ElysianEventHandler();
-
+        
     }
     
     @EventHandler
