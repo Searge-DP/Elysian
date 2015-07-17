@@ -32,7 +32,7 @@ public class ChunkProviderElysian implements IChunkProvider {
 
 	private Random rand;
 	private World worldObj;
-	private MapGenBase elysianCaveGenerator = new MapGenCaveElysian(); //update : this has nothing to do with the noise that generates the terrain ... (derp me)
+	private MapGenBase elysianCaveGenerator = new MapGenCavesHell(); //update : this has nothing to do with the noise that generates the terrain ... (derp me)
 	private BiomeGenBase[] biomesForGeneration;
 
 	private double[] noiseField;
@@ -200,11 +200,8 @@ public class ChunkProviderElysian implements IChunkProvider {
 										--minusOne;
 										chunkBlocks[blockPos] = block1;
 									}
-//									System.out.println(chunkBlocks[blockPos] + " "+ chunkBlocks[blockPos+1]);
 									if(chunkBlocks[blockPos+1]== null){
-										//										System.out.println(chunkBlocks[blockPos] + " "+ chunkBlocks[blockPos+1]);
 										chunkBlocks[blockPos] = biome.topBlock;
-										System.out.println("filler replaced with top");
 									}
 								}
 							}

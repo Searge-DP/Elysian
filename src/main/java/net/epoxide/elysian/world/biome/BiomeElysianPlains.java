@@ -15,7 +15,7 @@ public class BiomeElysianPlains extends BiomeGenElysian {
         this.fillerBlock = BlockHandler.dirt;
         this.fluid = Blocks.lava;
         this.topBlock = BlockHandler.grass;
-        this.waterColorMultiplier = 0xff0000;
+        this.waterColorMultiplier = 0xffffff;
         this.setColor(0xff0000);
     }
 }
