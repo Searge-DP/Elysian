@@ -76,17 +76,22 @@ public class ChunkProviderElysian implements IChunkProvider {
 
 	public void prepareChunk (int chunkX, int chunkZ, Block[] chunkBlocks) {
 
+		BiomeGenBase base = this.worldObj.getBiomeGenForCoords(chunkX, chunkZ);
+		BiomeGenElysian biome;
+		
+		if(! (base instanceof BiomeGenElysian))
+			return;
+		
+		biome = (BiomeGenElysian)base;
+		
 		this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, chunkX * 4 - 2, chunkZ * 4 - 2, 10, 10);
 
 		byte b0 = 4;
-		byte b1 = 32;
+		byte waterLevel = 32;
 		int k = b0 + 1;
 		byte b2 = 17;
 		int l = b0 + 1;
 		this.noiseField = this.initializeNoiseField(this.noiseField, chunkX * b0, 0, chunkZ * b0, k, b2, l);
-
-		//TODO make a proper check for our biome
-		BiomeGenElysian biome = (BiomeGenElysian)this.worldObj.getBiomeGenForCoords(chunkX, chunkZ);
 
 		for (int i1 = 0; i1 < b0; ++i1) {
 			for (int j1 = 0; j1 < b0; ++j1) {
@@ -117,7 +122,7 @@ public class ChunkProviderElysian implements IChunkProvider {
 							for (int k2 = 0; k2 < 4; ++k2) {
 								Block block = null;
 
-								if (k1 * 8 + l1 < b1) { // b1 == 32
+								if (k1 * 8 + l1 < waterLevel) { // b1 == 32
 									block = biome.fluid;
 								}
 
@@ -148,32 +153,28 @@ public class ChunkProviderElysian implements IChunkProvider {
 	// TODO map variables
 	public void replaceBiomeBlocks (int chunkX, int chunkZ, Block[] chunkBlocks, byte[] chunkMetas, BiomeGenBase[] possibleBiomes) {
 
-		//TODO topblock !
-		//hint : topblocks get done in cave generation !
-		//we should modify our hell generator !
-		//or implement digBlock method from the mapGenCaves class
-
-		ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, chunkX, chunkZ, chunkBlocks, chunkMetas, possibleBiomes, this.worldObj);
-		MinecraftForge.EVENT_BUS.post(event);
-		if (event.getResult() == Result.DENY)
+		BiomeGenBase base = this.worldObj.getBiomeGenForCoords(chunkX, chunkZ);
+		BiomeGenElysian biome;
+		
+		if(! (base instanceof BiomeGenElysian))
 			return;
-
+		
+		biome = (BiomeGenElysian)base;
+		
+		
 		byte waterLevel = 32;
 		double d0 = 0.03125D;
-
-		//TODO make a proper check for our biome
-		BiomeGenElysian biome = (BiomeGenElysian)this.worldObj.getBiomeGenForCoords(chunkX, chunkZ);
 
 		for (int y = 0; y < 16; ++y) {
 			for (int x = 0; x < 16; ++x) {
 				int minusOne = -1;
-				Block block = biome.fillerBlock;// TODO custom block // this block is above sea level
-				Block block1 = biome.fillerBlock;// TODO custom block // this block is under sea level
+				Block block = biome.fillerBlock; // this block is above sea level
+				Block block1 = biome.fillerBlock; // this block is under sea level
 
 				for (int posY = 127; posY >= 0; --posY) { //top down to ground level
 					int blockPos = (x * 16 + y) * 128 + posY;
 
-					if (posY < 127 - this.rand.nextInt(5) && posY > 0 + this.rand.nextInt(5)) {
+					if (posY < 127 - this.rand.nextInt(5) && posY > 0 + this.rand.nextInt(5)) { // all blocks between heightlimit and bottomlayer(1 - 127)
 						Block block2 = chunkBlocks[blockPos];
 						if(block2 != null){
 							if (block2.getMaterial() != Material.air) { //if not air
@@ -196,7 +197,7 @@ public class ChunkProviderElysian implements IChunkProvider {
 											chunkBlocks[blockPos] = block1;
 										}
 									}
-									else if (minusOne > 0) {
+									else if (minusOne > 0) { //does this even ever get checked ??
 										--minusOne;
 										chunkBlocks[blockPos] = block1;
 									}
@@ -442,46 +443,5 @@ public class ChunkProviderElysian implements IChunkProvider {
 	@Override
 	public void recreateStructures (int posX, int posY) {
 
-	}
-
-	//Determine if the block at the specified location is the top block for the biome, we take into account
-	//Vanilla bugs to make sure that we generate the map the same way vanilla does.
-	private boolean isTopBlock(Block data, int x, int y, int z, int chunkX, int chunkZ)
-	{
-		BiomeGenBase biome = worldObj.getBiomeGenForCoords(x + chunkX * 16, z + chunkZ * 16);
-		return data == biome.topBlock;
-	}
-
-	/**
-	 * Digs out the current block, default implementation removes stone, filler, and top block
-	 * Sets the block to lava if y is less then 10, and air other wise.
-	 * If setting to air, it also checks to see if we've broken the surface and if so 
-	 * tries to make the floor the biome's top block
-	 * 
-	 * @param data Block data array
-	 * @param index Pre-calculated index into block data
-	 * @param x local X position
-	 * @param y local Y position
-	 * @param z local Z position
-	 * @param chunkX Chunk X position
-	 * @param chunkZ Chunk Y position
-	 * @param foundTop True if we've encountered the biome's top block. Ideally if we've broken the surface.
-	 */
-	protected void digBlock(Block[] data, int index, int x, int y, int z, int chunkX, int chunkZ, boolean foundTop)
-	{
-		BiomeGenBase biome = worldObj.getBiomeGenForCoords(x + chunkX * 16, z + chunkZ * 16);
-		Block top    = biome.topBlock;
-		Block filler = biome.fillerBlock;
-		Block block  = data[index];
-
-		if (block == Blocks.stone || block == filler || block == top)
-		{
-			data[index] = null;
-
-			if (foundTop && data[index - 1] == filler)
-			{
-				data[index - 1] = top;
-			}
-		}
 	}
 }
