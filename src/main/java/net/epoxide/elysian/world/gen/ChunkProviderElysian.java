@@ -1,13 +1,11 @@
 package net.epoxide.elysian.world.gen;
-
-import static net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.SHROOM;
-import static net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType.NETHER_LAVA;
+import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.NETHER_BRIDGE;
+import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.NETHER_CAVE;
 
 import java.util.List;
 import java.util.Random;
 
 import net.epoxide.elysian.world.biome.BiomeGenElysian;
-import net.epoxide.elysian.world.biome.BiomeHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.material.Material;
@@ -30,584 +28,585 @@ import net.minecraftforge.event.terraingen.ChunkProviderEvent;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
-
 import cpw.mods.fml.common.eventhandler.Event.Result;
 
 public class ChunkProviderElysian implements IChunkProvider
 {
-	//NETHER SOUL FOREST IDEA	
-	
 	private Random rand;
+	/** A NoiseGeneratorOctaves used in generating nether terrain */
+	private NoiseGeneratorOctaves netherNoiseGen1;
+	private NoiseGeneratorOctaves netherNoiseGen2;
+	private NoiseGeneratorOctaves netherNoiseGen3;
+	/** Determines whether slowsand or gravel can be generated at a location */
+	private NoiseGeneratorOctaves lateriteGrassPorphyryNoise;
+	/** Determines whether something other than nettherack can be generated at a location */
+	private NoiseGeneratorOctaves porphyryExclusivityNoiseGen;
+	public NoiseGeneratorOctaves netherNoiseGen6;
+	public NoiseGeneratorOctaves netherNoiseGen7;
+	/** Is the world that the nether is getting generated. */
+	private World worldObj;
+	private double[] noiseField;
+	public MapGenNetherBridge genNetherBridge = new MapGenNetherBridge();
+	/** Holds the noise used to determine whether slowsand can be generated at a location */
+	private double[] lateriteGrassNoise = new double[256];
+	private double[] porphyryNoise = new double[256];
+	/** Holds the noise used to determine whether something other than netherrack can be generated at a location */
+	private double[] porphyryExclusiveNoise = new double[256];
+	//	private MapGenBase soulForestCaveGenerator = new WorldGenCavesSoulForest();
+	private MapGenBase soulForestCaveGenerator = new MapGenCavesHell();
+	double[] noiseData1;
+	double[] noiseData2;
+	double[] noiseData3;
+	double[] noiseData4;
+	double[] noiseData5;
 
-    /** A NoiseGeneratorOctaves used in generating nether terrain */
-    private NoiseGeneratorOctaves netherNoiseGen1;
-    private NoiseGeneratorOctaves netherNoiseGen2;
-    private NoiseGeneratorOctaves netherNoiseGen3;
-    public NoiseGeneratorOctaves mobSpawnerNoise;
-
-    private NoiseGeneratorOctaves topBlockNoiceForDifferentBiomes;
-    private NoiseGeneratorOctaves fillerBlockNoiceForDifferentBiomes;
-    
-    public NoiseGeneratorOctaves netherNoiseGen6;
-    public NoiseGeneratorOctaves netherNoiseGen7;
-
-    /** The biomes that are used to generate the chunk */
-    private BiomeGenBase[] biomesForGeneration;
-   
-    /** Is the world that the nether is getting generated. */
-    private World worldObj;
-    private double[] noiseField;
-    
-    //UNUSED
-//    private double[] grassNoise = new double[256];
-//    private double[] fillerNoise = new double[256];
-//    private double[] fillerExclusiveNoise = new double[256];
-    
-    private MapGenBase netherCaveGenerator = new MapGenCavesHell();
-    
-    double[] noiseData1;
-    double[] noiseData2;
-    double[] noiseData3;
-    double[] noiseData4;
-    double[] noiseData5;
+	/** The biomes that are used to generate the chunk */
+	private BiomeGenBase[] biomesForGeneration;
 
 	private Object theBiomeDecorator;
 
-    public ChunkProviderElysian(World par1World, long par2)
-    {
-        this.worldObj = par1World;
-        this.rand = new Random(par2);
-        this.netherNoiseGen1 = new NoiseGeneratorOctaves(this.rand, 16);
-        this.netherNoiseGen2 = new NoiseGeneratorOctaves(this.rand, 16);
-        this.netherNoiseGen3 = new NoiseGeneratorOctaves(this.rand, 8);
-        this.topBlockNoiceForDifferentBiomes = new NoiseGeneratorOctaves(this.rand, 4);
-        this.fillerBlockNoiceForDifferentBiomes = new NoiseGeneratorOctaves(this.rand, 4);
-        this.netherNoiseGen6 = new NoiseGeneratorOctaves(this.rand, 10);
-        this.netherNoiseGen7 = new NoiseGeneratorOctaves(this.rand, 16);
-        this.mobSpawnerNoise = new NoiseGeneratorOctaves(this.rand, 8);
+	private static final String __OBFID = "CL_00000392";{
+		genNetherBridge = (MapGenNetherBridge) TerrainGen.getModdedMapGen(genNetherBridge, NETHER_BRIDGE);
+		soulForestCaveGenerator = TerrainGen.getModdedMapGen(soulForestCaveGenerator, NETHER_CAVE);
+	}
 
-        NoiseGenerator[] noiseGens = {netherNoiseGen1, netherNoiseGen2, netherNoiseGen3, topBlockNoiceForDifferentBiomes, fillerBlockNoiceForDifferentBiomes, netherNoiseGen6, netherNoiseGen7, mobSpawnerNoise};
-        noiseGens = TerrainGen.getModdedNoiseGenerators(par1World, this.rand, noiseGens);
-        this.netherNoiseGen1 = (NoiseGeneratorOctaves) noiseGens[0];
-        this.netherNoiseGen2 = (NoiseGeneratorOctaves) noiseGens[1];
-        this.netherNoiseGen3 = (NoiseGeneratorOctaves) noiseGens[2];
-        this.topBlockNoiceForDifferentBiomes = (NoiseGeneratorOctaves) noiseGens[3];
-        this.fillerBlockNoiceForDifferentBiomes = (NoiseGeneratorOctaves) noiseGens[4];
-        this.netherNoiseGen6 = (NoiseGeneratorOctaves) noiseGens[5];
-        this.netherNoiseGen7 = (NoiseGeneratorOctaves) noiseGens[6];
-        this.mobSpawnerNoise = (NoiseGeneratorOctaves) noiseGens[7];
-    }
+	public ChunkProviderElysian(World p_i2005_1_, long p_i2005_2_){
+		this.worldObj = p_i2005_1_;
+		this.rand = new Random(p_i2005_2_);
+		this.netherNoiseGen1 = new NoiseGeneratorOctaves(this.rand, 16);
+		this.netherNoiseGen2 = new NoiseGeneratorOctaves(this.rand, 16);
+		this.netherNoiseGen3 = new NoiseGeneratorOctaves(this.rand, 8);
+		this.lateriteGrassPorphyryNoise = new NoiseGeneratorOctaves(this.rand, 4);
+		this.porphyryExclusivityNoiseGen = new NoiseGeneratorOctaves(this.rand, 4);
+		this.netherNoiseGen6 = new NoiseGeneratorOctaves(this.rand, 10);
+		this.netherNoiseGen7 = new NoiseGeneratorOctaves(this.rand, 16);
 
-   
-    /**
-     * Generates the shape of the terrain in the nether.
-     */
-    public void generateNetherTerrain(int posX, int posZ, Block[] abyte)
-    {
+		NoiseGenerator[] noiseGens = {netherNoiseGen1, netherNoiseGen2, netherNoiseGen3, lateriteGrassPorphyryNoise, porphyryExclusivityNoiseGen, netherNoiseGen6, netherNoiseGen7};
+		noiseGens = TerrainGen.getModdedNoiseGenerators(p_i2005_1_, this.rand, noiseGens);
+		this.netherNoiseGen1 = (NoiseGeneratorOctaves)noiseGens[0];
+		this.netherNoiseGen2 = (NoiseGeneratorOctaves)noiseGens[1];
+		this.netherNoiseGen3 = (NoiseGeneratorOctaves)noiseGens[2];
+		this.lateriteGrassPorphyryNoise = (NoiseGeneratorOctaves)noiseGens[3];
+		this.porphyryExclusivityNoiseGen = (NoiseGeneratorOctaves)noiseGens[4];
+		this.netherNoiseGen6 = (NoiseGeneratorOctaves)noiseGens[5];
+		this.netherNoiseGen7 = (NoiseGeneratorOctaves)noiseGens[6];
+	}
 
-        byte b0 = 4;
-        byte b1 = 32;
-        int k = b0 + 1;
-        byte b2 = 17;
-        int l = b0 + 1;
-        
-        BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(k + 16, l + 16); //TODO marked here for noticing the +16
-        
-        BiomeGenElysian biome = null;
-        
-        if(biomegenbase instanceof BiomeGenElysian)
-        	biome = (BiomeGenElysian)biomegenbase;
-        
-        if(biome == null){
-        	System.out.println("skipped " + k +" " + l + " chunk because biome wasnt our elysian biome");
-        	return;
-        }
-        
-        float t = biomegenbase.getFloatTemperature(k, 16, l);
-     
-        this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, posX * 4 - 2, posZ * 4 - 2, k + 5, l + 5);
+	public void func_147419_a(int p_147419_1_, int p_147419_2_, Block[] p_147419_3_){
+		byte b0 = 4;
+		byte b1 = 32;
+		int k = b0 + 1;
+		byte b2 = 17;
+		int l = b0 + 1;
+		BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(k + 16, l + 16);
 
-        this.noiseField = this.initializeNoiseField(this.noiseField, posX * b0, 0, posZ * b0, k, b2, l);
+		BiomeGenElysian biome = null;
 
-        for (int i1 = 0; i1 < b0; ++i1)
-        {
-            for (int j1 = 0; j1 < b0; ++j1)
-            {
-                for (int k1 = 0; k1 < 16; ++k1)
-                {
-                    double d0 = 0.125D;
-                    double d1 = this.noiseField[((i1 + 0) * l + j1 + 0) * b2 + k1 + 0];
-                    double d2 = this.noiseField[((i1 + 0) * l + j1 + 1) * b2 + k1 + 0];
-                    double d3 = this.noiseField[((i1 + 1) * l + j1 + 0) * b2 + k1 + 0];
-                    double d4 = this.noiseField[((i1 + 1) * l + j1 + 1) * b2 + k1 + 0];
-                    double d5 = (this.noiseField[((i1 + 0) * l + j1 + 0) * b2 + k1 + 1] - d1) * d0;
-                    double d6 = (this.noiseField[((i1 + 0) * l + j1 + 1) * b2 + k1 + 1] - d2) * d0;
-                    double d7 = (this.noiseField[((i1 + 1) * l + j1 + 0) * b2 + k1 + 1] - d3) * d0;
-                    double d8 = (this.noiseField[((i1 + 1) * l + j1 + 1) * b2 + k1 + 1] - d4) * d0;
+		if(biomegenbase instanceof BiomeGenElysian)
+			biome = (BiomeGenElysian)biomegenbase;
 
-                    for (int l1 = 0; l1 < 8; ++l1)
-                    {
-                        double d9 = 0.25D;
-                        double d10 = d1;
-                        double d11 = d2;
-                        double d12 = (d3 - d1) * d9;
-                        double d13 = (d4 - d2) * d9;
+		if(biome == null){
+			System.out.println("skipped " + k +" " + l + " chunk because biome wasnt our elysian biome");
+			return;
+		}
 
-                        for (int i2 = 0; i2 < 4; ++i2)
-                        {
-                        	//int j2 = i2 + i1 * 4 << 12 | 0 + j1 * 4 << 8 | k1 * 8 + l1;
-                            int j2 = i2 + i1 * 4 << 11 | 0 + j1 * 4 << 7 | k1 * 8 + l1;
-                            //short short1 = 256;
-                            //j2 -= short1;
-                            short short1 = 128;
-                            double d14 = 0.25D;
-                            double d15 = d10;
-                            double d16 = (d11 - d10) * d14;
-                            //ouble d15 = d10 - d16;   
+		float t = biomegenbase.getFloatTemperature(k, 16, l);
+		this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, p_147419_1_ * 4 - 2, p_147419_2_ * 4 - 2, k + 5, l + 5);
 
-                            for (int k2 = 0; k2 < 4; ++k2)
-                            {
-                                Block l2 = null;
+		this.noiseField = this.initializeNoiseField(this.noiseField, p_147419_1_ * b0, 0, p_147419_2_ * b0, k, b2, l);
 
-                                if (k1 * 8 + l1 < b1)
-                                {
-                                	l2 = biome.fluid;;
-                                }
-                                //if ! not else if !!
-                                if (d15 > 0.0D)
-                                {
-                                	l2 = biome.fillerBlock;
-                                }
+		for (int i1 = 0; i1 < b0; ++i1)
+		{
+			for (int j1 = 0; j1 < b0; ++j1)
+			{
+				for (int k1 = 0; k1 < 16; ++k1)
+				{
+					double d0 = 0.125D;
+					double d1 = this.noiseField[((i1 + 0) * l + j1 + 0) * b2 + k1 + 0];
+					double d2 = this.noiseField[((i1 + 0) * l + j1 + 1) * b2 + k1 + 0];
+					double d3 = this.noiseField[((i1 + 1) * l + j1 + 0) * b2 + k1 + 0];
+					double d4 = this.noiseField[((i1 + 1) * l + j1 + 1) * b2 + k1 + 0];
+					double d5 = (this.noiseField[((i1 + 0) * l + j1 + 0) * b2 + k1 + 1] - d1) * d0;
+					double d6 = (this.noiseField[((i1 + 0) * l + j1 + 1) * b2 + k1 + 1] - d2) * d0;
+					double d7 = (this.noiseField[((i1 + 1) * l + j1 + 0) * b2 + k1 + 1] - d3) * d0;
+					double d8 = (this.noiseField[((i1 + 1) * l + j1 + 1) * b2 + k1 + 1] - d4) * d0;
 
-                                abyte[j2] = l2;
-                                j2 += short1;
-                                d15 += d16;
-                            }
+					for (int l1 = 0; l1 < 8; ++l1)
+					{
+						double d9 = 0.25D;
+						double d10 = d1;
+						double d11 = d2;
+						double d12 = (d3 - d1) * d9;
+						double d13 = (d4 - d2) * d9;
 
-                            d10 += d12;
-                            d11 += d13;
-                        }
+						for (int i2 = 0; i2 < 4; ++i2)
+						{
+							int j2 = i2 + i1 * 4 << 11 | 0 + j1 * 4 << 7 | k1 * 8 + l1;
+							short short1 = 128;
+							double d14 = 0.25D;
+							double d15 = d10;
+							double d16 = (d11 - d10) * d14;
 
-                        d1 += d5;
-                        d2 += d6;
-                        d3 += d7;
-                        d4 += d8;
-                    }
-                }
-            }
-        }
-    }
+							for (int k2 = 0; k2 < 4; ++k2)
+							{
+								Block block = null;
 
-    /**
-     * name based on ChunkProviderGenerate
-     */
-    public void replaceBlocksForBiome(int chunkX, int chunkZ, Block[] chunkBlocks, BiomeGenBase[] possibleBiomes)
-    {
+								if (k1 * 8 + l1 < b1)
+								{
+									block = biome.fluid; //TODO maybe change this to a default fuid ?
 
-        BiomeGenBase base = this.worldObj.getBiomeGenForCoords(chunkX, chunkZ);
-        
-//        for (BiomeGenBase b : possibleBiomes)
-//            System.out.println(b.biomeName);
-        
-//        System.out.println("1 " + base.biomeName);
-        
-        BiomeGenElysian biome;
-        
-        if (!(base instanceof BiomeGenElysian))
-            return;
-        
-        biome = (BiomeGenElysian) base; // TODO biome only reflects one biome, instead of thsoe
-                                        // we have, altough the world detects both biomes
-        
-//        System.out.println(2 + biome.biomeName);
-//        System.out.println(biome.fillerBlock);
-//        System.out.println(biome.topBlock);
-        
-        byte waterLevel = 32;
-        double d0 = 0.03125D;
-        
-        for (int y = 0; y < 16; ++y) {
-            for (int x = 0; x < 16; ++x) {
-                int minusOne = -1;
-                Block block = biome.fillerBlock; // this block is above sea level
-                Block block1 = biome.fillerBlock; // this block is under sea level
-                
-                for (int posY = 127; posY >= 0; --posY) { // top down to ground level
-                    int blockPos = (x * 16 + y) * 128 + posY;
-                    
-                    if (posY < 127 - this.rand.nextInt(5) && posY > 0 + this.rand.nextInt(5)) { // all
-                                                                                                // blocks
-                                                                                                // between
-                                                                                                // heightlimit
-                                                                                                // and
-                                                                                                // bottomlayer(1
-                                                                                                // -
-                                                                                                // 127)
-                        Block block2 = chunkBlocks[blockPos];
-                        if (block2 != null) {
-                            if (block2.getMaterial() != Material.air) { // if not air
-                                if (block2 == biome.fillerBlock) {
-                                    if (minusOne == -1) {
-                                        
-                                    	if (posY >= waterLevel - 4 && posY <= waterLevel + 1) {
-                                            block = biome.fillerBlock;
-                                            block1 = biome.fillerBlock;
-                                        }
-                                        
-                                        if (posY < waterLevel && (block == null || block.getMaterial() == Material.air)) {
-                                            block = biome.fluid;
-                                        }
-                                        
-                                        if (posY >= waterLevel - 1) {
-                                            chunkBlocks[blockPos] = block;
-                                        }
-                                        else {
-                                            chunkBlocks[blockPos] = block1;
-                                        }
-                                    }
-                                    else if (minusOne > 0) { // does this even ever get checked
-                                                             // ??
-                                        --minusOne;
-                                        chunkBlocks[blockPos] = block1;
-                                    }
-                                    if (chunkBlocks[blockPos + 1] == null) {
-                                        chunkBlocks[blockPos] = biome.topBlock;
-                                    }
-                                }
-                            }
-                            else {
-                                minusOne = -1;
-                            }
-                        }
-                    }
-                    else {
-                        chunkBlocks[blockPos] = biome.barrier;
-                    }
-                }
-            }
-        }
-    	
-    }
+								}
 
-    /**
-     * loads or generates the chunk at the chunk location specified
-     */
-    public Chunk loadChunk(int par1, int par2)
-    {
-        return this.provideChunk(par1, par2);
-    }
+								if (d15 > 0.0D)
+								{
+									block = biome.fillerBlock; //TODO maybe change this to a default block ?
+								}
 
-    /**
-     * Will return back a chunk, if it doesn't exist and its not a MP client it will generates all the blocks for the
-     * specified chunk from the map seed and chunk seed
-     */
-    @Override
-    public Chunk provideChunk(int par1, int par2)
-    {
-        this.rand.setSeed((long)par1 * 341873128712L + (long)par2 * 132897987541L);
-        Block[] abyte = new Block[32768];
-        this.generateNetherTerrain(par1, par2, abyte);
-        this.biomesForGeneration = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, par1 * 16, par2 * 16, 16, 16);
-        this.replaceBlocksForBiome(par1, par2, abyte, this.biomesForGeneration);
-        this.netherCaveGenerator.func_151539_a(this, this.worldObj, par1, par2, abyte);
-        //this.genNetherBridge.generate(this, this.worldObj, par1, par2, abyte);
-        Chunk chunk = new Chunk(this.worldObj, abyte, par1, par2);
-        //BiomeGenBase[] abiomegenbase = (BiomeGenBase[]) this.worldObj.getWorldChunkManager().loadBlockGeneratorData((BiomeGenBase[])null, par1 * 16, par2 * 16, 16, 16);
-        byte[] abyte1 = chunk.getBiomeArray();
+								p_147419_3_[j2] = block;
+								j2 += short1;
+								d15 += d16;
+							}
 
-        for (int k = 0; k < abyte1.length; ++k)
-        {
-            abyte1[k] = (byte)biomesForGeneration[k].biomeID;
-        }
+							d10 += d12;
+							d11 += d13;
+						}
 
-        chunk.resetRelightChecks();
-        return chunk;
-    }
+						d1 += d5;
+						d2 += d6;
+						d3 += d7;
+						d4 += d8;
+					}
+				}
+			}
+		}
+	}
 
-    public void decorate(World par1World, Random par2Random, int par3, int par4)
-    {
-        ((BiomeGenBase) this.theBiomeDecorator).decorate(par1World, par2Random, par3, par4);
-    }
-    /**
-     * generates a subset of the level's terrain data. Takes 7 arguments: the [empty] noise array, the position, and the
-     * size.
-     */
-    private double[] initializeNoiseField(double[] par1ArrayOfDouble, int par2, int par3, int par4, int par5, int par6, int par7)
-    {
-        ChunkProviderEvent.InitNoiseField event = new ChunkProviderEvent.InitNoiseField(this, par1ArrayOfDouble, par2, par3, par4, par5, par6, par7);
-        MinecraftForge.EVENT_BUS.post(event);
-        if (event.getResult() == Result.DENY) return event.noisefield;
-        if (par1ArrayOfDouble == null)
-        {
-            par1ArrayOfDouble = new double[par5 * par6 * par7];
-        }
+	@Deprecated //You should provide meatadata and biome data in the below method
+	public void func_147418_b(int p_147418_1_, int p_147418_2_, Block[] p_147418_3_)
+	{
+		replaceBiomeBlocks(p_147418_1_, p_147418_2_, p_147418_3_, new byte[p_147418_3_.length], null);
+	} 
+	public void replaceBiomeBlocks(int p_147418_1_, int p_147418_2_, Block[] p_147418_3_, byte[] meta, BiomeGenBase[] biomes)
+	{
+		ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, p_147418_1_, p_147418_2_, p_147418_3_, meta, biomes, this.worldObj);
+		MinecraftForge.EVENT_BUS.post(event);
+		if (event.getResult() == Result.DENY) return;
 
-        double d0 = 684.412D;
-        double d1 = 2053.236D;
-        this.noiseData4 = this.netherNoiseGen6.generateNoiseOctaves(this.noiseData4, par2, par3, par4, par5, 1, par7, 1.0D, 0.0D, 1.0D);
-        this.noiseData5 = this.netherNoiseGen7.generateNoiseOctaves(this.noiseData5, par2, par3, par4, par5, 1, par7, 100.0D, 0.0D, 100.0D);
-        this.noiseData1 = this.netherNoiseGen3.generateNoiseOctaves(this.noiseData1, par2, par3, par4, par5, par6, par7, d0 / 80.0D, d1 / 60.0D, d0 / 80.0D);
-        this.noiseData2 = this.netherNoiseGen1.generateNoiseOctaves(this.noiseData2, par2, par3, par4, par5, par6, par7, d0, d1, d0);
-        this.noiseData3 = this.netherNoiseGen2.generateNoiseOctaves(this.noiseData3, par2, par3, par4, par5, par6, par7, d0, d1, d0);
-        int k1 = 0;
-        int l1 = 0;
-        double[] adouble1 = new double[par6];
-        int i2;       
-       
-        for (i2 = 0; i2 < par6; ++i2)
-        {
-            adouble1[i2] = Math.cos((double)i2 * Math.PI * 6.0D / (double)par6) * 2.0D;
-            double d2 = (double)i2;
+		byte b0 = 32; // was 64
+		double d0 = 0.03125D;
+		this.lateriteGrassNoise = this.lateriteGrassPorphyryNoise.generateNoiseOctaves(this.lateriteGrassNoise, p_147418_1_ * 16, p_147418_2_ * 16, 0, 16, 16, 1, d0, d0, 1.0D);
+		this.porphyryNoise = this.lateriteGrassPorphyryNoise.generateNoiseOctaves(this.porphyryNoise, p_147418_1_ * 16, 109, p_147418_2_ * 16, 16, 1, 16, d0, 1.0D, d0);
+		this.porphyryExclusiveNoise = this.porphyryExclusivityNoiseGen.generateNoiseOctaves(this.porphyryExclusiveNoise, p_147418_1_ * 16, p_147418_2_ * 16, 0, 16, 16, 1, d0 * 2.0D, d0 * 2.0D, d0 * 2.0D);
 
-            if (i2 > par6 / 2)
-            {
-                d2 = (double)(par6 - 1 - i2);
-            }
+		for (int k = 0; k < 16; ++k)
+		{
+			for (int l = 0; l < 16; ++l)
+			{
+				BiomeGenBase biomegenbase = biomesForGeneration[l + k * 16];
 
-            if (d2 < 4.0D)
-            {
-                d2 = 4.0D - d2;
-                adouble1[i2] -= d2 * d2 * d2 * 10.0D;
-            }
-        }
+				BiomeGenElysian biome = null;
 
-        for (i2 = 0; i2 < par5; ++i2)
-        {
-            for (int j2 = 0; j2 < par7; ++j2)
-            {
-                double d3 = (this.noiseData4[l1] + 256.0D) / 512.0D;
+				if(biomegenbase instanceof BiomeGenElysian)
+					biome = (BiomeGenElysian)biomegenbase;
 
-                if (d3 > 1.0D)
-                {
-                    d3 = 1.0D;
-                }
+				if(biome == null){
+					System.out.println("skipped " + k +" " + l + " chunk because biome wasnt our elysian biome");
+					return;
+				}
+				
+				//System.out.println(biomegenbase.biomeName);
+				//biomegenbase.genTerrainBlocks(this.worldObj, this.soulRNG, p_147418_3_, meta, p_147418_1_ * 16 + k, p_147418_2_ * 16 + l, this.porphyryExclusiveNoise[l + k * 16]);
+				boolean flag = this.lateriteGrassNoise[k + l * 16] + this.rand.nextDouble() * 0.2D > 0.0D;
+				boolean flag1 = this.porphyryNoise[k + l * 16] + this.rand.nextDouble() * 0.2D > 0.0D;
+				int i1 = (int)(this.porphyryExclusiveNoise[k + l * 16] / 3.0D + 3.0D + this.rand.nextDouble() * 0.25D);
+				int j1 = -1;
+				Block block = biomegenbase.topBlock;
+				Block block1 = biomegenbase.fillerBlock;
 
-                double d4 = 0.0D;
-                double d5 = this.noiseData5[l1] / 8000.0D;
+				for (int k1 = 127; k1 >= 0; --k1)
+				{
+					int l1 = (l * 16 + k) * 128 + k1;
 
-                if (d5 < 0.0D)
-                {
-                    d5 = -d5;
-                }
+					if (k1 < 127 - this.rand.nextInt(5) && k1 > 0 + this.rand.nextInt(5))
+					{
+						Block block2 = p_147418_3_[l1];
 
-                d5 = d5 * 3.0D - 3.0D;
+						if (block2 != null && block2.getMaterial() != Material.air)
+						{
+							if (block2 == biome.fillerBlock)
+							{
+								if (j1 == -1)
+								{
+									if (i1 <= 0)
+									{
+										block = null;
+										block1 = biome.fillerBlock;  
+									}
+									else if (k1 >= 0 - 4 && k1 <= b0 + 1)
+									{
+										block = biomegenbase.topBlock;
+										block1 = biomegenbase.fillerBlock;
 
-                if (d5 < 0.0D)
-                {
-                    d5 /= 2.0D;
+										if (flag1)
+										{
+											block = biomegenbase.topBlock;   
+											block1 = biomegenbase.fillerBlock;
+										}
 
-                    if (d5 < -1.0D)
-                    {
-                        d5 = -1.0D;
-                    }
+										//System.out.println("Block1 : " + biomegenbase.topBlock);
+										//System.out.println("Block2 : " + biomegenbase.fillerBlock);
 
-                    d5 /= 1.4D;
-                    d5 /= 2.0D;
-                    d3 = 0.0D;
-                }
-                else
-                {
-                    if (d5 > 1.0D)
-                    {
-                        d5 = 1.0D;
-                    }
+										if (flag)
+										{
+											block = biomegenbase.topBlock;
+											block1 = biomegenbase.fillerBlock;
+										}
+									}
 
-                    d5 /= 6.0D;
-                }
+									if (k1 < b0 && (block == null || block.getMaterial() == Material.air))
+									{
+//										if (biomegenbase == soul_forest.FrostCaves || biomegenbase == soul_forest.FrozenPlains) // Generate ice when temp below certain value
+//										{
+//											//b1 = (byte) SoulBlocks.soulIceID;
+//										} 
+//										else 
+//										{
+//											//block1 = SoulBlocks.SoulWaterMoving.get();
+//										}
+									}
 
-                d3 += 0.5D;
-                d5 = d5 * (double)par6 / 16.0D;
-                ++l1;
+									j1 = i1;
 
-                for (int k2 = 0; k2 < par6; ++k2)
-                {
-                    double d6 = 0.0D;
-                    double d7 = adouble1[k2];
-                    double d8 = this.noiseData2[k1] / 512.0D;
-                    double d9 = this.noiseData3[k1] / 512.0D;
-                    double d10 = (this.noiseData1[k1] / 10.0D + 1.0D) / 2.0D;
+									if (k1 >= b0 - 1)
+									{
+										p_147418_3_[l1] = block; 
+									}
+									else
+									{
+										p_147418_3_[l1] = block1;
+									}
+								}
+								else if (j1 > 0)
+								{
+									--j1;
+									p_147418_3_[l1] = block1;
+								}
+							}
+						}
+						else
+						{
+							j1 = -1;
+						}
+					}
+					else
+					{
+						p_147418_3_[l1] = biome.barrier;
+					}
+				}
+			}
+		}
+	}
 
-                    if (d10 < 0.0D)
-                    {
-                        d6 = d8;
-                    }
-                    else if (d10 > 1.0D)
-                    {
-                        d6 = d9;
-                    }
-                    else
-                    {
-                        d6 = d8 + (d9 - d8) * d10;
-                    }
+	/**
+	 * loads or generates the chunk at the chunk location specified
+	 */
+	public Chunk loadChunk(int p_73158_1_, int p_73158_2_)
+	{
+		return this.provideChunk(p_73158_1_, p_73158_2_);
+	}
 
-                    d6 -= d7;
-                    double d11;
+	/**
+	 * Will return back a chunk, if it doesn't exist and its not a MP client it will generates all the blocks for the
+	 * specified chunk from the map seed and chunk seed
+	 */
+	public Chunk provideChunk(int p_73154_1_, int p_73154_2_)
+	{
+		this.rand.setSeed((long)p_73154_1_ * 341873128712L + (long)p_73154_2_ * 132897987541L);
+		Block[] ablock = new Block[32768];
+		byte[] meta = new byte[ablock.length];
+		this.biomesForGeneration = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, p_73154_1_ * 16, p_73154_2_ * 16, 16, 16); //Forge Move up to allow for passing to replaceBiomeBlocks
+		this.func_147419_a(p_73154_1_, p_73154_2_, ablock);
+		this.replaceBiomeBlocks(p_73154_1_, p_73154_2_, ablock, meta, this.biomesForGeneration);
+		this.soulForestCaveGenerator.func_151539_a(this, this.worldObj, p_73154_1_, p_73154_2_, ablock);
+		//this.genNetherBridge.func_151539_a(this, this.worldObj, p_73154_1_, p_73154_2_, ablock);
+		Chunk chunk = new Chunk(this.worldObj, ablock, meta, p_73154_1_, p_73154_2_);
+		byte[] abyte = chunk.getBiomeArray();
 
-                    if (k2 > par6 - 4)
-                    {
-                        d11 = (double)((float)(k2 - (par6 - 4)) / 3.0F);
-                        d6 = d6 * (1.0D - d11) + -10.0D * d11;
-                    }
+		for (int k = 0; k < abyte.length; ++k){
+			abyte[k] = (byte)biomesForGeneration[k].biomeID;
+		}
 
-                    if ((double)k2 < d4)
-                    {
-                        d11 = (d4 - (double)k2) / 4.0D;
+		chunk.resetRelightChecks();
+		return chunk;
+	}
 
-                        if (d11 < 0.0D)
-                        {
-                            d11 = 0.0D;
-                        }
+	/**
+	 * generates a subset of the level's terrain data. Takes 7 arguments: the [empty] noise array, the position, and the
+	 * size.
+	 */
+	private double[] initializeNoiseField(double[] p_73164_1_, int p_73164_2_, int p_73164_3_, int p_73164_4_, int p_73164_5_, int p_73164_6_, int p_73164_7_)
+	{
+		ChunkProviderEvent.InitNoiseField event = new ChunkProviderEvent.InitNoiseField(this, p_73164_1_, p_73164_2_, p_73164_3_, p_73164_4_, p_73164_5_, p_73164_6_, p_73164_7_);
+		MinecraftForge.EVENT_BUS.post(event);
+		if (event.getResult() == Result.DENY) return event.noisefield;
 
-                        if (d11 > 1.0D)
-                        {
-                            d11 = 1.0D;
-                        }
+		if (p_73164_1_ == null)
+		{
+			p_73164_1_ = new double[p_73164_5_ * p_73164_6_ * p_73164_7_];
+		}
 
-                        d6 = d6 * (1.0D - d11) + -10.0D * d11;
-                    }
+		double d0 = 684.412D;
+		double d1 = 2053.236D;
+		this.noiseData4 = this.netherNoiseGen6.generateNoiseOctaves(this.noiseData4, p_73164_2_, p_73164_3_, p_73164_4_, p_73164_5_, 1, p_73164_7_, 1.0D, 0.0D, 1.0D);
+		this.noiseData5 = this.netherNoiseGen7.generateNoiseOctaves(this.noiseData5, p_73164_2_, p_73164_3_, p_73164_4_, p_73164_5_, 1, p_73164_7_, 100.0D, 0.0D, 100.0D);
+		this.noiseData1 = this.netherNoiseGen3.generateNoiseOctaves(this.noiseData1, p_73164_2_, p_73164_3_, p_73164_4_, p_73164_5_, p_73164_6_, p_73164_7_, d0 / 80.0D, d1 / 60.0D, d0 / 80.0D);
+		this.noiseData2 = this.netherNoiseGen1.generateNoiseOctaves(this.noiseData2, p_73164_2_, p_73164_3_, p_73164_4_, p_73164_5_, p_73164_6_, p_73164_7_, d0, d1, d0);
+		this.noiseData3 = this.netherNoiseGen2.generateNoiseOctaves(this.noiseData3, p_73164_2_, p_73164_3_, p_73164_4_, p_73164_5_, p_73164_6_, p_73164_7_, d0, d1, d0);
+		int k1 = 0;
+		int l1 = 0;
+		double[] adouble1 = new double[p_73164_6_];
+		int i2;
 
-                    par1ArrayOfDouble[k1] = d6;
-                    ++k1;
-                }
-            }
-        }
+		for (i2 = 0; i2 < p_73164_6_; ++i2)
+		{
+			adouble1[i2] = Math.cos((double)i2 * Math.PI * 6.0D / (double)p_73164_6_) * 2.0D;
+			double d2 = (double)i2;
 
-        return par1ArrayOfDouble;
-    }
+			if (i2 > p_73164_6_ / 2)
+			{
+				d2 = (double)(p_73164_6_ - 1 - i2);
+			}
 
-    /**
-     * Checks to see if a chunk exists at x, y
-     */
-	public boolean chunkExists(int par1, int par2)
-    {
-        return true;
-    }
+			if (d2 < 4.0D)
+			{
+				d2 = 4.0D - d2;
+				adouble1[i2] -= d2 * d2 * d2 * 10.0D;
+			}
+		}
 
-    /**
-     * Populates chunk with ores etc etc
-     */
-    public void populate(IChunkProvider par1IChunkProvider, int par2, int par3)
-    {
-        BlockSand.fallInstantly = true;
+		for (i2 = 0; i2 < p_73164_5_; ++i2)
+		{
+			for (int k2 = 0; k2 < p_73164_7_; ++k2)
+			{
+				double d3 = (this.noiseData4[l1] + 256.0D) / 512.0D;
 
-        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(par1IChunkProvider, worldObj, rand, par2, par3, false));
+				if (d3 > 1.0D)
+				{
+					d3 = 1.0D;
+				}
 
-        int k = par2 * 16;
-        int l = par3 * 16;
-        BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(k + 16, l + 16);
-        //this.genNetherBridge.generateStructuresInChunk(this.worldObj, this.soulRNG, par2, par3);
-        int i1;
-        int j1;
-        int k1;
-        int l1 = 0;
-        int j2;
+				double d4 = 0.0D;
+				double d5 = this.noiseData5[l1] / 8000.0D;
 
-        boolean doGen = TerrainGen.populate(par1IChunkProvider, worldObj, rand, par2, par3, false, NETHER_LAVA);
-         
-        //doGen = TerrainGen.populate(par1IChunkProvider, worldObj, soulRNG, par2, par3, false, DUNGEON);
+				if (d5 < 0.0D)
+				{
+					d5 = -d5;
+				}
 
-        MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(worldObj, rand, k, l));
+				d5 = d5 * 3.0D - 3.0D;
 
-        i1 = this.rand.nextInt(this.rand.nextInt(10) + 1) + 1;
-        int i2;
-       
-        doGen = TerrainGen.decorate(worldObj, rand, k, l, SHROOM);
-        // Everything not biome related       
-    	
-        //no need for mineables yet
-        // #region Ore Gen
-//        WorldGenMinable worldgenminable;
-       
-//		for (int i = 0; i < 5; i++)
-//		{
-//			int randPosX = k + soulRNG.nextInt(16);
-//			int randPosY = soulRNG.nextInt(128);
-//			int randPosZ = l + soulRNG.nextInt(16);
-//			(new WorldGenMinable(SoulBlocks.Bauxite.get(), 30, SoulBlocks.Porphyry.get())).generate(worldObj, soulRNG, randPosX, randPosY, randPosZ);
+				if (d5 < 0.0D)
+				{
+					d5 /= 2.0D;
+
+					if (d5 < -1.0D)
+					{
+						d5 = -1.0D;
+					}
+
+					d5 /= 1.4D;
+					d5 /= 2.0D;
+					d3 = 0.0D;
+				}
+				else
+				{
+					if (d5 > 1.0D)
+					{
+						d5 = 1.0D;
+					}
+
+					d5 /= 6.0D;
+				}
+
+				d3 += 0.5D;
+				d5 = d5 * (double)p_73164_6_ / 16.0D;
+				++l1;
+
+				for (int j2 = 0; j2 < p_73164_6_; ++j2)
+				{
+					double d6 = 0.0D;
+					double d7 = adouble1[j2];
+					double d8 = this.noiseData2[k1] / 512.0D;
+					double d9 = this.noiseData3[k1] / 512.0D;
+					double d10 = (this.noiseData1[k1] / 10.0D + 1.0D) / 2.0D;
+
+					if (d10 < 0.0D)
+					{
+						d6 = d8;
+					}
+					else if (d10 > 1.0D)
+					{
+						d6 = d9;
+					}
+					else
+					{
+						d6 = d8 + (d9 - d8) * d10;
+					}
+
+					d6 -= d7;
+					double d11;
+
+					if (j2 > p_73164_6_ - 4)
+					{
+						d11 = (double)((float)(j2 - (p_73164_6_ - 4)) / 3.0F);
+						d6 = d6 * (1.0D - d11) + -10.0D * d11;
+					}
+
+					if ((double)j2 < d4)
+					{
+						d11 = (d4 - (double)j2) / 4.0D;
+
+						if (d11 < 0.0D)
+						{
+							d11 = 0.0D;
+						}
+
+						if (d11 > 1.0D)
+						{
+							d11 = 1.0D;
+						}
+
+						d6 = d6 * (1.0D - d11) + -10.0D * d11;
+					}
+
+					p_73164_1_[k1] = d6;
+					++k1;
+				}
+			}
+		}
+
+		return p_73164_1_;
+	}
+
+	/**
+	 * Checks to see if a chunk exists at x, y
+	 */
+	public boolean chunkExists(int p_73149_1_, int p_73149_2_)
+	{
+		return true;
+	}
+
+	/**
+	 * Populates chunk with ores etc etc
+	 */
+	public void populate(IChunkProvider p_73153_1_, int p_73153_2_, int p_73153_3_)
+	{
+		BlockSand.fallInstantly = true;
+
+		MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(p_73153_1_, worldObj, rand, p_73153_2_, p_73153_3_, false));
+
+		int k = p_73153_2_ * 16;
+		int l = p_73153_3_ * 16;
+		BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(k + 16, l + 16);
+		//this.genNetherBridge.generateStructuresInChunk(this.worldObj, this.soulRNG, par2, par3);
+		int i1;
+		int j1;
+		int k1;
+		int l1 = 0;
+		int j2;
+
+		biomegenbase.decorate(this.worldObj, this.rand, k, l);
+		//boolean doGen = TerrainGen.populate(p_73153_1_, worldObj, soulRNG, p_73153_2_, p_73153_3_, false, NETHER_LAVA);
+
+		MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(worldObj, rand, k, l));
+
+		i1 = this.rand.nextInt(this.rand.nextInt(10) + 1) + 1;
+		int i2;
+
+		//doGen = TerrainGen.decorate(worldObj, soulRNG, k, l, SHROOM);
+		// Everything not biome related       
+
+		// #region Ore Gen
+		//WorldGenMinable worldgenminable;
+
+//		for (int i = 0; i < 5; i++){
+//			int randPosX = k + rand.nextInt(16);
+//			int randPosY = rand.nextInt(128);
+//			int randPosZ = l + rand.nextInt(16);
+//			(new WorldGenMinable(SoulBlocks.Bauxite.get(), 30, SoulBlocks.Porphyry.get())).generate(worldObj, rand, randPosX, randPosY, randPosZ);
 //		}	
-//		
-//		for (int i = 0; i < 5; i++)
-//		{
-//			int randPosX = k + soulRNG.nextInt(16);
-//			int randPosY = soulRNG.nextInt(128);
-//			int randPosZ = l + soulRNG.nextInt(16);
-//			(new WorldGenMinable(SoulBlocks.SoulSnowBottom.get(), 40, SoulBlocks.SoulSnowTop.get())).generate(worldObj, soulRNG, randPosX, randPosY, randPosZ);
+//
+//		for (int i = 0; i < 10; i++){
+//			int randPosX = k + rand.nextInt(16);
+//			int randPosY = rand.nextInt(128);
+//			int randPosZ = l + rand.nextInt(16);
+//			(new WorldGenMinable(SoulBlocks.Slate.get(), 50, SoulBlocks.Porphyry.get())).generate(worldObj, rand, randPosX, randPosY, randPosZ);
+//		}	
+//		for (int i = 0; i < 15; i++){
+//			int randPosX = k + rand.nextInt(16);
+//			int randPosY = rand.nextInt(128);
+//			int randPosZ = l + rand.nextInt(16);
+//			(new WorldGenMinable(SoulBlocks.DarkPorphyry.get(), 20, SoulBlocks.Porphyry.get())).generate(worldObj, rand, randPosX, randPosY, randPosZ);
 //		}	
 
-        MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Post(worldObj, rand, k, l));
-        MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(par1IChunkProvider, worldObj, rand, par2, par3, false));
+		MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Post(worldObj, rand, k, l));
+		MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(p_73153_1_, worldObj, rand, p_73153_2_, p_73153_3_, false));
 
-        BlockSand.fallInstantly = false;
-    }
+		BlockSand.fallInstantly = false;
+	}
 
-    /**
-     * Two modes of operation: if passed true, save all Chunks in one go.  If passed false, save up to two chunks.
-     * Return true if all chunks have been saved.
-     */
-    public boolean saveChunks(boolean par1, IProgressUpdate par2IProgressUpdate)
-    {
-        return true;
-    }
+	/**
+	 * Two modes of operation: if passed true, save all Chunks in one go.  If passed false, save up to two chunks.
+	 * Return true if all chunks have been saved.
+	 */
+	public boolean saveChunks(boolean p_73151_1_, IProgressUpdate p_73151_2_){
+		return true;
+	}
 
-    /**
-     * Unloads chunks that are marked to be unloaded. This is not guaranteed to unload every such chunk.
-     */
-    public boolean unloadQueuedChunks()
-    {
-        return false;
-    }
+	/**
+	 * Save extra data not associated with any Chunk.  Not saved during autosave, only during world unload.  Currently
+	 * unimplemented.
+	 */
+	public void saveExtraData() {}
 
-    /**
-     * Returns if the IChunkProvider supports saving.
-     */
-    public boolean canSave()
-    {
-        return true;
-    }
+	/**
+	 * Unloads chunks that are marked to be unloaded. This is not guaranteed to unload every such chunk.
+	 */
+	public boolean unloadQueuedChunks(){
+		return false;
+	}
 
-    /**
-     * Converts the instance data to a readable string.
-     */
-    public String makeString()
-    {
-        return "SoulForestLevelSource";
-    }
+	/**
+	 * Returns if the IChunkProvider supports saving.
+	 */
+	public boolean canSave(){
+		return true;
+	}
 
-    /**
-     * Returns a list of creatures of the specified type that can spawn at the given location.
-     */
-    public List getPossibleCreatures(EnumCreatureType par1EnumCreatureType, int par2, int par3, int par4)
-    {
-        BiomeGenBase biomegenbase = (BiomeGenBase) this.worldObj.getBiomeGenForCoords(par2, par4);
-        return biomegenbase == null ? null : biomegenbase.getSpawnableList(par1EnumCreatureType);
-    }
+	/**
+	 * Converts the instance data to a readable string.
+	 */
+	public String makeString(){
+		return "SoulForestLevelSource";
+	}
 
-    /**
-     * Returns the location of the closest structure of the specified type. If not found returns null.
-     */
-    public ChunkPosition findClosestStructure(World par1World, String par2Str, int par3, int par4, int par5)
-    {
-        return null;
-    }
+	/**
+	 * Returns a list of creatures of the specified type that can spawn at the given location.
+	 */
+	public List getPossibleCreatures(EnumCreatureType p_73155_1_, int p_73155_2_, int p_73155_3_, int p_73155_4_){
+		BiomeGenBase biomegenbase = (BiomeGenBase) this.worldObj.getBiomeGenForCoords(p_73155_2_, p_73155_4_);
+		return biomegenbase == null ? null : biomegenbase.getSpawnableList(p_73155_1_);
+	}
 
-    public int getLoadedChunkCount()
-    {
-        return 0;
-    }
-
-    public void recreateStructures(int par1, int par2)
-    {
-        //this.genNetherBridge.generate(this, this.worldObj, par1, par2, (byte[])null);
-    }
-
-
-	@Override
-	public ChunkPosition func_147416_a(World var1, String var2, int var3,
-			int var4, int var5) {
+	public ChunkPosition func_147416_a(World p_147416_1_, String p_147416_2_, int p_147416_3_, int p_147416_4_, int p_147416_5_){
 		return null;
 	}
 
+	public int getLoadedChunkCount(){
+		return 0;
+	}
 
 	@Override
-	public void saveExtraData() {}
+	public void recreateStructures(int p_82695_1_, int p_82695_2_) {
+	}
 }
