@@ -4,7 +4,6 @@ import net.epoxide.elysian.handler.ConfigurationHandler;
 import net.epoxide.elysian.world.biome.WorldChunkManagerElysian;
 import net.epoxide.elysian.world.gen.ChunkProviderElysian;
 import net.minecraft.world.WorldProvider;
-import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import cpw.mods.fml.relauncher.Side;

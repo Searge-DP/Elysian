@@ -3,7 +3,6 @@ package net.epoxide.elysian.world.biome;
 import java.util.List;
 import java.util.Random;
 
-import net.epoxide.elysian.blocks.BlockHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EnumCreatureType;
@@ -13,8 +12,6 @@ import net.minecraft.world.biome.BiomeGenBase;
 
 public class BiomeGenElysian extends BiomeGenBase {
     
-    // these should not be in any way static !! that would mean that all biomes would be the
-    // same !!
     public Block fluid = null;
     public Block barrier = null;
     
@@ -36,10 +33,11 @@ public class BiomeGenElysian extends BiomeGenBase {
     }
     
     @Override
-    public void genTerrainBlocks(World p_150573_1_, Random p_150573_2_, Block[] p_150573_3_, byte[] p_150573_4_, int p_150573_5_, int p_150573_6_, double p_150573_7_) {
+    public void genTerrainBlocks (World p_150573_1_, Random p_150573_2_, Block[] p_150573_3_, byte[] p_150573_4_, int p_150573_5_, int p_150573_6_, double p_150573_7_) {
+    
         genBiomeModdedTerrain(p_150573_1_, p_150573_2_, p_150573_3_, p_150573_4_, p_150573_5_, p_150573_6_, p_150573_7_);
     }
-
+    
     /**
      * Replaces custom Stone to allow top/filler blocks to work in dimension.
      * 
@@ -51,8 +49,8 @@ public class BiomeGenElysian extends BiomeGenBase {
      * @param y
      * @param z
      */
-    public void genBiomeModdedTerrain(World world, Random random, Block[] replacableBlock, byte[] aByte, int x, int y, double z)
-    {
+    public void genBiomeModdedTerrain (World world, Random random, Block[] replacableBlock, byte[] aByte, int x, int y, double z) {
+    
         Block block = this.topBlock;
         byte b0 = (byte) (this.field_150604_aj & 255);
         Block block1 = this.fillerBlock;
@@ -62,81 +60,65 @@ public class BiomeGenElysian extends BiomeGenBase {
         int j1 = y & 15;
         int k1 = replacableBlock.length / 256;
         
-        for (int l1 = 255; l1 >= 0; --l1)
-        {
+        for (int l1 = 255; l1 >= 0; --l1) {
             int i2 = (j1 * 16 + i1) * k1 + l1;
-
-            if (l1 <= 0 + random.nextInt(5))
-            {
+            
+            if (l1 <= 0 + random.nextInt(5)) {
                 replacableBlock[i2] = barrier;
             }
-            else
-            {
+            else {
                 Block block2 = replacableBlock[i2];
-
-                if (block2 != null && block2.getMaterial() != Material.air)
-                {
-                    if (block2 == fillerBlock)
-                    {
-                        if (k == -1)
-                        {
-                            if (l <= 0)
-                            {
+                
+                if (block2 != null && block2.getMaterial() != Material.air) {
+                    if (block2 == fillerBlock) {
+                        if (k == -1) {
+                            if (l <= 0) {
                                 block = null;
                                 b0 = 0;
                                 block1 = fillerBlock;
                             }
-                            else if (l1 >= 32)
-                            {
+                            else if (l1 >= 32) {
                                 block = this.topBlock;
                                 b0 = (byte) (this.field_150604_aj & 255);
                                 block1 = this.fillerBlock;
                             }
-
-                            if (l1 < 32 && (block == null || block.getMaterial() == Material.air))
-                            {
-                                    block = fluid;
-                                    b0 = 0;
+                            
+                            if (l1 < 32 && (block == null || block.getMaterial() == Material.air)) {
+                                block = fluid;
+                                b0 = 0;
                             }
-
+                            
                             k = l;
-
-                            if (l1 >= 62)
-                            {
+                            
+                            if (l1 >= 62) {
                                 replacableBlock[i2] = block;
                                 aByte[i2] = b0;
                             }
-                            else if (l1 < 56 - l)
-                            {
+                            else if (l1 < 56 - l) {
                                 block = null;
                                 block1 = fillerBlock;
                                 replacableBlock[i2] = Blocks.gravel;
                             }
-                            else
-                            {
+                            else {
                                 replacableBlock[i2] = block1;
                             }
                         }
-                        else if (k > 0)
-                        {
+                        else if (k > 0) {
                             --k;
                             replacableBlock[i2] = block1;
-
-                            if (k == 0 && block1 == Blocks.sand)
-                            {
+                            
+                            if (k == 0 && block1 == Blocks.sand) {
                                 k = random.nextInt(4) + Math.max(0, l1 - 63);
                                 block1 = Blocks.sandstone;
                             }
                         }
                     }
                 }
-                else
-                {
+                else {
                     k = -1;
                 }
             }
         }
     }
-
     
 }
