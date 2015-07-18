@@ -6,35 +6,36 @@ import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
 
 public class GenLayerBiomesElysian extends GenLayer {
-    
-    protected Object[] allowedBiomes = BiomeHandler.elysianBiomes.toArray();
-    
-    public GenLayerBiomesElysian(long seed, GenLayer genlayer) {
-    
-        super(seed);
-        this.parent = genlayer;
-    }
-    
-    public GenLayerBiomesElysian(long seed) {
-    
-        super(seed);
-    }
-    
-    @Override
-    public int[] getInts (int posX, int posZ, int width, int depth) {
-    
-        int[] positions = IntCache.getIntCache(width * depth);
-        
-        for (int distantZ = 0; distantZ < depth; distantZ++) {
-            
-            for (int distantX = 0; distantX < width; distantX++) {
-                
-                this.initChunkSeed(distantX + posX, distantZ + posZ);
-                BiomeGenBase biome = (BiomeGenBase) BiomeHandler.elysianBiomes.toArray()[nextInt(this.allowedBiomes.length)];
-                positions[(distantX + distantZ * width)] = biome.biomeID;
-            }
-        }
-        
-        return positions;
-    }
+
+	protected Object[] allowedBiomes = BiomeHandler.elysianBiomes.toArray();
+
+	public GenLayerBiomesElysian(long seed, GenLayer genlayer) {
+
+		super(seed);
+		this.parent = genlayer;
+	}
+
+	public GenLayerBiomesElysian(long seed) {
+
+		super(seed);
+	}
+
+	@Override
+	public int[] getInts(int posX, int posZ, int width, int depth) {
+
+		int[] positions = IntCache.getIntCache(width * depth);
+
+		for (int distantZ = 0; distantZ < depth; distantZ++) {
+
+			for (int distantX = 0; distantX < width; distantX++) {
+
+				this.initChunkSeed(distantX + posX, distantZ + posZ);
+				BiomeGenBase biome = (BiomeGenBase) BiomeHandler.elysianBiomes
+						.toArray()[nextInt(this.allowedBiomes.length)];
+				positions[(distantX + distantZ * width)] = biome.biomeID;
+			}
+		}
+
+		return positions;
+	}
 }
