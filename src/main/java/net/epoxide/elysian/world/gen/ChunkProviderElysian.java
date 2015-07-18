@@ -45,13 +45,9 @@ public class ChunkProviderElysian implements IChunkProvider
     private NoiseGeneratorOctaves netherNoiseGen3;
     public NoiseGeneratorOctaves mobSpawnerNoise;
 
-    /** Determines whether lateriteGrass or porphyry can be generated at a location */
-    private NoiseGeneratorOctaves lateriteGrassPorphyryNoise;
-
-    /**
-     * Determines whether something other than porphyry can be generated at a location
-     */
-    private NoiseGeneratorOctaves porphyryExclusivityNoiseGen;
+    private NoiseGeneratorOctaves topBlockNoiceForDifferentBiomes;
+    private NoiseGeneratorOctaves fillerBlockNoiceForDifferentBiomes;
+    
     public NoiseGeneratorOctaves netherNoiseGen6;
     public NoiseGeneratorOctaves netherNoiseGen7;
 
@@ -61,7 +57,6 @@ public class ChunkProviderElysian implements IChunkProvider
     /** Is the world that the nether is getting generated. */
     private World worldObj;
     private double[] noiseField;
-    public MapGenNetherBridge genNetherBridge = new MapGenNetherBridge();
 
     /**
      * Holds the noise used to determine whether lateriteGrass can be generated at a location
@@ -89,19 +84,19 @@ public class ChunkProviderElysian implements IChunkProvider
         this.netherNoiseGen1 = new NoiseGeneratorOctaves(this.rand, 16);
         this.netherNoiseGen2 = new NoiseGeneratorOctaves(this.rand, 16);
         this.netherNoiseGen3 = new NoiseGeneratorOctaves(this.rand, 8);
-        this.lateriteGrassPorphyryNoise = new NoiseGeneratorOctaves(this.rand, 4);
-        this.porphyryExclusivityNoiseGen = new NoiseGeneratorOctaves(this.rand, 4);
+        this.topBlockNoiceForDifferentBiomes = new NoiseGeneratorOctaves(this.rand, 4);
+        this.fillerBlockNoiceForDifferentBiomes = new NoiseGeneratorOctaves(this.rand, 4);
         this.netherNoiseGen6 = new NoiseGeneratorOctaves(this.rand, 10);
         this.netherNoiseGen7 = new NoiseGeneratorOctaves(this.rand, 16);
         this.mobSpawnerNoise = new NoiseGeneratorOctaves(this.rand, 8);
 
-        NoiseGenerator[] noiseGens = {netherNoiseGen1, netherNoiseGen2, netherNoiseGen3, lateriteGrassPorphyryNoise, porphyryExclusivityNoiseGen, netherNoiseGen6, netherNoiseGen7, mobSpawnerNoise};
+        NoiseGenerator[] noiseGens = {netherNoiseGen1, netherNoiseGen2, netherNoiseGen3, topBlockNoiceForDifferentBiomes, fillerBlockNoiceForDifferentBiomes, netherNoiseGen6, netherNoiseGen7, mobSpawnerNoise};
         noiseGens = TerrainGen.getModdedNoiseGenerators(par1World, this.rand, noiseGens);
         this.netherNoiseGen1 = (NoiseGeneratorOctaves) noiseGens[0];
         this.netherNoiseGen2 = (NoiseGeneratorOctaves) noiseGens[1];
         this.netherNoiseGen3 = (NoiseGeneratorOctaves) noiseGens[2];
-        this.lateriteGrassPorphyryNoise = (NoiseGeneratorOctaves) noiseGens[3];
-        this.porphyryExclusivityNoiseGen = (NoiseGeneratorOctaves) noiseGens[4];
+        this.topBlockNoiceForDifferentBiomes = (NoiseGeneratorOctaves) noiseGens[3];
+        this.fillerBlockNoiceForDifferentBiomes = (NoiseGeneratorOctaves) noiseGens[4];
         this.netherNoiseGen6 = (NoiseGeneratorOctaves) noiseGens[5];
         this.netherNoiseGen7 = (NoiseGeneratorOctaves) noiseGens[6];
         this.mobSpawnerNoise = (NoiseGeneratorOctaves) noiseGens[7];
