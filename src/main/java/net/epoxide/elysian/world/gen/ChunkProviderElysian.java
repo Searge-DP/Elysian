@@ -57,18 +57,14 @@ public class ChunkProviderElysian implements IChunkProvider
     /** Is the world that the nether is getting generated. */
     private World worldObj;
     private double[] noiseField;
-
-    /**
-     * Holds the noise used to determine whether lateriteGrass can be generated at a location
-     */
-    private double[] lateriteGrassNoise = new double[256];
-    private double[] porphyryNoise = new double[256];
-
-    /**
-     * Holds the noise used to determine whether something other than porphyry can be generated at a location
-     */
-    private double[] porphyryExclusivityNoise = new double[256];
+    
+    //UNUSED
+//    private double[] grassNoise = new double[256];
+//    private double[] fillerNoise = new double[256];
+//    private double[] fillerExclusiveNoise = new double[256];
+    
     private MapGenBase netherCaveGenerator = new MapGenCavesHell();
+    
     double[] noiseData1;
     double[] noiseData2;
     double[] noiseData3;
@@ -116,8 +112,6 @@ public class ChunkProviderElysian implements IChunkProvider
         int l = b0 + 1;
         
         BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(k + 16, l + 16); //TODO marked here for noticing the +16
-        
-//        BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(posX, posZ);
         
         BiomeGenElysian biome = null;
         
