@@ -54,7 +54,7 @@ public class ChunkProviderElysian implements IChunkProvider
 	private double[] exclusivelyFillerNoise = new double[256];
 
 	private MapGenBase caveGenerator = new MapGenCavesHell();
-	
+
 	double[] noiseData1;
 	double[] noiseData2;
 	double[] noiseData3;
@@ -243,16 +243,16 @@ public class ChunkProviderElysian implements IChunkProvider
 						Block block2 = chunkBlocks[chunkSize];
 
 						if (block2 != null && block2.getMaterial() != Material.air){
-							
+
 							generateDifferentWaterSources();
-							
+
 							if (block2 == generalFiller){
 								if (j1 == -1){
 									if (i1 <= 0){
 										block = null;
 										block1 = biome.fillerBlock;  
 									}
-									else if (worldHeight >= 0 - 4 && worldHeight <= waterLevel + 1){
+									else if (worldHeight >= waterLevel - 4 && worldHeight <= waterLevel + 1){
 										block = biomegenbase.topBlock;
 										block1 = biomegenbase.fillerBlock;
 
@@ -353,9 +353,7 @@ public class ChunkProviderElysian implements IChunkProvider
 			return event.noisefield;
 
 		if (noiseArray == null)
-		{
 			noiseArray = new double[sizeX * sizeY * sizeZ];
-		}
 
 		double d0 = 684.412D;
 		double d1 = 2053.236D;
@@ -509,15 +507,11 @@ public class ChunkProviderElysian implements IChunkProvider
 		int k = p_73153_2_ * 16;
 		int l = p_73153_3_ * 16;
 		BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(k + 16, l + 16);
-		//this.genNetherBridge.generateStructuresInChunk(this.worldObj, this.soulRNG, par2, par3);
 		int i1;
 		int j1;
 		int k1;
 		int l1 = 0;
 		int j2;
-
-		biomegenbase.decorate(this.worldObj, this.rand, k, l);
-		//boolean doGen = TerrainGen.populate(p_73153_1_, worldObj, soulRNG, p_73153_2_, p_73153_3_, false, NETHER_LAVA);
 
 		MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(worldObj, rand, k, l));
 
