@@ -5,6 +5,7 @@ import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.NETH
 import java.util.List;
 import java.util.Random;
 
+import net.epoxide.elysian.LogElysian;
 import net.epoxide.elysian.world.biome.BiomeGenElysian;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSand;
@@ -92,13 +93,22 @@ public class ChunkProviderElysian implements IChunkProvider
 		this.netherNoiseGen7 = (NoiseGeneratorOctaves)noiseGens[6];
 	}
 
-	public void prepareChunk(int p_147419_1_, int p_147419_2_, Block[] p_147419_3_){
-		byte b0 = 4;
-		byte b1 = 32;
-		int k = b0 + 1;
-		byte b2 = 17;
-		int l = b0 + 1;
-		BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(k + 16, l + 16);
+	/**initializes noisefields with the biome found at spawn
+	 * */
+	public void prepareChunk(int posX, int posZ, Block[] chunkBlocks){
+
+		byte four = 4;
+		byte waterLevel = 32;
+		int five_a = four + 1;
+		byte sevenTeen = 17;
+		int five_b = four + 1;
+
+		//these coordinates take only the biome from spawn !
+		BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(five_a + 16, five_b + 16);
+
+		//this should be better
+		//but odly, this makes it (run hyper slowly)/crash and/or bug out
+		//BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(posX,posZ);
 
 		BiomeGenElysian biome = null;
 
@@ -106,63 +116,59 @@ public class ChunkProviderElysian implements IChunkProvider
 			biome = (BiomeGenElysian)biomegenbase;
 
 		if(biome == null){
-			System.out.println("skipped " + k +" " + l + " chunk because biome wasnt our elysian biome");
+			System.out.println("skipped " + five_a +" " + five_b + " chunk because biome wasnt our elysian biome");
 			return;
 		}
 
-		float t = biomegenbase.getFloatTemperature(k, 16, l);
-		this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, p_147419_1_ * 4 - 2, p_147419_2_ * 4 - 2, k + 5, l + 5);
+		LogElysian.info("preparing chunk ... at " + posX + " " + posZ);
+		LogElysian.info("preparing chunk ... biome is " +biome.biomeName);
+		LogElysian.info("preparing chunk ... biome at location is realy " + this.worldObj.getBiomeGenForCoords(posX, posZ).biomeName);
 
-		this.noiseField = this.initializeNoiseField(this.noiseField, p_147419_1_ * b0, 0, p_147419_2_ * b0, k, b2, l);
+		float t = biomegenbase.getFloatTemperature(five_a, 16, five_b);
+		this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, posX * 4 - 2, posZ * 4 - 2, five_a + 5, five_b + 5);
 
-		for (int i1 = 0; i1 < b0; ++i1)
-		{
-			for (int j1 = 0; j1 < b0; ++j1)
-			{
-				for (int k1 = 0; k1 < 16; ++k1)
-				{
-					double d0 = 0.125D;
-					double d1 = this.noiseField[((i1 + 0) * l + j1 + 0) * b2 + k1 + 0];
-					double d2 = this.noiseField[((i1 + 0) * l + j1 + 1) * b2 + k1 + 0];
-					double d3 = this.noiseField[((i1 + 1) * l + j1 + 0) * b2 + k1 + 0];
-					double d4 = this.noiseField[((i1 + 1) * l + j1 + 1) * b2 + k1 + 0];
-					double d5 = (this.noiseField[((i1 + 0) * l + j1 + 0) * b2 + k1 + 1] - d1) * d0;
-					double d6 = (this.noiseField[((i1 + 0) * l + j1 + 1) * b2 + k1 + 1] - d2) * d0;
-					double d7 = (this.noiseField[((i1 + 1) * l + j1 + 0) * b2 + k1 + 1] - d3) * d0;
-					double d8 = (this.noiseField[((i1 + 1) * l + j1 + 1) * b2 + k1 + 1] - d4) * d0;
+		this.noiseField = this.initializeNoiseField(this.noiseField, posX * four, 0, posZ * four, five_a, sevenTeen, five_b);//empty nosie array, position, size
 
-					for (int l1 = 0; l1 < 8; ++l1)
-					{
+		//4*4 = 16 ! it's a chunk size
+		for (int xSize = 0; xSize < four; ++xSize){
+			for (int zSize = 0; zSize < four; ++zSize){
+				for (int chunkSize = 0; chunkSize < 16; ++chunkSize){
+					
+					double d = 0.125D;
+					double sizeNoise1 = this.noiseField[((xSize + 0) * five_b + zSize + 0) * sevenTeen + chunkSize + 0];
+					double sizeNoise2 = this.noiseField[((xSize + 0) * five_b + zSize + 1) * sevenTeen + chunkSize + 0];
+					double sizeNoise3 = this.noiseField[((xSize + 1) * five_b + zSize + 0) * sevenTeen + chunkSize + 0];
+					double sizeNoise4 = this.noiseField[((xSize + 1) * five_b + zSize + 1) * sevenTeen + chunkSize + 0];
+					double sizeNoise5 = (this.noiseField[((xSize + 0) * five_b + zSize + 0) * sevenTeen + chunkSize + 1] - sizeNoise1) * d;
+					double sizeNoise6 = (this.noiseField[((xSize + 0) * five_b + zSize + 1) * sevenTeen + chunkSize + 1] - sizeNoise2) * d;
+					double sizeNoise7 = (this.noiseField[((xSize + 1) * five_b + zSize + 0) * sevenTeen + chunkSize + 1] - sizeNoise3) * d;
+					double sizeNoise8 = (this.noiseField[((xSize + 1) * five_b + zSize + 1) * sevenTeen + chunkSize + 1] - sizeNoise4) * d;
+
+					for (int l1 = 0; l1 < 8; ++l1){
+						
 						double d9 = 0.25D;
-						double d10 = d1;
-						double d11 = d2;
-						double d12 = (d3 - d1) * d9;
-						double d13 = (d4 - d2) * d9;
+						double d10 = sizeNoise1;
+						double d11 = sizeNoise2;
+						double d12 = (sizeNoise3 - sizeNoise1) * d9;
+						double d13 = (sizeNoise4 - sizeNoise2) * d9;
 
-						for (int i2 = 0; i2 < 4; ++i2)
-						{
-							int j2 = i2 + i1 * 4 << 11 | 0 + j1 * 4 << 7 | k1 * 8 + l1;
+						for (int i2 = 0; i2 < 4; ++i2){
+							int j2 = i2 + xSize * 4 << 11 | 0 + zSize * 4 << 7 | chunkSize * 8 + l1;
 							short short1 = 128;
 							double d14 = 0.25D;
 							double d15 = d10;
 							double d16 = (d11 - d10) * d14;
 
-							for (int k2 = 0; k2 < 4; ++k2)
-							{
+							for (int k2 = 0; k2 < 4; ++k2){
+
 								Block block = null;
 
-								if (k1 * 8 + l1 < b1)
-								{
-									block = biome.fluid; //TODO maybe change this to a default fuid ?
-
-								}
-
+								if (chunkSize * 8 + l1 < waterLevel)					
+									block = biome.fluid;
 								if (d15 > 0.0D)
-								{
-									block = biome.fillerBlock; //TODO maybe change this to a default block ?
-								}
+									block = biome.fillerBlock;
 
-								p_147419_3_[j2] = block;
+								chunkBlocks[j2] = block;
 								j2 += short1;
 								d15 += d16;
 							}
@@ -171,33 +177,27 @@ public class ChunkProviderElysian implements IChunkProvider
 							d11 += d13;
 						}
 
-						d1 += d5;
-						d2 += d6;
-						d3 += d7;
-						d4 += d8;
+						sizeNoise1 += sizeNoise5;
+						sizeNoise2 += sizeNoise6;
+						sizeNoise3 += sizeNoise7;
+						sizeNoise4 += sizeNoise8;
 					}
 				}
 			}
 		}
 	}
 
-	@Deprecated //You should provide meatadata and biome data in the below method
-	public void func_147418_b(int p_147418_1_, int p_147418_2_, Block[] p_147418_3_)
+	public void replaceBiomeBlocks(int posX, int posZ, Block[] chunkBlocks, byte[] meta, BiomeGenBase[] biomes)
 	{
-		replaceBiomeBlocks(p_147418_1_, p_147418_2_, p_147418_3_, new byte[p_147418_3_.length], null);
-	} 
-	
-	public void replaceBiomeBlocks(int p_147418_1_, int p_147418_2_, Block[] p_147418_3_, byte[] meta, BiomeGenBase[] biomes)
-	{
-		ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, p_147418_1_, p_147418_2_, p_147418_3_, meta, biomes, this.worldObj);
+		ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, posX, posZ, chunkBlocks, meta, biomes, this.worldObj);
 		MinecraftForge.EVENT_BUS.post(event);
 		if (event.getResult() == Result.DENY) return;
 
 		byte b0 = 32; // was 64
 		double d0 = 0.03125D;
-		this.lateriteGrassNoise = this.lateriteGrassPorphyryNoise.generateNoiseOctaves(this.lateriteGrassNoise, p_147418_1_ * 16, p_147418_2_ * 16, 0, 16, 16, 1, d0, d0, 1.0D);
-		this.porphyryNoise = this.lateriteGrassPorphyryNoise.generateNoiseOctaves(this.porphyryNoise, p_147418_1_ * 16, 109, p_147418_2_ * 16, 16, 1, 16, d0, 1.0D, d0);
-		this.porphyryExclusiveNoise = this.porphyryExclusivityNoiseGen.generateNoiseOctaves(this.porphyryExclusiveNoise, p_147418_1_ * 16, p_147418_2_ * 16, 0, 16, 16, 1, d0 * 2.0D, d0 * 2.0D, d0 * 2.0D);
+		this.lateriteGrassNoise = this.lateriteGrassPorphyryNoise.generateNoiseOctaves(this.lateriteGrassNoise, posX * 16, posZ * 16, 0, 16, 16, 1, d0, d0, 1.0D);
+		this.porphyryNoise = this.lateriteGrassPorphyryNoise.generateNoiseOctaves(this.porphyryNoise, posX * 16, 109, posZ * 16, 16, 1, 16, d0, 1.0D, d0);
+		this.porphyryExclusiveNoise = this.porphyryExclusivityNoiseGen.generateNoiseOctaves(this.porphyryExclusiveNoise, posX * 16, posZ * 16, 0, 16, 16, 1, d0 * 2.0D, d0 * 2.0D, d0 * 2.0D);
 
 		for (int k = 0; k < 16; ++k)
 		{
@@ -214,9 +214,7 @@ public class ChunkProviderElysian implements IChunkProvider
 					System.out.println("skipped " + k +" " + l + " chunk because biome wasnt our elysian biome");
 					return;
 				}
-				
-				//System.out.println(biomegenbase.biomeName);
-				//biomegenbase.genTerrainBlocks(this.worldObj, this.soulRNG, p_147418_3_, meta, p_147418_1_ * 16 + k, p_147418_2_ * 16 + l, this.porphyryExclusiveNoise[l + k * 16]);
+
 				boolean flag = this.lateriteGrassNoise[k + l * 16] + this.rand.nextDouble() * 0.2D > 0.0D;
 				boolean flag1 = this.porphyryNoise[k + l * 16] + this.rand.nextDouble() * 0.2D > 0.0D;
 				int i1 = (int)(this.porphyryExclusiveNoise[k + l * 16] / 3.0D + 3.0D + this.rand.nextDouble() * 0.25D);
@@ -230,7 +228,7 @@ public class ChunkProviderElysian implements IChunkProvider
 
 					if (k1 < 127 - this.rand.nextInt(5) && k1 > 0 + this.rand.nextInt(5))
 					{
-						Block block2 = p_147418_3_[l1];
+						Block block2 = chunkBlocks[l1];
 
 						if (block2 != null && block2.getMaterial() != Material.air)
 						{
@@ -266,31 +264,31 @@ public class ChunkProviderElysian implements IChunkProvider
 
 									if (k1 < b0 && (block == null || block.getMaterial() == Material.air))
 									{
-//										if (biomegenbase == soul_forest.FrostCaves || biomegenbase == soul_forest.FrozenPlains) // Generate ice when temp below certain value
-//										{
-//											//b1 = (byte) SoulBlocks.soulIceID;
-//										} 
-//										else 
-//										{
-//											//block1 = SoulBlocks.SoulWaterMoving.get();
-//										}
+										//										if (biomegenbase == soul_forest.FrostCaves || biomegenbase == soul_forest.FrozenPlains) // Generate ice when temp below certain value
+										//										{
+										//											//b1 = (byte) SoulBlocks.soulIceID;
+										//										} 
+										//										else 
+										//										{
+										//											//block1 = SoulBlocks.SoulWaterMoving.get();
+										//										}
 									}
 
 									j1 = i1;
 
 									if (k1 >= b0 - 1)
 									{
-										p_147418_3_[l1] = block; 
+										chunkBlocks[l1] = block; 
 									}
 									else
 									{
-										p_147418_3_[l1] = block1;
+										chunkBlocks[l1] = block1;
 									}
 								}
 								else if (j1 > 0)
 								{
 									--j1;
-									p_147418_3_[l1] = block1;
+									chunkBlocks[l1] = block1;
 								}
 							}
 						}
@@ -301,7 +299,7 @@ public class ChunkProviderElysian implements IChunkProvider
 					}
 					else
 					{
-						p_147418_3_[l1] = biome.barrier;
+						chunkBlocks[l1] = biome.barrier;
 					}
 				}
 			}
@@ -530,25 +528,25 @@ public class ChunkProviderElysian implements IChunkProvider
 		// #region Ore Gen
 		//WorldGenMinable worldgenminable;
 
-//		for (int i = 0; i < 5; i++){
-//			int randPosX = k + rand.nextInt(16);
-//			int randPosY = rand.nextInt(128);
-//			int randPosZ = l + rand.nextInt(16);
-//			(new WorldGenMinable(SoulBlocks.Bauxite.get(), 30, SoulBlocks.Porphyry.get())).generate(worldObj, rand, randPosX, randPosY, randPosZ);
-//		}	
-//
-//		for (int i = 0; i < 10; i++){
-//			int randPosX = k + rand.nextInt(16);
-//			int randPosY = rand.nextInt(128);
-//			int randPosZ = l + rand.nextInt(16);
-//			(new WorldGenMinable(SoulBlocks.Slate.get(), 50, SoulBlocks.Porphyry.get())).generate(worldObj, rand, randPosX, randPosY, randPosZ);
-//		}	
-//		for (int i = 0; i < 15; i++){
-//			int randPosX = k + rand.nextInt(16);
-//			int randPosY = rand.nextInt(128);
-//			int randPosZ = l + rand.nextInt(16);
-//			(new WorldGenMinable(SoulBlocks.DarkPorphyry.get(), 20, SoulBlocks.Porphyry.get())).generate(worldObj, rand, randPosX, randPosY, randPosZ);
-//		}	
+		//		for (int i = 0; i < 5; i++){
+		//			int randPosX = k + rand.nextInt(16);
+		//			int randPosY = rand.nextInt(128);
+		//			int randPosZ = l + rand.nextInt(16);
+		//			(new WorldGenMinable(SoulBlocks.Bauxite.get(), 30, SoulBlocks.Porphyry.get())).generate(worldObj, rand, randPosX, randPosY, randPosZ);
+		//		}	
+		//
+		//		for (int i = 0; i < 10; i++){
+		//			int randPosX = k + rand.nextInt(16);
+		//			int randPosY = rand.nextInt(128);
+		//			int randPosZ = l + rand.nextInt(16);
+		//			(new WorldGenMinable(SoulBlocks.Slate.get(), 50, SoulBlocks.Porphyry.get())).generate(worldObj, rand, randPosX, randPosY, randPosZ);
+		//		}	
+		//		for (int i = 0; i < 15; i++){
+		//			int randPosX = k + rand.nextInt(16);
+		//			int randPosY = rand.nextInt(128);
+		//			int randPosZ = l + rand.nextInt(16);
+		//			(new WorldGenMinable(SoulBlocks.DarkPorphyry.get(), 20, SoulBlocks.Porphyry.get())).generate(worldObj, rand, randPosX, randPosY, randPosZ);
+		//		}	
 
 		MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Post(worldObj, rand, k, l));
 		MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(p_73153_1_, worldObj, rand, p_73153_2_, p_73153_3_, false));
