@@ -233,15 +233,13 @@ public class ChunkProviderElysian implements IChunkProvider
 				Block block = biomegenbase.topBlock; //above water
 				Block block1 = biomegenbase.fillerBlock; //bellow water
 
-				//TODO change waterblock so multiple liquids can be supported
+				for (int worldHeight = 127; worldHeight >= 0; --worldHeight){
 
-				for (int k1 = 127; k1 >= 0; --k1){
-					int l1 = (chunkZ * 16 + chunkX) * 128 + k1;
+					int chunkSize = (chunkZ * 16 + chunkX) * 128 + worldHeight;
 
-					//if (k1 < 127 - this.rand.nextInt(5) && k1 > 0 + this.rand.nextInt(5)){
-					if (k1 < 127 && k1 > 0 ){ //allows for flat bed bedrock layers
+					if (worldHeight < 127 - this.rand.nextInt(5) && worldHeight > 0 + this.rand.nextInt(5)){
 
-						Block block2 = chunkBlocks[l1];
+						Block block2 = chunkBlocks[chunkSize];
 
 						if (block2 != null && block2.getMaterial() != Material.air){
 							//TODO : feature > uncheck this if we want multi fluids to be enabled
@@ -263,7 +261,7 @@ public class ChunkProviderElysian implements IChunkProvider
 										block = null;
 										block1 = biome.fillerBlock;  
 									}
-									else if (k1 >= 0 - 4 && k1 <= waterLevel + 1){
+									else if (worldHeight >= 0 - 4 && worldHeight <= waterLevel + 1){
 										block = biomegenbase.topBlock;
 										block1 = biomegenbase.fillerBlock;
 
@@ -280,23 +278,23 @@ public class ChunkProviderElysian implements IChunkProvider
 
 									j1 = i1;
 
-									if (k1 >= waterLevel - 1)
-										chunkBlocks[l1] = block; 
+									if (worldHeight >= waterLevel - 1)
+										chunkBlocks[chunkSize] = block; 
 									else
-										chunkBlocks[l1] = block1;
+										chunkBlocks[chunkSize] = block1;
 								}
 								else if (j1 > 0)
 								{
 									--j1;
-									chunkBlocks[l1] = block1;
+									chunkBlocks[chunkSize] = block1;
 								}
 							}
 						}
 						else
 							j1 = -1;
 					}
-					else
-						chunkBlocks[l1] = biome.barrier;
+					else if (worldHeight == 127 || worldHeight ==0)
+						chunkBlocks[chunkSize] = biome.barrier;
 				}
 			}
 		}
@@ -339,49 +337,50 @@ public class ChunkProviderElysian implements IChunkProvider
 	 * generates a subset of the level's terrain data. Takes 7 arguments: the [empty] noise array, the position, and the
 	 * size.
 	 */
-	private double[] initializeNoiseField(double[] p_73164_1_, int p_73164_2_, int p_73164_3_, int p_73164_4_, int p_73164_5_, int p_73164_6_, int p_73164_7_)
+	private double[] initializeNoiseField(double[] noiseArray, int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ)
 	{
-		ChunkProviderEvent.InitNoiseField event = new ChunkProviderEvent.InitNoiseField(this, p_73164_1_, p_73164_2_, p_73164_3_, p_73164_4_, p_73164_5_, p_73164_6_, p_73164_7_);
+		ChunkProviderEvent.InitNoiseField event = new ChunkProviderEvent.InitNoiseField(this, noiseArray, posX, posY, posZ, sizeX, sizeY, sizeZ);
 		MinecraftForge.EVENT_BUS.post(event);
-		if (event.getResult() == Result.DENY) return event.noisefield;
 
-		if (p_73164_1_ == null)
+		if (event.getResult() == Result.DENY) 
+			return event.noisefield;
+
+		if (noiseArray == null)
 		{
-			p_73164_1_ = new double[p_73164_5_ * p_73164_6_ * p_73164_7_];
+			noiseArray = new double[sizeX * sizeY * sizeZ];
 		}
 
 		double d0 = 684.412D;
 		double d1 = 2053.236D;
-		this.noiseData4 = this.netherNoiseGen6.generateNoiseOctaves(this.noiseData4, p_73164_2_, p_73164_3_, p_73164_4_, p_73164_5_, 1, p_73164_7_, 1.0D, 0.0D, 1.0D);
-		this.noiseData5 = this.netherNoiseGen7.generateNoiseOctaves(this.noiseData5, p_73164_2_, p_73164_3_, p_73164_4_, p_73164_5_, 1, p_73164_7_, 100.0D, 0.0D, 100.0D);
-		this.noiseData1 = this.netherNoiseGen3.generateNoiseOctaves(this.noiseData1, p_73164_2_, p_73164_3_, p_73164_4_, p_73164_5_, p_73164_6_, p_73164_7_, d0 / 80.0D, d1 / 60.0D, d0 / 80.0D);
-		this.noiseData2 = this.netherNoiseGen1.generateNoiseOctaves(this.noiseData2, p_73164_2_, p_73164_3_, p_73164_4_, p_73164_5_, p_73164_6_, p_73164_7_, d0, d1, d0);
-		this.noiseData3 = this.netherNoiseGen2.generateNoiseOctaves(this.noiseData3, p_73164_2_, p_73164_3_, p_73164_4_, p_73164_5_, p_73164_6_, p_73164_7_, d0, d1, d0);
+
+		this.noiseData1 = this.netherNoiseGen3.generateNoiseOctaves(this.noiseData1, posX, posY, posZ, sizeX, sizeY, sizeZ, d0 / 80.0D, d1 / 60.0D, d0 / 80.0D);
+		this.noiseData2 = this.netherNoiseGen1.generateNoiseOctaves(this.noiseData2, posX, posY, posZ, sizeX, sizeY, sizeZ, d0, d1, d0);
+		this.noiseData3 = this.netherNoiseGen2.generateNoiseOctaves(this.noiseData3, posX, posY, posZ, sizeX, sizeY, sizeZ, d0, d1, d0);
+		this.noiseData4 = this.netherNoiseGen6.generateNoiseOctaves(this.noiseData4, posX, posY, posZ, sizeX, 1, sizeZ, 1.0D, 0.0D, 1.0D);
+		this.noiseData5 = this.netherNoiseGen7.generateNoiseOctaves(this.noiseData5, posX, posY, posZ, sizeX, 1, sizeZ, 100.0D, 0.0D, 100.0D);
+
 		int k1 = 0;
 		int l1 = 0;
-		double[] adouble1 = new double[p_73164_6_];
-		int i2;
+		double[] chunkHeight = new double[sizeY];
+		int i; //just and index for the loop
 
-		for (i2 = 0; i2 < p_73164_6_; ++i2)
+		for (i = 0; i < sizeY; ++i)
 		{
-			adouble1[i2] = Math.cos((double)i2 * Math.PI * 6.0D / (double)p_73164_6_) * 2.0D;
-			double d2 = (double)i2;
+			chunkHeight[i] = Math.cos((double)i * Math.PI * 6.0D / (double)sizeY) * 2.0D;
+			double d2 = (double)i;
 
-			if (i2 > p_73164_6_ / 2)
-			{
-				d2 = (double)(p_73164_6_ - 1 - i2);
-			}
+			if (i > sizeY / 2)
+				d2 = (double)(sizeY - 1 - i);
 
-			if (d2 < 4.0D)
-			{
+			if (d2 < 4.0D){
 				d2 = 4.0D - d2;
-				adouble1[i2] -= d2 * d2 * d2 * 10.0D;
+				chunkHeight[i] -= d2 * d2 * d2 * 10.0D;
 			}
 		}
 
-		for (i2 = 0; i2 < p_73164_5_; ++i2)
+		for (i = 0; i < sizeX; ++i)
 		{
-			for (int k2 = 0; k2 < p_73164_7_; ++k2)
+			for (int k2 = 0; k2 < sizeZ; ++k2)
 			{
 				double d3 = (this.noiseData4[l1] + 256.0D) / 512.0D;
 
@@ -424,13 +423,13 @@ public class ChunkProviderElysian implements IChunkProvider
 				}
 
 				d3 += 0.5D;
-				d5 = d5 * (double)p_73164_6_ / 16.0D;
+				d5 = d5 * (double)sizeY / 16.0D;
 				++l1;
 
-				for (int j2 = 0; j2 < p_73164_6_; ++j2)
+				for (int j2 = 0; j2 < sizeY; ++j2)
 				{
 					double d6 = 0.0D;
-					double d7 = adouble1[j2];
+					double d7 = chunkHeight[j2];
 					double d8 = this.noiseData2[k1] / 512.0D;
 					double d9 = this.noiseData3[k1] / 512.0D;
 					double d10 = (this.noiseData1[k1] / 10.0D + 1.0D) / 2.0D;
@@ -451,9 +450,9 @@ public class ChunkProviderElysian implements IChunkProvider
 					d6 -= d7;
 					double d11;
 
-					if (j2 > p_73164_6_ - 4)
+					if (j2 > sizeY - 4)
 					{
-						d11 = (double)((float)(j2 - (p_73164_6_ - 4)) / 3.0F);
+						d11 = (double)((float)(j2 - (sizeY - 4)) / 3.0F);
 						d6 = d6 * (1.0D - d11) + -10.0D * d11;
 					}
 
@@ -474,13 +473,13 @@ public class ChunkProviderElysian implements IChunkProvider
 						d6 = d6 * (1.0D - d11) + -10.0D * d11;
 					}
 
-					p_73164_1_[k1] = d6;
+					noiseArray[k1] = d6;
 					++k1;
 				}
 			}
 		}
 
-		return p_73164_1_;
+		return noiseArray;
 	}
 
 	/**
