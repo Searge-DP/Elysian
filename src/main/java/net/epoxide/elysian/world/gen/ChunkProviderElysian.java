@@ -92,7 +92,7 @@ public class ChunkProviderElysian implements IChunkProvider
 		this.netherNoiseGen7 = (NoiseGeneratorOctaves)noiseGens[6];
 	}
 
-	public void func_147419_a(int p_147419_1_, int p_147419_2_, Block[] p_147419_3_){
+	public void prepareChunk(int p_147419_1_, int p_147419_2_, Block[] p_147419_3_){
 		byte b0 = 4;
 		byte b1 = 32;
 		int k = b0 + 1;
@@ -186,6 +186,7 @@ public class ChunkProviderElysian implements IChunkProvider
 	{
 		replaceBiomeBlocks(p_147418_1_, p_147418_2_, p_147418_3_, new byte[p_147418_3_.length], null);
 	} 
+	
 	public void replaceBiomeBlocks(int p_147418_1_, int p_147418_2_, Block[] p_147418_3_, byte[] meta, BiomeGenBase[] biomes)
 	{
 		ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, p_147418_1_, p_147418_2_, p_147418_3_, meta, biomes, this.worldObj);
@@ -325,7 +326,7 @@ public class ChunkProviderElysian implements IChunkProvider
 		Block[] ablock = new Block[32768];
 		byte[] meta = new byte[ablock.length];
 		this.biomesForGeneration = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, p_73154_1_ * 16, p_73154_2_ * 16, 16, 16); //Forge Move up to allow for passing to replaceBiomeBlocks
-		this.func_147419_a(p_73154_1_, p_73154_2_, ablock);
+		this.prepareChunk(p_73154_1_, p_73154_2_, ablock);
 		this.replaceBiomeBlocks(p_73154_1_, p_73154_2_, ablock, meta, this.biomesForGeneration);
 		this.soulForestCaveGenerator.func_151539_a(this, this.worldObj, p_73154_1_, p_73154_2_, ablock);
 		//this.genNetherBridge.func_151539_a(this, this.worldObj, p_73154_1_, p_73154_2_, ablock);
