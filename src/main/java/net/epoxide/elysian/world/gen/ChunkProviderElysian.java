@@ -7,13 +7,11 @@ import java.util.Random;
 
 import net.epoxide.elysian.LogElysian;
 import net.epoxide.elysian.blocks.BlockHandler;
-import net.epoxide.elysian.world.biome.BiomeElysianPlains;
 import net.epoxide.elysian.world.biome.BiomeGenElysian;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
