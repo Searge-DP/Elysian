@@ -11,7 +11,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
@@ -22,7 +21,6 @@ import net.minecraft.world.gen.MapGenBase;
 import net.minecraft.world.gen.MapGenCavesHell;
 import net.minecraft.world.gen.NoiseGenerator;
 import net.minecraft.world.gen.NoiseGeneratorOctaves;
-import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraft.world.gen.structure.MapGenNetherBridge;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.ChunkProviderEvent;
@@ -93,7 +91,9 @@ public class ChunkProviderElysian implements IChunkProvider
 		this.netherNoiseGen7 = (NoiseGeneratorOctaves)noiseGens[6];
 	}
 
-	/**initializes noisefields with the biome found at spawn
+	/**initializes noisefields
+	 * calculates size of the noisefields with other noisefields
+	 * uses only biome found at spawn to place blocks
 	 * */
 	public void prepareChunk(int posX, int posZ, Block[] chunkBlocks){
 
@@ -147,34 +147,34 @@ public class ChunkProviderElysian implements IChunkProvider
 					for (int l1 = 0; l1 < 8; ++l1){
 						
 						double d9 = 0.25D;
-						double d10 = sizeNoise1;
-						double d11 = sizeNoise2;
-						double d12 = (sizeNoise3 - sizeNoise1) * d9;
-						double d13 = (sizeNoise4 - sizeNoise2) * d9;
+						double sN1 = sizeNoise1;
+						double sN2 = sizeNoise2;
+						double d12 = (sizeNoise3 - sizeNoise1) * d9; //TODO name these !
+						double d13 = (sizeNoise4 - sizeNoise2) * d9; //TODO name these !
 
-						for (int i2 = 0; i2 < 4; ++i2){
-							int j2 = i2 + xSize * 4 << 11 | 0 + zSize * 4 << 7 | chunkSize * 8 + l1;
+						for (int xSize_bis = 0; xSize_bis < 4; ++xSize_bis){
+							int zSise_bis = xSize_bis + xSize * 4 << 11 | 0 + zSize * 4 << 7 | chunkSize * 8 + l1;
 							short short1 = 128;
 							double d14 = 0.25D;
-							double d15 = d10;
-							double d16 = (d11 - d10) * d14;
+							double sn1_bis = sN1;
+							double d16 = (sN2 - sN1) * d14; //TODO name these !
 
-							for (int k2 = 0; k2 < 4; ++k2){
+							for (int i = 0; i < 4; ++i){
 
 								Block block = null;
 
 								if (chunkSize * 8 + l1 < waterLevel)					
 									block = biome.fluid;
-								if (d15 > 0.0D)
+								if (sn1_bis > 0.0D)
 									block = biome.fillerBlock;
 
-								chunkBlocks[j2] = block;
-								j2 += short1;
-								d15 += d16;
+								chunkBlocks[zSise_bis] = block;
+								zSise_bis += short1;
+								sn1_bis += d16;
 							}
 
-							d10 += d12;
-							d11 += d13;
+							sN1 += d12;
+							sN2 += d13;
 						}
 
 						sizeNoise1 += sizeNoise5;
