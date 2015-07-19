@@ -238,11 +238,14 @@ public class ChunkProviderElysian implements IChunkProvider
 				for (int k1 = 127; k1 >= 0; --k1){
 					int l1 = (chunkZ * 16 + chunkX) * 128 + k1;
 
-					if (k1 < 127 - this.rand.nextInt(5) && k1 > 0 + this.rand.nextInt(5)){
+					//if (k1 < 127 - this.rand.nextInt(5) && k1 > 0 + this.rand.nextInt(5)){
+					if (k1 < 127 && k1 > 0 ){ //allows for flat bed bedrock layers
+
 						Block block2 = chunkBlocks[l1];
 
 						if (block2 != null && block2.getMaterial() != Material.air){
-							//uncheck this if we want multi fluids to be enabled
+							//TODO : feature > uncheck this if we want multi fluids to be enabled
+							//WARNING/!\ it lags a shit ton and doen't allow us to properly use the dimension
 							//							if(block2 == generalWater){
 							//								if (j1 == -1){
 							//									if(k1 <= waterLevel)
