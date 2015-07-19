@@ -2,7 +2,7 @@ package net.epoxide.elysian.world;
 
 import net.epoxide.elysian.handler.ConfigurationHandler;
 import net.epoxide.elysian.world.biome.WorldChunkManagerElysian;
-import net.epoxide.elysian.world.gen.ChunkProviderElysian;
+import net.epoxide.elysian.world.chunk.ChunkProviderElysian;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;

@@ -1,6 +1,5 @@
 package net.epoxide.elysian.world.gen.layer;
 
-import net.minecraft.world.WorldType;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.GenLayerVoronoiZoom;
 import net.minecraft.world.gen.layer.GenLayerZoom;
@@ -12,7 +11,13 @@ public abstract class GenLayerElysian extends GenLayer {
         super(seed);
     }
     
-    public static GenLayer[] makeTheWorld (long seed, WorldType type) {
+    /**
+     * Create a biome map for an Elysian world.
+     * 
+     * @param seed: The seed which is used for the world.
+     * @return GenLayer[]: A GenLayer[] array for the new Elysian world.
+     */
+    public static GenLayer[] makeTheWorld (long seed) {
     
         GenLayer biomes = new GenLayerBiomesElysian(1L);
         biomes = new GenLayerZoom(1000L, biomes);

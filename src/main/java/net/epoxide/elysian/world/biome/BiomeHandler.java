@@ -20,7 +20,18 @@ public class BiomeHandler {
         registerBiome(elysianTest1, BiomeDictionary.Type.MAGICAL, BiomeDictionary.Type.DEAD);
         registerBiome(elysianTest2, BiomeDictionary.Type.SPOOKY, BiomeDictionary.Type.MAGICAL);
         registerBiome(elysianTest3, BiomeDictionary.Type.CONIFEROUS, BiomeDictionary.Type.DRY);
-        registerBiome(elysianTest4, BiomeDictionary.Type.HOT, BiomeDictionary.Type.WET); //just like your mom .... (haha !! bad 'yo momma' joke xD)
+        registerBiome(elysianTest4, BiomeDictionary.Type.HOT, BiomeDictionary.Type.WET); // just
+                                                                                         // like
+                                                                                         // your
+                                                                                         // mom
+                                                                                         // ....
+                                                                                         // (haha
+                                                                                         // !!
+                                                                                         // bad
+                                                                                         // 'yo
+                                                                                         // momma'
+                                                                                         // joke
+                                                                                         // xD)
         BiomeDictionary.registerAllBiomes();
     }
     

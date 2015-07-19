@@ -36,7 +36,7 @@ public class WorldChunkManagerElysian extends WorldChunkManager {
     public WorldChunkManagerElysian(long seed, WorldType worldType) {
     
         this();
-        GenLayer[] agenlayer = GenLayerElysian.makeTheWorld(seed, worldType);
+        GenLayer[] agenlayer = GenLayerElysian.makeTheWorld(seed);
         agenlayer = getModdedBiomeGenerators(worldType, seed, agenlayer);
         this.genBiomes = agenlayer[0];
         this.biomeIndexLayer = agenlayer[1];

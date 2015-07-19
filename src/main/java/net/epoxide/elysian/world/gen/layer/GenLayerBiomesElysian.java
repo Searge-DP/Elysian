@@ -7,13 +7,11 @@ import net.minecraft.world.gen.layer.IntCache;
 
 public class GenLayerBiomesElysian extends GenLayer {
     
+    /**
+     * An array of all possible biomes which should be allowed to spawn within the elysian
+     * dimension.
+     */
     protected Object[] allowedBiomes = BiomeHandler.elysianBiomes.toArray();
-    
-    public GenLayerBiomesElysian(long seed, GenLayer genlayer) {
-    
-        super(seed);
-        this.parent = genlayer;
-    }
     
     public GenLayerBiomesElysian(long seed) {
     
