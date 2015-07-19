@@ -38,9 +38,9 @@ public class ChunkProviderElysian implements IChunkProvider
 	private NoiseGeneratorOctaves netherNoiseGen2;
 	private NoiseGeneratorOctaves netherNoiseGen3;
 	/** Determines whether slowsand or gravel can be generated at a location */
-	private NoiseGeneratorOctaves lateriteGrassPorphyryNoise;
+	private NoiseGeneratorOctaves topBlockNoiseGen;
 	/** Determines whether something other than nettherack can be generated at a location */
-	private NoiseGeneratorOctaves porphyryExclusivityNoiseGen;
+	private NoiseGeneratorOctaves fillerBlockNoiseGen;
 	public NoiseGeneratorOctaves netherNoiseGen6;
 	public NoiseGeneratorOctaves netherNoiseGen7;
 	/** Is the world that the nether is getting generated. */
@@ -52,8 +52,9 @@ public class ChunkProviderElysian implements IChunkProvider
 	private double[] fillerNoise = new double[256];
 	/** Holds the noise used to determine whether something other than netherrack can be generated at a location */
 	private double[] exclusivelyFillerNoise = new double[256];
-	//	private MapGenBase soulForestCaveGenerator = new WorldGenCavesSoulForest();
-	private MapGenBase soulForestCaveGenerator = new MapGenCavesHell();
+
+	private MapGenBase caveGenerator = new MapGenCavesHell();
+	
 	double[] noiseData1;
 	double[] noiseData2;
 	double[] noiseData3;
@@ -70,7 +71,7 @@ public class ChunkProviderElysian implements IChunkProvider
 
 	private static final String __OBFID = "CL_00000392";{
 		genNetherBridge = (MapGenNetherBridge) TerrainGen.getModdedMapGen(genNetherBridge, NETHER_BRIDGE);
-		soulForestCaveGenerator = TerrainGen.getModdedMapGen(soulForestCaveGenerator, NETHER_CAVE);
+		caveGenerator = TerrainGen.getModdedMapGen(caveGenerator, NETHER_CAVE);
 	}
 
 	public ChunkProviderElysian(World p_i2005_1_, long p_i2005_2_){
@@ -79,18 +80,18 @@ public class ChunkProviderElysian implements IChunkProvider
 		this.netherNoiseGen1 = new NoiseGeneratorOctaves(this.rand, 16);
 		this.netherNoiseGen2 = new NoiseGeneratorOctaves(this.rand, 16);
 		this.netherNoiseGen3 = new NoiseGeneratorOctaves(this.rand, 8);
-		this.lateriteGrassPorphyryNoise = new NoiseGeneratorOctaves(this.rand, 4);
-		this.porphyryExclusivityNoiseGen = new NoiseGeneratorOctaves(this.rand, 4);
+		this.topBlockNoiseGen = new NoiseGeneratorOctaves(this.rand, 4);
+		this.fillerBlockNoiseGen = new NoiseGeneratorOctaves(this.rand, 4);
 		this.netherNoiseGen6 = new NoiseGeneratorOctaves(this.rand, 10);
 		this.netherNoiseGen7 = new NoiseGeneratorOctaves(this.rand, 16);
 
-		NoiseGenerator[] noiseGens = {netherNoiseGen1, netherNoiseGen2, netherNoiseGen3, lateriteGrassPorphyryNoise, porphyryExclusivityNoiseGen, netherNoiseGen6, netherNoiseGen7};
+		NoiseGenerator[] noiseGens = {netherNoiseGen1, netherNoiseGen2, netherNoiseGen3, topBlockNoiseGen, fillerBlockNoiseGen, netherNoiseGen6, netherNoiseGen7};
 		noiseGens = TerrainGen.getModdedNoiseGenerators(p_i2005_1_, this.rand, noiseGens);
 		this.netherNoiseGen1 = (NoiseGeneratorOctaves)noiseGens[0];
 		this.netherNoiseGen2 = (NoiseGeneratorOctaves)noiseGens[1];
 		this.netherNoiseGen3 = (NoiseGeneratorOctaves)noiseGens[2];
-		this.lateriteGrassPorphyryNoise = (NoiseGeneratorOctaves)noiseGens[3];
-		this.porphyryExclusivityNoiseGen = (NoiseGeneratorOctaves)noiseGens[4];
+		this.topBlockNoiseGen = (NoiseGeneratorOctaves)noiseGens[3];
+		this.fillerBlockNoiseGen = (NoiseGeneratorOctaves)noiseGens[4];
 		this.netherNoiseGen6 = (NoiseGeneratorOctaves)noiseGens[5];
 		this.netherNoiseGen7 = (NoiseGeneratorOctaves)noiseGens[6];
 	}
@@ -205,9 +206,9 @@ public class ChunkProviderElysian implements IChunkProvider
 
 		byte waterLevel = 32;
 		double d0 = 0.03125D;
-		this.topBlockNoise = this.lateriteGrassPorphyryNoise.generateNoiseOctaves(this.topBlockNoise, posX * 16, posZ * 16, 0, 16, 16, 1, d0, d0, 1.0D);
-		this.fillerNoise = this.lateriteGrassPorphyryNoise.generateNoiseOctaves(this.fillerNoise, posX * 16, 109, posZ * 16, 16, 1, 16, d0, 1.0D, d0);
-		this.exclusivelyFillerNoise = this.porphyryExclusivityNoiseGen.generateNoiseOctaves(this.exclusivelyFillerNoise, posX * 16, posZ * 16, 0, 16, 16, 1, d0 * 2.0D, d0 * 2.0D, d0 * 2.0D);
+		this.topBlockNoise = this.topBlockNoiseGen.generateNoiseOctaves(this.topBlockNoise, posX * 16, posZ * 16, 0, 16, 16, 1, d0, d0, 1.0D);
+		this.fillerNoise = this.topBlockNoiseGen.generateNoiseOctaves(this.fillerNoise, posX * 16, 109, posZ * 16, 16, 1, 16, d0, 1.0D, d0);
+		this.exclusivelyFillerNoise = this.fillerBlockNoiseGen.generateNoiseOctaves(this.exclusivelyFillerNoise, posX * 16, posZ * 16, 0, 16, 16, 1, d0 * 2.0D, d0 * 2.0D, d0 * 2.0D);
 
 		for (int chunkX = 0; chunkX < 16; ++chunkX){ //Z and X could be other way around ...
 			for (int chunkZ = 0; chunkZ < 16; ++chunkZ){
@@ -320,7 +321,7 @@ public class ChunkProviderElysian implements IChunkProvider
 		this.biomesForGeneration = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, p_73154_1_ * 16, p_73154_2_ * 16, 16, 16); //Forge Move up to allow for passing to replaceBiomeBlocks
 		this.prepareChunk(p_73154_1_, p_73154_2_, ablock);
 		this.replaceBiomeBlocks(p_73154_1_, p_73154_2_, ablock, meta, this.biomesForGeneration);
-		this.soulForestCaveGenerator.func_151539_a(this, this.worldObj, p_73154_1_, p_73154_2_, ablock);
+		this.caveGenerator.func_151539_a(this, this.worldObj, p_73154_1_, p_73154_2_, ablock);
 		//this.genNetherBridge.func_151539_a(this, this.worldObj, p_73154_1_, p_73154_2_, ablock);
 		Chunk chunk = new Chunk(this.worldObj, ablock, meta, p_73154_1_, p_73154_2_);
 		byte[] abyte = chunk.getBiomeArray();
