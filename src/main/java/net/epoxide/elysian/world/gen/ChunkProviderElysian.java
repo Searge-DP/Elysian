@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.Random;
 
 import net.epoxide.elysian.LogElysian;
+import net.epoxide.elysian.blocks.BlockHandler;
+import net.epoxide.elysian.world.biome.BiomeElysianPlains;
 import net.epoxide.elysian.world.biome.BiomeGenElysian;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
@@ -47,10 +50,10 @@ public class ChunkProviderElysian implements IChunkProvider
 	private double[] noiseField;
 	public MapGenNetherBridge genNetherBridge = new MapGenNetherBridge();
 	/** Holds the noise used to determine whether slowsand can be generated at a location */
-	private double[] lateriteGrassNoise = new double[256];
-	private double[] porphyryNoise = new double[256];
+	private double[] topBlockNoise = new double[256];
+	private double[] fillerNoise = new double[256];
 	/** Holds the noise used to determine whether something other than netherrack can be generated at a location */
-	private double[] porphyryExclusiveNoise = new double[256];
+	private double[] exclusivelyFillerNoise = new double[256];
 	//	private MapGenBase soulForestCaveGenerator = new WorldGenCavesSoulForest();
 	private MapGenBase soulForestCaveGenerator = new MapGenCavesHell();
 	double[] noiseData1;
@@ -63,6 +66,9 @@ public class ChunkProviderElysian implements IChunkProvider
 	private BiomeGenBase[] biomesForGeneration;
 
 	private Object theBiomeDecorator;
+
+	private Block generalFiller = BlockHandler.dirt;
+	private Block generalWater = BlockHandler.water;
 
 	private static final String __OBFID = "CL_00000392";{
 		genNetherBridge = (MapGenNetherBridge) TerrainGen.getModdedMapGen(genNetherBridge, NETHER_BRIDGE);
@@ -133,7 +139,7 @@ public class ChunkProviderElysian implements IChunkProvider
 		for (int xSize = 0; xSize < four; ++xSize){
 			for (int zSize = 0; zSize < four; ++zSize){
 				for (int chunkSize = 0; chunkSize < 16; ++chunkSize){
-					
+
 					double d = 0.125D;
 					double sizeNoise1 = this.noiseField[((xSize + 0) * five_b + zSize + 0) * sevenTeen + chunkSize + 0];
 					double sizeNoise2 = this.noiseField[((xSize + 0) * five_b + zSize + 1) * sevenTeen + chunkSize + 0];
@@ -145,7 +151,7 @@ public class ChunkProviderElysian implements IChunkProvider
 					double sizeNoise8 = (this.noiseField[((xSize + 1) * five_b + zSize + 1) * sevenTeen + chunkSize + 1] - sizeNoise4) * d;
 
 					for (int l1 = 0; l1 < 8; ++l1){
-						
+
 						double d9 = 0.25D;
 						double sN1 = sizeNoise1;
 						double sN2 = sizeNoise2;
@@ -163,10 +169,13 @@ public class ChunkProviderElysian implements IChunkProvider
 
 								Block block = null;
 
+								//water and filler are the same everywhere
+								//this is done in overworld generation too
 								if (chunkSize * 8 + l1 < waterLevel)					
-									block = biome.fluid;
+									block = generalWater; // fluid is the same everywhere
 								if (sn1_bis > 0.0D)
-									block = biome.fillerBlock;
+									block = generalFiller; //filelr is the sam everywhere. 
+
 
 								chunkBlocks[zSise_bis] = block;
 								zSise_bis += short1;
@@ -187,23 +196,25 @@ public class ChunkProviderElysian implements IChunkProvider
 		}
 	}
 
+	/**replaces blocks for biomes they are in
+	 * currently contains a check for blocks bellow water and above water
+	 * */
 	public void replaceBiomeBlocks(int posX, int posZ, Block[] chunkBlocks, byte[] meta, BiomeGenBase[] biomes)
 	{
 		ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, posX, posZ, chunkBlocks, meta, biomes, this.worldObj);
 		MinecraftForge.EVENT_BUS.post(event);
 		if (event.getResult() == Result.DENY) return;
 
-		byte b0 = 32; // was 64
+		byte waterLevel = 32;
 		double d0 = 0.03125D;
-		this.lateriteGrassNoise = this.lateriteGrassPorphyryNoise.generateNoiseOctaves(this.lateriteGrassNoise, posX * 16, posZ * 16, 0, 16, 16, 1, d0, d0, 1.0D);
-		this.porphyryNoise = this.lateriteGrassPorphyryNoise.generateNoiseOctaves(this.porphyryNoise, posX * 16, 109, posZ * 16, 16, 1, 16, d0, 1.0D, d0);
-		this.porphyryExclusiveNoise = this.porphyryExclusivityNoiseGen.generateNoiseOctaves(this.porphyryExclusiveNoise, posX * 16, posZ * 16, 0, 16, 16, 1, d0 * 2.0D, d0 * 2.0D, d0 * 2.0D);
+		this.topBlockNoise = this.lateriteGrassPorphyryNoise.generateNoiseOctaves(this.topBlockNoise, posX * 16, posZ * 16, 0, 16, 16, 1, d0, d0, 1.0D);
+		this.fillerNoise = this.lateriteGrassPorphyryNoise.generateNoiseOctaves(this.fillerNoise, posX * 16, 109, posZ * 16, 16, 1, 16, d0, 1.0D, d0);
+		this.exclusivelyFillerNoise = this.porphyryExclusivityNoiseGen.generateNoiseOctaves(this.exclusivelyFillerNoise, posX * 16, posZ * 16, 0, 16, 16, 1, d0 * 2.0D, d0 * 2.0D, d0 * 2.0D);
 
-		for (int k = 0; k < 16; ++k)
-		{
-			for (int l = 0; l < 16; ++l)
-			{
-				BiomeGenBase biomegenbase = biomesForGeneration[l + k * 16];
+		for (int chunkX = 0; chunkX < 16; ++chunkX){ //Z and X could be other way around ...
+			for (int chunkZ = 0; chunkZ < 16; ++chunkZ){
+
+				BiomeGenBase biomegenbase = biomesForGeneration[chunkZ + chunkX * 16];
 
 				BiomeGenElysian biome = null;
 
@@ -211,79 +222,67 @@ public class ChunkProviderElysian implements IChunkProvider
 					biome = (BiomeGenElysian)biomegenbase;
 
 				if(biome == null){
-					System.out.println("skipped " + k +" " + l + " chunk because biome wasnt our elysian biome");
+					System.out.println("skipped " + chunkX +" " + chunkZ + " chunk because biome wasnt our elysian biome");
 					return;
 				}
 
-				boolean flag = this.lateriteGrassNoise[k + l * 16] + this.rand.nextDouble() * 0.2D > 0.0D;
-				boolean flag1 = this.porphyryNoise[k + l * 16] + this.rand.nextDouble() * 0.2D > 0.0D;
-				int i1 = (int)(this.porphyryExclusiveNoise[k + l * 16] / 3.0D + 3.0D + this.rand.nextDouble() * 0.25D);
+				boolean flag = this.topBlockNoise[chunkX + chunkZ * 16]  + this.rand.nextDouble() * 0.2D > 0.0D;
+				boolean flag1 = this.fillerNoise[chunkX + chunkZ * 16] + this.rand.nextDouble() * 0.2D > 0.0D;
+
+				int i1 = (int)(this.exclusivelyFillerNoise[chunkX + chunkZ * 16] / 3.0D + 3.0D + this.rand.nextDouble() * 0.25D);
 				int j1 = -1;
-				Block block = biomegenbase.topBlock;
-				Block block1 = biomegenbase.fillerBlock;
 
-				for (int k1 = 127; k1 >= 0; --k1)
-				{
-					int l1 = (l * 16 + k) * 128 + k1;
+				Block block = biomegenbase.topBlock; //above water
+				Block block1 = biomegenbase.fillerBlock; //bellow water
 
-					if (k1 < 127 - this.rand.nextInt(5) && k1 > 0 + this.rand.nextInt(5))
-					{
+				//TODO change waterblock so multiple liquids can be supported
+
+				for (int k1 = 127; k1 >= 0; --k1){
+					int l1 = (chunkZ * 16 + chunkX) * 128 + k1;
+
+					if (k1 < 127 - this.rand.nextInt(5) && k1 > 0 + this.rand.nextInt(5)){
 						Block block2 = chunkBlocks[l1];
 
-						if (block2 != null && block2.getMaterial() != Material.air)
-						{
-							if (block2 == biome.fillerBlock)
-							{
-								if (j1 == -1)
-								{
-									if (i1 <= 0)
-									{
+						if (block2 != null && block2.getMaterial() != Material.air){
+							//uncheck this if we want multi fluids to be enabled
+							//							if(block2 == generalWater){
+							//								if (j1 == -1){
+							//									if(k1 <= waterLevel)
+							//										chunkBlocks[l1] = biome.fluid;
+							//								}
+							//								else if (j1 > 0){
+							//									--j1;
+							//									chunkBlocks[l1] = biome.fluid;
+							//								}
+							//							}
+
+							if (block2 == generalFiller){
+								if (j1 == -1){
+									if (i1 <= 0){
 										block = null;
 										block1 = biome.fillerBlock;  
 									}
-									else if (k1 >= 0 - 4 && k1 <= b0 + 1)
-									{
+									else if (k1 >= 0 - 4 && k1 <= waterLevel + 1){
 										block = biomegenbase.topBlock;
 										block1 = biomegenbase.fillerBlock;
 
-										if (flag1)
-										{
+										if (flag1){
 											block = biomegenbase.topBlock;   
 											block1 = biomegenbase.fillerBlock;
 										}
 
-										//System.out.println("Block1 : " + biomegenbase.topBlock);
-										//System.out.println("Block2 : " + biomegenbase.fillerBlock);
-
-										if (flag)
-										{
+										if (flag){
 											block = biomegenbase.topBlock;
 											block1 = biomegenbase.fillerBlock;
 										}
 									}
 
-									if (k1 < b0 && (block == null || block.getMaterial() == Material.air))
-									{
-										//										if (biomegenbase == soul_forest.FrostCaves || biomegenbase == soul_forest.FrozenPlains) // Generate ice when temp below certain value
-										//										{
-										//											//b1 = (byte) SoulBlocks.soulIceID;
-										//										} 
-										//										else 
-										//										{
-										//											//block1 = SoulBlocks.SoulWaterMoving.get();
-										//										}
-									}
-
 									j1 = i1;
 
-									if (k1 >= b0 - 1)
-									{
+									if (k1 >= waterLevel - 1)
 										chunkBlocks[l1] = block; 
-									}
 									else
-									{
 										chunkBlocks[l1] = block1;
-									}
 								}
 								else if (j1 > 0)
 								{
@@ -293,14 +292,10 @@ public class ChunkProviderElysian implements IChunkProvider
 							}
 						}
 						else
-						{
 							j1 = -1;
-						}
 					}
 					else
-					{
 						chunkBlocks[l1] = biome.barrier;
-					}
 				}
 			}
 		}
