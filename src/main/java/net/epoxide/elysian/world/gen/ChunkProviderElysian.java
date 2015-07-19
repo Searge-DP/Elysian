@@ -68,7 +68,7 @@ public class ChunkProviderElysian implements IChunkProvider
 	private Object theBiomeDecorator;
 
 	private Block generalFiller = BlockHandler.dirt;
-	private Block generalWater = BlockHandler.water;
+	private Block generalWater = Blocks.water;
 
 	private static final String __OBFID = "CL_00000392";{
 		genNetherBridge = (MapGenNetherBridge) TerrainGen.getModdedMapGen(genNetherBridge, NETHER_BRIDGE);
