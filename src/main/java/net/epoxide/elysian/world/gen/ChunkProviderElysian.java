@@ -238,24 +238,14 @@ public class ChunkProviderElysian implements IChunkProvider
 
 					int chunkSize = (chunkZ * 16 + chunkX) * 128 + worldHeight;
 
-					if (worldHeight < 127 - this.rand.nextInt(5) && worldHeight > 0 + this.rand.nextInt(5)){
+					if (worldHeight < 127 && worldHeight > 0){
 
 						Block block2 = chunkBlocks[chunkSize];
 
 						if (block2 != null && block2.getMaterial() != Material.air){
-							//TODO : feature > uncheck this if we want multi fluids to be enabled
-							//WARNING/!\ it lags a shit ton and doen't allow us to properly use the dimension
-							//							if(block2 == generalWater){
-							//								if (j1 == -1){
-							//									if(k1 <= waterLevel)
-							//										chunkBlocks[l1] = biome.fluid;
-							//								}
-							//								else if (j1 > 0){
-							//									--j1;
-							//									chunkBlocks[l1] = biome.fluid;
-							//								}
-							//							}
-
+							
+							generateDifferentWaterSources();
+							
 							if (block2 == generalFiller){
 								if (j1 == -1){
 									if (i1 <= 0){
@@ -299,6 +289,22 @@ public class ChunkProviderElysian implements IChunkProvider
 				}
 			}
 		}
+	}
+
+	@Deprecated /**allows for multi watersources, one per biome. suffers from extreme lag. has to be improved*/
+	private void generateDifferentWaterSources() {
+		//TODO : feature > uncheck this if we want multi fluids to be enabled
+		//WARNING/!\ it lags a shit ton and doen't allow us to properly use the dimension
+		//							if(block2 == generalWater){
+		//								if (j1 == -1){
+		//									if(k1 <= waterLevel)
+		//										chunkBlocks[l1] = biome.fluid;
+		//								}
+		//								else if (j1 > 0){
+		//									--j1;
+		//									chunkBlocks[l1] = biome.fluid;
+		//								}
+		//							}
 	}
 
 	/**
