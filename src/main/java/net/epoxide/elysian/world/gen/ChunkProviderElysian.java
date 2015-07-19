@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
@@ -279,13 +280,18 @@ public class ChunkProviderElysian implements IChunkProvider
 									--j1;
 									chunkBlocks[chunkSize] = block1;
 								}
+								if(worldHeight == 126){
+									int chunkSize2 = (chunkZ * 16 + chunkX) * 128 + (worldHeight);
+									chunkBlocks[chunkSize2] = biome.fillerBlock; //fix for topblock under bedrock
+								}
 							}
 						}
 						else
 							j1 = -1;
 					}
-					else if (worldHeight == 127 || worldHeight ==0)
+					else if (worldHeight == 127 || worldHeight ==0){
 						chunkBlocks[chunkSize] = biome.barrier;
+					}
 				}
 			}
 		}

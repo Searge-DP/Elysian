@@ -39,7 +39,9 @@ public class ConfigurationHandler {
         dimensionID = config.getInt("dimensionID", config.CATEGORY_GENERAL, DimensionManager.getNextFreeDimId(), -10000, 10000, "The dimension ID for the Elysian dimension. If you have succesfully launched a world with the Elysian mod once, do not change this!");
         biomeTestID = config.getInt("biomeTestID1", "Biomes", Utilities.getAvailableBiomeID(), 0, BiomeGenBase.getBiomeGenArray().length, "The biome ID for the test1 biome. If you have successfully launched a world with the Elysian mod once, do not change this!");
         biomeTestID2 = config.getInt("biomeTestID2", "Biomes", Utilities.getAvailableBiomeID(), 0, BiomeGenBase.getBiomeGenArray().length, "The biome ID for the test2 biome. If you have successfully launched a world with the Elysian mod once, do not change this!");
-        
+        biomeTestID3 = config.getInt("biomeTestID3", "Biomes", Utilities.getAvailableBiomeID(), 0, BiomeGenBase.getBiomeGenArray().length, "The biome ID for the test3 biome. If you have successfully launched a world with the Elysian mod once, do not change this!");
+        biomeTestID4 = config.getInt("biomeTestID4", "Biomes", Utilities.getAvailableBiomeID(), 0, BiomeGenBase.getBiomeGenArray().length, "The biome ID for the test4 biome. If you have successfully launched a world with the Elysian mod once, do not change this!");
+
         if (config.hasChanged())
             config.save();
     }
@@ -48,4 +50,6 @@ public class ConfigurationHandler {
     
     public static int biomeTestID;
     public static int biomeTestID2;
+    public static int biomeTestID3;
+    public static int biomeTestID4;
 }

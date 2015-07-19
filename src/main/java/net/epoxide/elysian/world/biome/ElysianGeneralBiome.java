@@ -4,9 +4,9 @@ import net.epoxide.elysian.blocks.BlockHandler;
 import net.epoxide.elysian.handler.ConfigurationHandler;
 import net.minecraft.init.Blocks;
 
-public class BiomeTest2 extends BiomeGenElysian {
+public class ElysianGeneralBiome extends BiomeGenElysian {
     
-    public BiomeTest2() {
+    public ElysianGeneralBiome() {
     
         super(ConfigurationHandler.biomeTestID2);
         
