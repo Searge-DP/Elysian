@@ -9,6 +9,8 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BiomeGenElysian extends BiomeGenBase {
     
@@ -121,4 +123,9 @@ public class BiomeGenElysian extends BiomeGenBase {
         }
     }
     
+    @SideOnly(Side.CLIENT)
+    public int getBiomeGrassColor (int p_150558_1_, int p_150558_2_, int p_150558_3_) {
+    
+        return this.color;
+    }
 }
