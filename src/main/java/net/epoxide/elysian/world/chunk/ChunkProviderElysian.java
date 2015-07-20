@@ -1,6 +1,5 @@
 package net.epoxide.elysian.world.chunk;
 
-import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.NETHER_BRIDGE;
 import static net.minecraftforge.event.terraingen.InitMapGenEvent.EventType.NETHER_CAVE;
 
 import java.util.List;
@@ -23,7 +22,6 @@ import net.minecraft.world.gen.MapGenBase;
 import net.minecraft.world.gen.MapGenCavesHell;
 import net.minecraft.world.gen.NoiseGenerator;
 import net.minecraft.world.gen.NoiseGeneratorOctaves;
-import net.minecraft.world.gen.structure.MapGenNetherBridge;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.ChunkProviderEvent;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
@@ -33,17 +31,17 @@ import cpw.mods.fml.common.eventhandler.Event.Result;
 
 public class ChunkProviderElysian implements IChunkProvider {
 	private Random rand;
-	
+
 	/** A NoiseGeneratorOctaves used in generating nether terrain, now in ours */
 	private NoiseGeneratorOctaves elysianNoiseGen1;
 	private NoiseGeneratorOctaves elysianNoiseGen2;
 	private NoiseGeneratorOctaves elysianNoiseGen3;
-	
+
 	/** Determines whether topBlocks can be generated at a location */
 	private NoiseGeneratorOctaves topBlockNoiseGen; //noise 4
 	/** Determines whether something other than the fillerblock can be generated at a location */
 	private NoiseGeneratorOctaves fillerBlockNoiseGen; //noise 5
-	
+
 	public NoiseGeneratorOctaves elysianNoiseGen6;
 	public NoiseGeneratorOctaves elysianNoiseGen7;
 	/** Is the world that the elysian is getting generated in. */
@@ -175,7 +173,7 @@ public class ChunkProviderElysian implements IChunkProvider {
 
 								if (chunkSize * 8 + loopNr < waterLevel)
 									block = generalWater; 
-								
+
 								if (sn1_bis > 0.0D)
 									block = generalFiller; 
 
@@ -380,88 +378,88 @@ public class ChunkProviderElysian implements IChunkProvider {
 		int k1 = 0;
 		int l1 = 0;
 		double[] chunkHeight = new double[sizeY];
-		int i; // just and index for the loop
+		int x; // just and index for the loop
 
-		for (i = 0; i < sizeY; ++i) {
-			chunkHeight[i] = Math.cos((double) i * Math.PI * 6.0D / (double) sizeY) * 2.0D;
-			double d2 = (double) i;
+		for (x = 0; x < sizeY; ++x) {
+			chunkHeight[x] = Math.cos((double) x * Math.PI * 6.0D / (double) sizeY) * 2.0D;
+			double index_D = (double) x;
 
-			if (i > sizeY / 2)
-				d2 = (double) (sizeY - 1 - i);
+			if (x > sizeY / 2)
+				index_D = (double) (sizeY - 1 - x);
 
-			if (d2 < 4.0D) {
-				d2 = 4.0D - d2;
-				chunkHeight[i] -= d2 * d2 * d2 * 10.0D;
+			if (index_D < 4.0D) {
+				index_D = 4.0D - index_D;
+				chunkHeight[x] -= index_D * index_D * index_D * 10.0D;
 			}
 		}
 
-		for (i = 0; i < sizeX; ++i) {
-			for (int k2 = 0; k2 < sizeZ; ++k2) {
-				double d3 = (this.noiseData6[l1] + 256.0D) / 1024.0D; //edited this from 128 / 512 to 512 / 1024
+		for (x = 0; x < sizeX; ++x) {
+			for (int z = 0; z < sizeZ; ++z) {
+				
+				double noiseData_6 = (this.noiseData6[l1] + 256.0D) / 1024.0D;
 
-				if (d3 > 1.0D) {
-					d3 = 1.0D;
-				}
+				if (noiseData_6 > 1.0D) 
+					noiseData_6 = 1.0D;
 
 				double d4 = 0.0D;
-				double d5 = this.noiseData7[l1] / 8000.0D;
+				double noiseData_7 = this.noiseData7[l1] / 8000.0D;
 
-				if (d5 < 0.0D) {
-					d5 = -d5;
+				if (noiseData_7 < 0.0D) {
+					noiseData_7 = -noiseData_7;
 				}
 
-				d5 = d5 * 3.0D - 3.0D;
+				noiseData_7 = noiseData_7 * 3.0D - 3.0D;
 
-				if (d5 < 0.0D) {
-					d5 /= 2.0D;
+				if (noiseData_7 < 0.0D) {
+					noiseData_7 /= 2.0D;
 
-					if (d5 < -1.0D) {
-						d5 = -1.0D;
+					if (noiseData_7 < -1.0D) {
+						noiseData_7 = -1.0D;
 					}
 
-					d5 /= 1.4D;
-					d5 /= 2.0D;
-					d3 = 0.0D;
+					noiseData_7 /= 1.4D;
+					noiseData_7 /= 2.0D;
+					noiseData_6 = 0.0D;
 				}
 				else {
-					if (d5 > 1.0D) {
-						d5 = 1.0D;
+					if (noiseData_7 > 1.0D) {
+						noiseData_7 = 1.0D;
 					}
 
-					d5 /= 6.0D;
+					noiseData_7 /= 6.0D;
 				}
 
-				d3 += 0.5D;
-				d5 = d5 * (double) sizeY / 16.0D;
+				noiseData_6 += 0.5D;
+				noiseData_7 = noiseData_7 * (double) sizeY / 16.0D;
 				++l1;
 
-				for (int j2 = 0; j2 < sizeY; ++j2) {
+				for (int y = 0; y < sizeY; ++y) {
 					double d6 = 0.0D;
-					double d7 = chunkHeight[j2];
-					double d8 = this.noiseData2[k1] / 1024.0D; //from 512 to 1024. both
-					double d9 = this.noiseData3[k1] / 1024.0D;
-					double d10 = (this.noiseData1[k1] / 10.0D + 1.0D) / 2.0D;
+					double d7 = chunkHeight[y];
+					double noiseData_2 = this.noiseData2[k1] / 1024.0D; //from 512 to 1024. both
+					double noiseData_3 = this.noiseData3[k1] / 1024.0D;
+					double noiseData_1 = (this.noiseData1[k1] / 10.0D + 1.0D) / 2.0D;
 
-					if (d10 < 0.0D) {
-						d6 = d8;
+					if (noiseData_1 < 0.0D) {
+						d6 = noiseData_2;
 					}
-					else if (d10 > 1.0D) {
-						d6 = d9;
+					else if (noiseData_1 > 1.0D) {
+						d6 = noiseData_3;
 					}
 					else {
-						d6 = d8 + (d9 - d8) * d10;
+						d6 = noiseData_2 + (noiseData_3 - noiseData_2) * noiseData_1;
 					}
 
 					d6 -= d7;
 					double d11;
 
-					if (j2 > sizeY - 4) {
-						d11 = (double) ((float) (j2 - (sizeY - 4)) / 3.0F);
+					if (y > sizeY - 4) {
+						d11 = (double) ((float) (y - (sizeY - 4)) / 3.0F);
 						d6 = d6 * (1.0D - d11) + -10.0D * d11;
 					}
 
-					if ((double) j2 < d4) {
-						d11 = (d4 - (double) j2) / 4.0D;
+					if ((double) y < d4) {
+						d11 = (d4 - (double) y) / 4.0D;
 
 						if (d11 < 0.0D) {
 							d11 = 0.0D;
@@ -486,7 +484,7 @@ public class ChunkProviderElysian implements IChunkProvider {
 	/**
 	 * Checks to see if a chunk exists at x, y
 	 */
-	public boolean chunkExists (int p_73149_1_, int p_73149_2_) {
+	public boolean chunkExists (int posX, int posZ) {
 
 		return true;
 	}
@@ -494,57 +492,22 @@ public class ChunkProviderElysian implements IChunkProvider {
 	/**
 	 * Populates chunk with ores etc etc
 	 */
-	public void populate (IChunkProvider p_73153_1_, int p_73153_2_, int p_73153_3_) {
+	public void populate (IChunkProvider provider, int posX, int posZ) {
 
 		BlockSand.fallInstantly = true;
 
-		MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(p_73153_1_, worldObj, rand, p_73153_2_, p_73153_3_, false));
+		MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(provider, worldObj, rand, posX, posZ, false));
 
-		int k = p_73153_2_ * 16;
-		int l = p_73153_3_ * 16;
-		BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(k + 16, l + 16);
-		int i1;
-		int j1;
-		int k1;
-		int l1 = 0;
-		int j2;
+		int x = posX * 16;
+		int z = posZ * 16;
+		BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(x + 16, z + 16);
 
-		MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(worldObj, rand, k, l));
+		MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(worldObj, rand, x, z));
 
-		i1 = this.rand.nextInt(this.rand.nextInt(10) + 1) + 1;
-		int i2;
-
-		// doGen = TerrainGen.decorate(worldObj, soulRNG, k, l, SHROOM);
-		// Everything not biome related
-
-		// #region Ore Gen
-		// WorldGenMinable worldgenminable;
-
-		// for (int i = 0; i < 5; i++){
-		// int randPosX = k + rand.nextInt(16);
-		// int randPosY = rand.nextInt(128);
-		// int randPosZ = l + rand.nextInt(16);
-		// (new WorldGenMinable(SoulBlocks.Bauxite.get(), 30,
-		// SoulBlocks.Porphyry.get())).generate(worldObj, rand, randPosX, randPosY, randPosZ);
-		// }
-		//
-		// for (int i = 0; i < 10; i++){
-		// int randPosX = k + rand.nextInt(16);
-		// int randPosY = rand.nextInt(128);
-		// int randPosZ = l + rand.nextInt(16);
-		// (new WorldGenMinable(SoulBlocks.Slate.get(), 50,
-		// SoulBlocks.Porphyry.get())).generate(worldObj, rand, randPosX, randPosY, randPosZ);
-		// }
-		// for (int i = 0; i < 15; i++){
-		// int randPosX = k + rand.nextInt(16);
-		// int randPosY = rand.nextInt(128);
-		// int randPosZ = l + rand.nextInt(16);
-		// (new WorldGenMinable(SoulBlocks.DarkPorphyry.get(), 20,
-		// SoulBlocks.Porphyry.get())).generate(worldObj, rand, randPosX, randPosY, randPosZ);
-		// }
-
-		MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Post(worldObj, rand, k, l));
-		MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(p_73153_1_, worldObj, rand, p_73153_2_, p_73153_3_, false));
+		//mineables here
+		
+		MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Post(worldObj, rand, x, z));
+		MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(provider, worldObj, rand, posX, posZ, false));
 
 		BlockSand.fallInstantly = false;
 	}
@@ -553,7 +516,7 @@ public class ChunkProviderElysian implements IChunkProvider {
 	 * Two modes of operation: if passed true, save all Chunks in one go. If passed false, save
 	 * up to two chunks. Return true if all chunks have been saved.
 	 */
-	public boolean saveChunks (boolean p_73151_1_, IProgressUpdate p_73151_2_) {
+	public boolean saveChunks (boolean flag, IProgressUpdate progressUpdate) {
 
 		return true;
 	}
@@ -594,15 +557,10 @@ public class ChunkProviderElysian implements IChunkProvider {
 	/**
 	 * Returns a list of creatures of the specified type that can spawn at the given location.
 	 */
-	public List getPossibleCreatures (EnumCreatureType p_73155_1_, int p_73155_2_, int p_73155_3_, int p_73155_4_) {
+	public List getPossibleCreatures (EnumCreatureType creatureType, int posX, int posY, int posZ) {
 
-		BiomeGenBase biomegenbase = (BiomeGenBase) this.worldObj.getBiomeGenForCoords(p_73155_2_, p_73155_4_);
-		return biomegenbase == null ? null : biomegenbase.getSpawnableList(p_73155_1_);
-	}
-
-	public ChunkPosition func_147416_a (World p_147416_1_, String p_147416_2_, int p_147416_3_, int p_147416_4_, int p_147416_5_) {
-
-		return null;
+		BiomeGenBase biomegenbase = (BiomeGenBase) this.worldObj.getBiomeGenForCoords(posX, posZ);
+		return biomegenbase == null ? null : biomegenbase.getSpawnableList(creatureType);
 	}
 
 	public int getLoadedChunkCount () {
@@ -611,7 +569,12 @@ public class ChunkProviderElysian implements IChunkProvider {
 	}
 
 	@Override
-	public void recreateStructures (int p_82695_1_, int p_82695_2_) {
+	public void recreateStructures (int chunkX, int chunkZ) {
 
+	}
+
+	@Override
+	public ChunkPosition func_147416_a(World world, String someString, int x, int y, int z) {
+		return null;
 	}
 }
