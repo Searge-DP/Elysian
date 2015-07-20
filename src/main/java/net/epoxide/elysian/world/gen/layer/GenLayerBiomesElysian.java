@@ -18,7 +18,6 @@ public class GenLayerBiomesElysian extends GenLayer {
         super(seed);
     }
     
-    /**determines the position of biomes*/
     @Override
     public int[] getInts (int posX, int posZ, int width, int depth) {
     
