@@ -1,6 +1,7 @@
 package net.epoxide.elysian.world.biome;
 
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -30,7 +31,7 @@ public class BiomeGenElysian extends BiomeGenBase {
     }
     
     @Override
-	@SideOnly(Side.CLIENT)
+    @SideOnly(Side.CLIENT)
     public int getBiomeGrassColor (int p_150558_1_, int p_150558_2_, int p_150558_3_) {
     
         return this.color;
