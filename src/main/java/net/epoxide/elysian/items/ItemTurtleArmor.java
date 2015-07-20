@@ -14,6 +14,7 @@ public class ItemTurtleArmor extends ItemArmor {
 		super(ArmorMaterial.IRON, 0, armorID);
 
 		setCreativeTab(Elysian.tabElysian);
+
 		switch (armorID) {
 		case 0:
 			setUnlocalizedName("turtleHelm");
@@ -43,7 +44,7 @@ public class ItemTurtleArmor extends ItemArmor {
 			return "elysian:textures/items/armor/armor_1.png";
 		else if(slot != 2)
 			return "elysian:textures/items/armor/armor_0.png";
-		
+
 		return null; 
 	}
 
@@ -61,17 +62,18 @@ public class ItemTurtleArmor extends ItemArmor {
 					armorModel = Elysian.proxy.getArmorModel(1);
 
 				if(armorModel != null){ 
+					
 					armorModel.bipedHead.showModel = armorSlot == 0;
 					armorModel.bipedHeadwear.showModel = armorSlot == 0; 
-					
+
 					armorModel.bipedBody.showModel = armorSlot == 1 || armorSlot == 2; 
-					
+
 					armorModel.bipedRightArm.showModel = armorSlot == 1; 
 					armorModel.bipedLeftArm.showModel = armorSlot == 1; 
-					
+
 					armorModel.bipedRightLeg.showModel = armorSlot == 2 || armorSlot == 3;
 					armorModel.bipedLeftLeg.showModel = armorSlot == 2 || armorSlot == 3; 
-					
+
 					armorModel.isSneak = entityLiving.isSneaking();
 					armorModel.isRiding = entityLiving.isRiding(); 
 					armorModel.isChild = entityLiving.isChild();
