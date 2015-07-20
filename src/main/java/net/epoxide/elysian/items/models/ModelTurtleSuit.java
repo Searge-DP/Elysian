@@ -94,8 +94,8 @@ public class ModelTurtleSuit extends ModelBiped
 //		HelmMask.render(f5);
 //		Shoe.render(f5);
 //		Shoe2.render(f5);
-		ShellTop.render(f5);
-		ShellBase.render(f5);
+//		ShellTop.render(f5);
+//		ShellBase.render(f5);
 //		KneePad1.render(f5);
 //		KneePad2.render(f5);
 	}
