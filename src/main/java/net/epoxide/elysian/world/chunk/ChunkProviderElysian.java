@@ -210,10 +210,10 @@ public class ChunkProviderElysian implements IChunkProvider {
 		byte waterLevel = 70;
 		int totalWorldHeight = 256;
 
-		double d0 = 0.03125D;
-		this.topBlockNoise = this.topBlockNoiseGen.generateNoiseOctaves(this.topBlockNoise, posX * 16, posZ * 16, 0, 16, 16, 1, d0, d0, 1.0D);
-		this.fillerNoise = this.topBlockNoiseGen.generateNoiseOctaves(this.fillerNoise, posX * 16, 109, posZ * 16, 16, 1, 16, d0, 1.0D, d0);
-		this.exclusivelyFillerNoise = this.fillerBlockNoiseGen.generateNoiseOctaves(this.exclusivelyFillerNoise, posX * 16, posZ * 16, 0, 16, 16, 1, d0 * 2.0D, d0 * 2.0D, d0 * 2.0D);
+		double noiseScale = 0.03125D;
+		this.topBlockNoise = this.topBlockNoiseGen.generateNoiseOctaves(this.topBlockNoise, posX * 16, posZ * 16, 0, 16, 16, 1, noiseScale, noiseScale, 1.0D);
+		this.fillerNoise = this.topBlockNoiseGen.generateNoiseOctaves(this.fillerNoise, posX * 16, 109, posZ * 16, 16, 1, 16, noiseScale, 1.0D, noiseScale);
+		this.exclusivelyFillerNoise = this.fillerBlockNoiseGen.generateNoiseOctaves(this.exclusivelyFillerNoise, posX * 16, posZ * 16, 0, 16, 16, 1, noiseScale * 2.0D, noiseScale * 2.0D, noiseScale * 2.0D);
 
 		for (int chunkX = 0; chunkX < 16; ++chunkX) { // Z and X could be other way around ...
 			for (int chunkZ = 0; chunkZ < 16; ++chunkZ) {
@@ -230,11 +230,11 @@ public class ChunkProviderElysian implements IChunkProvider {
 					return;
 				}
 
-				boolean flag = this.topBlockNoise[chunkX + chunkZ * 16] + this.rand.nextDouble() * 0.2D > 0.0D;
-				boolean flag1 = this.fillerNoise[chunkX + chunkZ * 16] + this.rand.nextDouble() * 0.2D > 0.0D;
+				boolean canTopReplace = this.topBlockNoise[chunkX + chunkZ * 16] + this.rand.nextDouble() * 0.2D > 0.0D;
+				boolean canFillerReplace = this.fillerNoise[chunkX + chunkZ * 16] + this.rand.nextDouble() * 0.2D > 0.0D;
 
-				int i1 = (int) (this.exclusivelyFillerNoise[chunkX + chunkZ * 16] / 3.0D + 3.0D + this.rand.nextDouble() * 0.25D);
-				int j1 = -1;
+				int fillerExclusiveNoise = (int) (this.exclusivelyFillerNoise[chunkX + chunkZ * 16] / 3.0D + 3.0D + this.rand.nextDouble() * 0.25D);
+				int minusOne = -1;
 
 				Block block = biomegenbase.topBlock; // above water
 				Block block1 = biomegenbase.fillerBlock; // bellow water
@@ -252,8 +252,8 @@ public class ChunkProviderElysian implements IChunkProvider {
 							generateDifferentWaterSources();
 
 							if (block2 == generalFiller) {
-								if (j1 == -1) {
-									if (i1 <= 0) {
+								if (minusOne == -1) {
+									if (fillerExclusiveNoise <= 0) {
 										block = null;
 										block1 = biome.fillerBlock;
 									}
@@ -261,26 +261,26 @@ public class ChunkProviderElysian implements IChunkProvider {
 										block = biomegenbase.topBlock;
 										block1 = biomegenbase.fillerBlock;
 
-										if (flag1) {
+										if (canFillerReplace) {
 											block = biomegenbase.topBlock;
 											block1 = biomegenbase.fillerBlock;
 										}
 
-										if (flag) {
+										if (canTopReplace) {
 											block = biomegenbase.topBlock;
 											block1 = biomegenbase.fillerBlock;
 										}
 									}
 
-									j1 = i1;
+									minusOne = fillerExclusiveNoise;
 
 									if (height >= waterLevel - 1)
 										chunkBlocks[chunkSize] = block;
 									else
 										chunkBlocks[chunkSize] = block1;
 								}
-								else if (j1 > 0) {
-									--j1;
+								else if (minusOne > 0) {
+									--minusOne;
 									chunkBlocks[chunkSize] = block1;
 								}
 								/**this is a fix for the topblock under the barrier block on the upper edge of the world*/
@@ -291,7 +291,7 @@ public class ChunkProviderElysian implements IChunkProvider {
 							}
 						}
 						else
-							j1 = -1;
+							minusOne = -1;
 					}
 					else if (height == totalWorldHeight || height == 0) {
 						chunkBlocks[chunkSize] = biome.barrier;
@@ -322,9 +322,9 @@ public class ChunkProviderElysian implements IChunkProvider {
 	/**
 	 * loads or generates the chunk at the chunk location specified
 	 */
-	public Chunk loadChunk (int p_73158_1_, int p_73158_2_) {
+	public Chunk loadChunk (int posX, int posZ) {
 
-		return this.provideChunk(p_73158_1_, p_73158_2_);
+		return this.provideChunk(posX, posZ);
 	}
 
 	/**
@@ -434,28 +434,28 @@ public class ChunkProviderElysian implements IChunkProvider {
 				++noiseIndex_6_7;
 
 				for (int y = 0; y < sizeY; ++y) {
-					double d6 = 0.0D;
-					double d7 = chunkHeight[y];
+					double adouble = 0.0D;
+					double chunkHeightIndex = chunkHeight[y];
 					double noiseData_2 = this.noiseData2[noiseIndex_1_2_3] / 1024.0D; //from 512 to 1024. both
 					double noiseData_3 = this.noiseData3[noiseIndex_1_2_3] / 1024.0D;
 					double noiseData_1 = (this.noiseData1[noiseIndex_1_2_3] / 10.0D + 1.0D) / 2.0D;
 
 					if (noiseData_1 < 0.0D) {
-						d6 = noiseData_2;
+						adouble = noiseData_2;
 					}
 					else if (noiseData_1 > 1.0D) {
-						d6 = noiseData_3;
+						adouble = noiseData_3;
 					}
 					else {
-						d6 = noiseData_2 + (noiseData_3 - noiseData_2) * noiseData_1;
+						adouble = noiseData_2 + (noiseData_3 - noiseData_2) * noiseData_1;
 					}
 
-					d6 -= d7;
+					adouble -= chunkHeightIndex;
 					double d11;
 
 					if (y > sizeY - 4) {
 						d11 = (double) ((float) (y - (sizeY - 4)) / 3.0F);
-						d6 = d6 * (1.0D - d11) + -10.0D * d11;
+						adouble = adouble * (1.0D - d11) + -10.0D * d11;
 					}
 
 					if ((double) y < d4) {
@@ -469,10 +469,10 @@ public class ChunkProviderElysian implements IChunkProvider {
 							d11 = 1.0D;
 						}
 
-						d6 = d6 * (1.0D - d11) + -10.0D * d11;
+						adouble = adouble * (1.0D - d11) + -10.0D * d11;
 					}
 
-					noiseArray[noiseIndex_1_2_3] = d6;
+					noiseArray[noiseIndex_1_2_3] = adouble;
 					++noiseIndex_1_2_3;
 				}
 			}
