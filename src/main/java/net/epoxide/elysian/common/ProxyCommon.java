@@ -4,7 +4,7 @@ import net.minecraft.client.model.ModelBiped;
 
 public class ProxyCommon {
 
-	/**A sided method used for armor modeling. Server version will always return null, as rendering
+	/**A sided method used to get the armor model for rendering. Server version will always return null, as rendering
 	 * is exclusively done on the client*/
 	public ModelBiped getArmorModel(int id){
 		return null; 

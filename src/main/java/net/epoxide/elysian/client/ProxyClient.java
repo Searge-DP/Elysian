@@ -14,10 +14,8 @@ public class ProxyClient extends ProxyCommon {
 		switch (id) {
 		case 0:
 			return generalArmor;
-
 		case 1:
 			return legsArmor;
-			
 		}
 		return null;
 	}
