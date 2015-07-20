@@ -11,7 +11,6 @@ public class ItemHandler {
     public static final Item turtleLegs = new ItemTurtleArmor(2);
     public static final Item turtleBoots = new ItemTurtleArmor(3);
     
-    
     public ItemHandler() {
     
         GameRegistry.registerItem(bucket, "bucket");
