@@ -39,9 +39,9 @@ public class ItemTurtleArmor extends ItemArmor {
 
 	@Override
 	public String getArmorTexture(ItemStack stack, Entity entity, int slot, String type) { 
-		if(slot == 1)
+		if(slot == 2)
 			return "elysian:textures/items/armor/armor_1.png";
-		else if(slot != 1)
+		else if(slot != 2)
 			return "elysian:textures/items/armor/armor_0.png";
 		
 		return null; 
@@ -55,9 +55,7 @@ public class ItemTurtleArmor extends ItemArmor {
 		if(itemStack != null)
 			if(itemStack.getItem() instanceof ItemTurtleArmor){
 
-				int type = ((ItemArmor)itemStack.getItem()).armorType; 
-
-				if(type == 1 ||	type == 3)
+				if(armorSlot == 1 ||armorSlot == 3)
 					armorModel = Elysian.proxy.getArmorModel(0); 
 				else
 					armorModel = Elysian.proxy.getArmorModel(1);
@@ -65,11 +63,15 @@ public class ItemTurtleArmor extends ItemArmor {
 				if(armorModel != null){ 
 					armorModel.bipedHead.showModel = armorSlot == 0;
 					armorModel.bipedHeadwear.showModel = armorSlot == 0; 
+					
 					armorModel.bipedBody.showModel = armorSlot == 1 || armorSlot == 2; 
+					
 					armorModel.bipedRightArm.showModel = armorSlot == 1; 
 					armorModel.bipedLeftArm.showModel = armorSlot == 1; 
+					
 					armorModel.bipedRightLeg.showModel = armorSlot == 2 || armorSlot == 3;
 					armorModel.bipedLeftLeg.showModel = armorSlot == 2 || armorSlot == 3; 
+					
 					armorModel.isSneak = entityLiving.isSneaking();
 					armorModel.isRiding = entityLiving.isRiding(); 
 					armorModel.isChild = entityLiving.isChild();

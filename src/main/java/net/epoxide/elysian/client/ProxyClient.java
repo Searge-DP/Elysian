@@ -6,8 +6,8 @@ import net.minecraft.client.model.ModelBiped;
 
 public class ProxyClient extends ProxyCommon {
 
-	private static final ModelTurtleSuit generalArmor = new ModelTurtleSuit(1.0f); 
-	private static final ModelTurtleSuit legsArmor = new ModelTurtleSuit(0.5f);
+	private static final ModelTurtleSuit generalArmor = new ModelTurtleSuit(0.7f); 
+	private static final ModelTurtleSuit legsArmor = new ModelTurtleSuit(0.3f);
 
 	public ModelBiped getArmorModel(int id){
 		
