@@ -7,9 +7,13 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 public class ItemTurtleArmor extends ItemArmor {
 
+	private int defaultBreathTimer;
+	private int breathingTimer;
+	
 	public ItemTurtleArmor(int armorID) {
 		super(ArmorMaterial.IRON, 0, armorID);
 
@@ -23,6 +27,7 @@ public class ItemTurtleArmor extends ItemArmor {
 		case 1:
 			setUnlocalizedName("turtleBody");
 			setTextureName("iron_chestplate");
+			defaultBreathTimer = breathingTimer = 5000;
 			break;
 		case 2:
 			setUnlocalizedName("turtleLegs");
@@ -86,4 +91,17 @@ public class ItemTurtleArmor extends ItemArmor {
 
 		return armorModel ;
 	}
+	
+	public int getBreathTimer(){
+		return breathingTimer;
+	}
+	
+	public void breath(){
+		breathingTimer--;
+	}
+	
+	public void resetTank(){
+		breathingTimer = defaultBreathTimer;
+	}
+	
 }

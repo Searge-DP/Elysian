@@ -65,10 +65,14 @@ public class ElysianEventHandler {
 
 		if(isWearingFullTurtleSuite(player)){
 			if(player.isInsideOfMaterial(Material.water)){
-
-				//TODO add iff check to check if tank is full
-				player.setAir(300);
-				//TODO if tank is full, decrease tank air time
+				ItemTurtleArmor shell = ((ItemTurtleArmor)player.inventory.armorItemInSlot(2).getItem());
+				
+				if(shell.getBreathTimer() > 0){
+					player.setAir(300);
+					shell.breath();
+				}else{
+					
+				}
 
 				if(!player.onGround && player.fallDistance > 0){
 					player.motionY = player.motionY*1.1;
