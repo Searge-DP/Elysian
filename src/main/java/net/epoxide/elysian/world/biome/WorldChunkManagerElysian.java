@@ -72,7 +72,7 @@ public class WorldChunkManagerElysian extends WorldChunkManager {
         
         for (int i1 = 0; i1 < width * length; ++i1) {
             try {
-                float f = (float) BiomeGenBase.getBiome(aint[i1]).getIntRainfall() / 65536.0F;
+                float f = BiomeGenBase.getBiome(aint[i1]).getIntRainfall() / 65536.0F;
                 
                 if (f > 1.0F) {
                     f = 1.0F;

@@ -39,7 +39,8 @@ public class BlockElysianWater extends BlockFluidClassic {
         flowingIcon = register.registerIcon("elysian:elysian_water_flow");
     }
     
-    public int colorMultiplier (IBlockAccess world, int x, int y, int z) {
+    @Override
+	public int colorMultiplier (IBlockAccess world, int x, int y, int z) {
     
         int l = 0;
         int i1 = 0;

@@ -9,6 +9,7 @@ public class ProxyClient extends ProxyCommon {
 	private static final ModelTurtleSuit generalArmor = new ModelTurtleSuit(0.7f); 
 	private static final ModelTurtleSuit legsArmor = new ModelTurtleSuit(0.3f);
 
+	@Override
 	public ModelBiped getArmorModel(int id){
 		
 		switch (id) {

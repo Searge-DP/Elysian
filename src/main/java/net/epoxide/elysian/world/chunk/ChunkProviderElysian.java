@@ -8,6 +8,7 @@ import java.util.Random;
 import net.epoxide.elysian.blocks.BlockHandler;
 import net.epoxide.elysian.world.biome.BiomeGenElysian;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EnumCreatureType;
@@ -322,6 +323,7 @@ public class ChunkProviderElysian implements IChunkProvider {
 	/**
 	 * loads or generates the chunk at the chunk location specified
 	 */
+	@Override
 	public Chunk loadChunk (int posX, int posZ) {
 
 		return this.provideChunk(posX, posZ);
@@ -331,9 +333,10 @@ public class ChunkProviderElysian implements IChunkProvider {
 	 * Will return back a chunk, if it doesn't exist and its not a MP client it will generates
 	 * all the blocks for the specified chunk from the map seed and chunk seed
 	 */
+	@Override
 	public Chunk provideChunk (int chunkX, int chunkZ) {
 
-		this.rand.setSeed((long) chunkX * 341873128712L + (long) chunkZ * 132897987541L);
+		this.rand.setSeed(chunkX * 341873128712L + chunkZ * 132897987541L);
 		Block[] ablock = new Block[65536];
 		byte[] meta = new byte[ablock.length];
 		this.biomesForGeneration = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, chunkX * 16, chunkZ * 16, 16, 16);
@@ -381,11 +384,11 @@ public class ChunkProviderElysian implements IChunkProvider {
 		double[] chunkHeight = new double[sizeY];
 
 		for (int indexHeight = 0; indexHeight < sizeY; ++indexHeight) {
-			chunkHeight[indexHeight] = Math.cos((double) indexHeight * Math.PI * 6.0D / (double) sizeY) * 2.0D;
-			double index_D = (double) indexHeight;
+			chunkHeight[indexHeight] = Math.cos(indexHeight * Math.PI * 6.0D / sizeY) * 2.0D;
+			double index_D = indexHeight;
 
 			if (indexHeight > sizeY / 2)
-				index_D = (double) (sizeY - 1 - indexHeight);
+				index_D = sizeY - 1 - indexHeight;
 
 			if (index_D < 4.0D) {
 				index_D = 4.0D - index_D;
@@ -430,7 +433,7 @@ public class ChunkProviderElysian implements IChunkProvider {
 				}
 
 				noiseData_6 += 0.5D;
-				noiseData_7 = noiseData_7 * (double) sizeY / 16.0D;
+				noiseData_7 = noiseData_7 * sizeY / 16.0D;
 				++noiseIndex_6_7;
 
 				for (int y = 0; y < sizeY; ++y) {
@@ -454,12 +457,12 @@ public class ChunkProviderElysian implements IChunkProvider {
 					double d11;
 
 					if (y > sizeY - 4) {
-						d11 = (double) ((float) (y - (sizeY - 4)) / 3.0F);
+						d11 = (y - (sizeY - 4)) / 3.0F;
 						adouble = adouble * (1.0D - d11) + -10.0D * d11;
 					}
 
-					if ((double) y < d4) {
-						d11 = (d4 - (double) y) / 4.0D;
+					if (y < d4) {
+						d11 = (d4 - y) / 4.0D;
 
 						if (d11 < 0.0D) {
 							d11 = 0.0D;
@@ -484,6 +487,7 @@ public class ChunkProviderElysian implements IChunkProvider {
 	/**
 	 * Checks to see if a chunk exists at x, y
 	 */
+	@Override
 	public boolean chunkExists (int posX, int posZ) {
 
 		return true;
@@ -492,9 +496,10 @@ public class ChunkProviderElysian implements IChunkProvider {
 	/**
 	 * Populates chunk with ores etc etc
 	 */
+	@Override
 	public void populate (IChunkProvider provider, int posX, int posZ) {
 
-		BlockSand.fallInstantly = true;
+		BlockFalling.fallInstantly = true;
 
 		MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(provider, worldObj, rand, posX, posZ, false));
 
@@ -509,13 +514,14 @@ public class ChunkProviderElysian implements IChunkProvider {
 		MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Post(worldObj, rand, x, z));
 		MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(provider, worldObj, rand, posX, posZ, false));
 
-		BlockSand.fallInstantly = false;
+		BlockFalling.fallInstantly = false;
 	}
 
 	/**
 	 * Two modes of operation: if passed true, save all Chunks in one go. If passed false, save
 	 * up to two chunks. Return true if all chunks have been saved.
 	 */
+	@Override
 	public boolean saveChunks (boolean flag, IProgressUpdate progressUpdate) {
 
 		return true;
@@ -525,6 +531,7 @@ public class ChunkProviderElysian implements IChunkProvider {
 	 * Save extra data not associated with any Chunk. Not saved during autosave, only during
 	 * world unload. Currently unimplemented.
 	 */
+	@Override
 	public void saveExtraData () {
 
 	}
@@ -533,6 +540,7 @@ public class ChunkProviderElysian implements IChunkProvider {
 	 * Unloads chunks that are marked to be unloaded. This is not guaranteed to unload every
 	 * such chunk.
 	 */
+	@Override
 	public boolean unloadQueuedChunks () {
 
 		return false;
@@ -541,6 +549,7 @@ public class ChunkProviderElysian implements IChunkProvider {
 	/**
 	 * Returns if the IChunkProvider supports saving.
 	 */
+	@Override
 	public boolean canSave () {
 
 		return true;
@@ -549,6 +558,7 @@ public class ChunkProviderElysian implements IChunkProvider {
 	/**
 	 * Converts the instance data to a readable string.
 	 */
+	@Override
 	public String makeString () {
 
 		return "SoulForestLevelSource";
@@ -557,12 +567,14 @@ public class ChunkProviderElysian implements IChunkProvider {
 	/**
 	 * Returns a list of creatures of the specified type that can spawn at the given location.
 	 */
+	@Override
 	public List getPossibleCreatures (EnumCreatureType creatureType, int posX, int posY, int posZ) {
 
-		BiomeGenBase biomegenbase = (BiomeGenBase) this.worldObj.getBiomeGenForCoords(posX, posZ);
+		BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(posX, posZ);
 		return biomegenbase == null ? null : biomegenbase.getSpawnableList(creatureType);
 	}
 
+	@Override
 	public int getLoadedChunkCount () {
 
 		return 0;

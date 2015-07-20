@@ -89,9 +89,9 @@ public class TeleporterElysian extends Teleporter {
         }
         else {
             for (l3 = l - short1; l3 <= l + short1; ++l3) {
-                double d4 = (double) l3 + 0.5D - entity.posX;
+                double d4 = l3 + 0.5D - entity.posX;
                 for (int l1 = i1 - short1; l1 <= i1 + short1; ++l1) {
-                    double d5 = (double) l1 + 0.5D - entity.posZ;
+                    double d5 = l1 + 0.5D - entity.posZ;
                     
                     for (int i2 = this.worldServerInstance.getActualHeight() - 1; i2 >= 0; --i2) {
                         
