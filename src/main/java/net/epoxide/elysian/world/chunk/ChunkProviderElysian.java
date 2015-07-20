@@ -33,48 +33,55 @@ import cpw.mods.fml.common.eventhandler.Event.Result;
 
 public class ChunkProviderElysian implements IChunkProvider {
 	private Random rand;
-	/** A NoiseGeneratorOctaves used in generating nether terrain */
-	private NoiseGeneratorOctaves netherNoiseGen1;
-	private NoiseGeneratorOctaves netherNoiseGen2;
-	private NoiseGeneratorOctaves netherNoiseGen3;
-	/** Determines whether slowsand or gravel can be generated at a location */
-	private NoiseGeneratorOctaves topBlockNoiseGen;
-	/** Determines whether something other than nettherack can be generated at a location */
-	private NoiseGeneratorOctaves fillerBlockNoiseGen;
-	public NoiseGeneratorOctaves netherNoiseGen6;
-	public NoiseGeneratorOctaves netherNoiseGen7;
-	/** Is the world that the nether is getting generated. */
+	
+	/** A NoiseGeneratorOctaves used in generating nether terrain, now in ours */
+	private NoiseGeneratorOctaves elysianNoiseGen1;
+	private NoiseGeneratorOctaves elysianNoiseGen2;
+	private NoiseGeneratorOctaves elysianNoiseGen3;
+	
+	/** Determines whether topBlocks can be generated at a location */
+	private NoiseGeneratorOctaves topBlockNoiseGen; //noise 4
+	/** Determines whether something other than the fillerblock can be generated at a location */
+	private NoiseGeneratorOctaves fillerBlockNoiseGen; //noise 5
+	
+	public NoiseGeneratorOctaves elysianNoiseGen6;
+	public NoiseGeneratorOctaves elysianNoiseGen7;
+	/** Is the world that the elysian is getting generated in. */
 	private World worldObj;
 	private double[] noiseField;
-	public MapGenNetherBridge genNetherBridge = new MapGenNetherBridge();
-	/** Holds the noise used to determine whether slowsand can be generated at a location */
-	private double[] topBlockNoise = new double[256];
-	private double[] fillerNoise = new double[256];
 	/**
-	 * Holds the noise used to determine whether something other than netherrack can be
-	 * generated at a location
+	 * Holds the noise used to determine whether something other than topBlocks can be generated at a location
 	 */
 	private double[] exclusivelyFillerNoise = new double[256];
 
 	private MapGenBase caveGenerator = new MapGenCavesHell();
-
+	/** Holds the noise used to determine whether topBlocks can be generated at a location */
+	private double[] topBlockNoise = new double[256];
+	/** Holds the noise used to determine whether fillerBlocks can be generated at a location */
+	private double[] fillerNoise = new double[256];
+	/**contains the noise data for elysianNoiseGen1*/
 	double[] noiseData1;
+	/**contains the noise data for elysianNoiseGen2*/
 	double[] noiseData2;
+	/**contains the noise data for elysianNoiseGen3*/
 	double[] noiseData3;
-	double[] noiseData4;
-	double[] noiseData5;
+	/**contains the noise data for elysianNoiseGen6*/
+	double[] noiseData6;
+	/**contains the noise data for elysianNoiseGen7*/
+	double[] noiseData7;
 
 	/** The biomes that are used to generate the chunk */
 	private BiomeGenBase[] biomesForGeneration;
 
 	private Object theBiomeDecorator;
 
+	/**Block Base for fillers. will be replaced by biome's filler later*/
 	private Block generalFiller = BlockHandler.dirt;
+	/**Block Base for fluid. will be replaced by biome's fluid later (if implemented)*/
 	private Block generalWater = Blocks.water;
 
 	private static final String __OBFID = "CL_00000392";
 	{
-		genNetherBridge = (MapGenNetherBridge) TerrainGen.getModdedMapGen(genNetherBridge, NETHER_BRIDGE);
 		caveGenerator = TerrainGen.getModdedMapGen(caveGenerator, NETHER_CAVE);
 	}
 
@@ -82,28 +89,28 @@ public class ChunkProviderElysian implements IChunkProvider {
 
 		this.worldObj = world;
 		this.rand = new Random(seed);
-		this.netherNoiseGen1 = new NoiseGeneratorOctaves(this.rand, 16);
-		this.netherNoiseGen2 = new NoiseGeneratorOctaves(this.rand, 16);
-		this.netherNoiseGen3 = new NoiseGeneratorOctaves(this.rand, 8);
+		this.elysianNoiseGen1 = new NoiseGeneratorOctaves(this.rand, 16);
+		this.elysianNoiseGen2 = new NoiseGeneratorOctaves(this.rand, 16);
+		this.elysianNoiseGen3 = new NoiseGeneratorOctaves(this.rand, 8);
 		this.topBlockNoiseGen = new NoiseGeneratorOctaves(this.rand, 4);
 		this.fillerBlockNoiseGen = new NoiseGeneratorOctaves(this.rand, 4);
-		this.netherNoiseGen6 = new NoiseGeneratorOctaves(this.rand, 10);
-		this.netherNoiseGen7 = new NoiseGeneratorOctaves(this.rand, 16);
+		this.elysianNoiseGen6 = new NoiseGeneratorOctaves(this.rand, 10);
+		this.elysianNoiseGen7 = new NoiseGeneratorOctaves(this.rand, 16);
 
-		NoiseGenerator[] noiseGens = { netherNoiseGen1, netherNoiseGen2, netherNoiseGen3, topBlockNoiseGen, fillerBlockNoiseGen, netherNoiseGen6, netherNoiseGen7 };
+		NoiseGenerator[] noiseGens = { elysianNoiseGen1, elysianNoiseGen2, elysianNoiseGen3, topBlockNoiseGen, fillerBlockNoiseGen, elysianNoiseGen6, elysianNoiseGen7 };
 		noiseGens = TerrainGen.getModdedNoiseGenerators(world, this.rand, noiseGens);
-		this.netherNoiseGen1 = (NoiseGeneratorOctaves) noiseGens[0];
-		this.netherNoiseGen2 = (NoiseGeneratorOctaves) noiseGens[1];
-		this.netherNoiseGen3 = (NoiseGeneratorOctaves) noiseGens[2];
+		this.elysianNoiseGen1 = (NoiseGeneratorOctaves) noiseGens[0];
+		this.elysianNoiseGen2 = (NoiseGeneratorOctaves) noiseGens[1];
+		this.elysianNoiseGen3 = (NoiseGeneratorOctaves) noiseGens[2];
 		this.topBlockNoiseGen = (NoiseGeneratorOctaves) noiseGens[3];
 		this.fillerBlockNoiseGen = (NoiseGeneratorOctaves) noiseGens[4];
-		this.netherNoiseGen6 = (NoiseGeneratorOctaves) noiseGens[5];
-		this.netherNoiseGen7 = (NoiseGeneratorOctaves) noiseGens[6];
+		this.elysianNoiseGen6 = (NoiseGeneratorOctaves) noiseGens[5];
+		this.elysianNoiseGen7 = (NoiseGeneratorOctaves) noiseGens[6];
 	}
 
 	/**
-	 * initializes noisefields calculates size of the noisefields with other noisefields uses
-	 * only biome found at spawn to place blocks
+	 * initializes noisefields, calculates size of the noisefields with other noisefields, uses
+	 * default blocks to start generation
 	 * */
 	public void prepareChunk (int posX, int posZ, Block[] chunkBlocks) {
 
@@ -113,12 +120,7 @@ public class ChunkProviderElysian implements IChunkProvider {
 		byte sevenTeen = 33;
 		int five_b = four + 1;
 
-		// these coordinates take only the biome from spawn !
 		BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(five_a + 16, five_b + 16);
-
-		// this should be better
-		// but odly, this makes it (run hyper slowly)/crash and/or bug out
-		// BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(posX,posZ);
 
 		BiomeGenElysian biome = null;
 
@@ -156,13 +158,13 @@ public class ChunkProviderElysian implements IChunkProvider {
 						double d9 = 0.25D;
 						double sN1 = sizeNoise1;
 						double sN2 = sizeNoise2;
-						double d12 = (sizeNoise3 - sizeNoise1) * d9; // TODO name these !
-						double d13 = (sizeNoise4 - sizeNoise2) * d9; // TODO name these !
+						double compactNoiseDouble3n1 = (sizeNoise3 - sizeNoise1) * d9;
+						double compactNoiseDouble4n2 = (sizeNoise4 - sizeNoise2) * d9;
 
 						for (int xSize_bis = 0; xSize_bis < 4; ++xSize_bis) {
 
 							int zSise_bis = xSize_bis + xSize * 4 << 12 | 0 + zSize * 4 << 8 | chunkSize * 8 + loopNr;
-							short short1 = 256; //total world height
+							short worldHeight = 256; //total world height
 							double d14 = 0.25D;
 							double sn1_bis = sN1;
 							double d16 = (sN2 - sN1) * d14; // TODO name these !
@@ -171,20 +173,19 @@ public class ChunkProviderElysian implements IChunkProvider {
 
 								Block block = null;
 
-								// water and filler are the same everywhere
-								// this is done in overworld generation too
 								if (chunkSize * 8 + loopNr < waterLevel)
-									block = generalWater; // fluid is the same everywhere
+									block = generalWater; 
+								
 								if (sn1_bis > 0.0D)
-									block = generalFiller; // filelr is the sam everywhere.
+									block = generalFiller; 
 
 								chunkBlocks[zSise_bis] = block;
-								zSise_bis += short1;
+								zSise_bis += worldHeight;
 								sn1_bis += d16;
 							}
 
-							sN1 += d12;
-							sN2 += d13;
+							sN1 += compactNoiseDouble3n1;
+							sN2 += compactNoiseDouble4n2;
 						}
 
 						sizeNoise1 += sizeNoise5;
@@ -370,11 +371,11 @@ public class ChunkProviderElysian implements IChunkProvider {
 		double d0 = 684.412D;
 		double d1 = 2053.236D;
 
-		this.noiseData1 = this.netherNoiseGen3.generateNoiseOctaves(this.noiseData1, posX, posY, posZ, sizeX, sizeY, sizeZ, d0 / 80.0D, d1 / 60.0D, d0 / 80.0D);
-		this.noiseData2 = this.netherNoiseGen1.generateNoiseOctaves(this.noiseData2, posX, posY, posZ, sizeX, sizeY, sizeZ, d0, d1, d0);
-		this.noiseData3 = this.netherNoiseGen2.generateNoiseOctaves(this.noiseData3, posX, posY, posZ, sizeX, sizeY, sizeZ, d0, d1, d0);
-		this.noiseData4 = this.netherNoiseGen6.generateNoiseOctaves(this.noiseData4, posX, posY, posZ, sizeX, 1, sizeZ, 1.0D, 0.0D, 1.0D);
-		this.noiseData5 = this.netherNoiseGen7.generateNoiseOctaves(this.noiseData5, posX, posY, posZ, sizeX, 1, sizeZ, 100.0D, 0.0D, 100.0D);
+		this.noiseData1 = this.elysianNoiseGen3.generateNoiseOctaves(this.noiseData1, posX, posY, posZ, sizeX, sizeY, sizeZ, d0 / 80.0D, d1 / 60.0D, d0 / 80.0D);
+		this.noiseData2 = this.elysianNoiseGen1.generateNoiseOctaves(this.noiseData2, posX, posY, posZ, sizeX, sizeY, sizeZ, d0, d1, d0);
+		this.noiseData3 = this.elysianNoiseGen2.generateNoiseOctaves(this.noiseData3, posX, posY, posZ, sizeX, sizeY, sizeZ, d0, d1, d0);
+		this.noiseData6 = this.elysianNoiseGen6.generateNoiseOctaves(this.noiseData6, posX, posY, posZ, sizeX, 1, sizeZ, 1.0D, 0.0D, 1.0D);
+		this.noiseData7 = this.elysianNoiseGen7.generateNoiseOctaves(this.noiseData7, posX, posY, posZ, sizeX, 1, sizeZ, 100.0D, 0.0D, 100.0D);
 
 		int k1 = 0;
 		int l1 = 0;
@@ -396,14 +397,14 @@ public class ChunkProviderElysian implements IChunkProvider {
 
 		for (i = 0; i < sizeX; ++i) {
 			for (int k2 = 0; k2 < sizeZ; ++k2) {
-				double d3 = (this.noiseData4[l1] + 256.0D) / 1024.0D; //edited this from 128 / 512 to 512 / 1024
+				double d3 = (this.noiseData6[l1] + 256.0D) / 1024.0D; //edited this from 128 / 512 to 512 / 1024
 
 				if (d3 > 1.0D) {
 					d3 = 1.0D;
 				}
 
 				double d4 = 0.0D;
-				double d5 = this.noiseData5[l1] / 8000.0D;
+				double d5 = this.noiseData7[l1] / 8000.0D;
 
 				if (d5 < 0.0D) {
 					d5 = -d5;
