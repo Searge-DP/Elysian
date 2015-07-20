@@ -366,43 +366,43 @@ public class ChunkProviderElysian implements IChunkProvider {
 		if (noiseArray == null)
 			noiseArray = new double[sizeX * sizeY * sizeZ];
 
-		double d0 = 684.412D;
-		double d1 = 2053.236D;
+		double noiseScaleZX = 684.412D;
+		double noiseScaleY = 2053.236D;
 
-		this.noiseData1 = this.elysianNoiseGen3.generateNoiseOctaves(this.noiseData1, posX, posY, posZ, sizeX, sizeY, sizeZ, d0 / 80.0D, d1 / 60.0D, d0 / 80.0D);
-		this.noiseData2 = this.elysianNoiseGen1.generateNoiseOctaves(this.noiseData2, posX, posY, posZ, sizeX, sizeY, sizeZ, d0, d1, d0);
-		this.noiseData3 = this.elysianNoiseGen2.generateNoiseOctaves(this.noiseData3, posX, posY, posZ, sizeX, sizeY, sizeZ, d0, d1, d0);
+		this.noiseData1 = this.elysianNoiseGen3.generateNoiseOctaves(this.noiseData1, posX, posY, posZ, sizeX, sizeY, sizeZ, noiseScaleZX / 80.0D, noiseScaleY / 60.0D, noiseScaleZX / 80.0D);
+		this.noiseData2 = this.elysianNoiseGen1.generateNoiseOctaves(this.noiseData2, posX, posY, posZ, sizeX, sizeY, sizeZ, noiseScaleZX, noiseScaleY, noiseScaleZX);
+		this.noiseData3 = this.elysianNoiseGen2.generateNoiseOctaves(this.noiseData3, posX, posY, posZ, sizeX, sizeY, sizeZ, noiseScaleZX, noiseScaleY, noiseScaleZX);
 		this.noiseData6 = this.elysianNoiseGen6.generateNoiseOctaves(this.noiseData6, posX, posY, posZ, sizeX, 1, sizeZ, 1.0D, 0.0D, 1.0D);
 		this.noiseData7 = this.elysianNoiseGen7.generateNoiseOctaves(this.noiseData7, posX, posY, posZ, sizeX, 1, sizeZ, 100.0D, 0.0D, 100.0D);
 
-		int k1 = 0;
-		int l1 = 0;
+		int noiseIndex_1_2_3 = 0;
+		int noiseIndex_6_7 = 0;
+		
 		double[] chunkHeight = new double[sizeY];
-		int x; // just and index for the loop
 
-		for (x = 0; x < sizeY; ++x) {
-			chunkHeight[x] = Math.cos((double) x * Math.PI * 6.0D / (double) sizeY) * 2.0D;
-			double index_D = (double) x;
+		for (int indexHeight = 0; indexHeight < sizeY; ++indexHeight) {
+			chunkHeight[indexHeight] = Math.cos((double) indexHeight * Math.PI * 6.0D / (double) sizeY) * 2.0D;
+			double index_D = (double) indexHeight;
 
-			if (x > sizeY / 2)
-				index_D = (double) (sizeY - 1 - x);
+			if (indexHeight > sizeY / 2)
+				index_D = (double) (sizeY - 1 - indexHeight);
 
 			if (index_D < 4.0D) {
 				index_D = 4.0D - index_D;
-				chunkHeight[x] -= index_D * index_D * index_D * 10.0D;
+				chunkHeight[indexHeight] -= index_D * index_D * index_D * 10.0D;
 			}
 		}
 
-		for (x = 0; x < sizeX; ++x) {
+		for (int indexHeight = 0; indexHeight < sizeX; ++indexHeight) {
 			for (int z = 0; z < sizeZ; ++z) {
 				
-				double noiseData_6 = (this.noiseData6[l1] + 256.0D) / 1024.0D;
+				double noiseData_6 = (this.noiseData6[noiseIndex_6_7] + 256.0D) / 1024.0D;
 
 				if (noiseData_6 > 1.0D) 
 					noiseData_6 = 1.0D;
 
 				double d4 = 0.0D;
-				double noiseData_7 = this.noiseData7[l1] / 8000.0D;
+				double noiseData_7 = this.noiseData7[noiseIndex_6_7] / 8000.0D;
 
 				if (noiseData_7 < 0.0D) {
 					noiseData_7 = -noiseData_7;
@@ -431,14 +431,14 @@ public class ChunkProviderElysian implements IChunkProvider {
 
 				noiseData_6 += 0.5D;
 				noiseData_7 = noiseData_7 * (double) sizeY / 16.0D;
-				++l1;
+				++noiseIndex_6_7;
 
 				for (int y = 0; y < sizeY; ++y) {
 					double d6 = 0.0D;
 					double d7 = chunkHeight[y];
-					double noiseData_2 = this.noiseData2[k1] / 1024.0D; //from 512 to 1024. both
-					double noiseData_3 = this.noiseData3[k1] / 1024.0D;
-					double noiseData_1 = (this.noiseData1[k1] / 10.0D + 1.0D) / 2.0D;
+					double noiseData_2 = this.noiseData2[noiseIndex_1_2_3] / 1024.0D; //from 512 to 1024. both
+					double noiseData_3 = this.noiseData3[noiseIndex_1_2_3] / 1024.0D;
+					double noiseData_1 = (this.noiseData1[noiseIndex_1_2_3] / 10.0D + 1.0D) / 2.0D;
 
 					if (noiseData_1 < 0.0D) {
 						d6 = noiseData_2;
@@ -472,8 +472,8 @@ public class ChunkProviderElysian implements IChunkProvider {
 						d6 = d6 * (1.0D - d11) + -10.0D * d11;
 					}
 
-					noiseArray[k1] = d6;
-					++k1;
+					noiseArray[noiseIndex_1_2_3] = d6;
+					++noiseIndex_1_2_3;
 				}
 			}
 		}
