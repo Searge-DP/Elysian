@@ -1,4 +1,4 @@
-package net.epoxide.elysian.items.models;
+package net.epoxide.elysian.client.model.armor;
 
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
