@@ -36,10 +36,8 @@ public class EntityEnvironementCreature extends EntityLiving implements	IAnimals
 		super.onUpdate();
 		this.motionY *= 0.2000000238418579D;
 
-//		int c = rand.nextInt(2);
-		
-//		if(c == 0)
-			Minecraft.getMinecraft().effectRenderer.addEffect(new EntityElysianEnvironementEffect(worldObj, posX, posY, posZ));
+		//TODO get rid of client call
+		Minecraft.getMinecraft().effectRenderer.addEffect(new EntityElysianEnvironementEffect(worldObj, posX, posY, posZ));
 
 	}
 
