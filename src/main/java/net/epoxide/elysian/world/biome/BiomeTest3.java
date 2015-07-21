@@ -18,5 +18,4 @@ public class BiomeTest3 extends BiomeGenElysian {
         this.waterColorMultiplier = 0x64441c;
         this.setColor(0x64441c);
     }
-    
 }

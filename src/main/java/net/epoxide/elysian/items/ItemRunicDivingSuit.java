@@ -8,7 +8,6 @@ import net.epoxide.elysian.client.model.armor.ModelTurtleSuit;
 import net.epoxide.elysian.lib.Utilities;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.EnchantmentHelper;
