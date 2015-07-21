@@ -37,7 +37,7 @@ public class ColorObject {
      */
     public ColorObject(int rgb) {
     
-        this((rgb >> 16 & 255) / 255.0F, (rgb >> 8 & 255) / 255.0F, (rgb & 255) / 255.0F);
+        this((float) (rgb >> 16 & 255) / 255.0F, (float) (rgb >> 8 & 255) / 255.0F, (float) (rgb & 255) / 255.0F);
     }
     
     /**
@@ -196,8 +196,7 @@ public class ColorObject {
      * 
      * @return ColorObject: A clone of the provided ColorObject;
      */
-    @Override
-	public ColorObject clone () {
+    public ColorObject clone () {
     
         ColorObject clone = new ColorObject(false);
         clone.red = this.red;

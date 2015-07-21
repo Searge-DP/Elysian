@@ -32,8 +32,7 @@ public class RenderElysianGolem extends RenderLiving {
         GL11.glTranslatef(-0.5f, 1f, -1f);
     }
     
-    @Override
-	public void doRender (Entity e, double par2, double par4, double par6, float par8, float par9) {
+    public void doRender (Entity e, double par2, double par4, double par6, float par8, float par9) {
     
         super.doRender(e, par2, par4, par6, par8, par9);
     }

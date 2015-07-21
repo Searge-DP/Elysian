@@ -186,7 +186,7 @@ public class ItemRunicDivingSuit extends ItemArmor {
                 event.setCanceled(true);
                 event.density = 0.002f;
                 GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP);
-                GL11.glFogf(GL11.GL_FOG_DENSITY, 1.0f + (0.1F - EnchantmentHelper.getRespiration(player) * 0.03F));
+                GL11.glFogf(GL11.GL_FOG_DENSITY, 1.0f + (0.1F - (float) EnchantmentHelper.getRespiration(player) * 0.03F));
             }
         }
     }
@@ -197,7 +197,7 @@ public class ItemRunicDivingSuit extends ItemArmor {
     public void onPlayerRenderArmor (RenderPlayerEvent.SetArmorModel evt) {
     
         if (evt.entityPlayer != null) {
-            EntityPlayer player = evt.entityPlayer;
+            EntityPlayer player = (EntityPlayer) evt.entityPlayer;
             
             ModelBiped main = evt.renderer.modelBipedMain;
             
