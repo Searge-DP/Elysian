@@ -2,6 +2,7 @@ package net.epoxide.elysian.client;
 
 import net.epoxide.elysian.common.ProxyCommon;
 import net.epoxide.elysian.entity.EntityEnvironementCreature;
+import net.epoxide.elysian.entity.EntityHandler;
 import net.epoxide.elysian.entity.render.RenderElysianEnvCreature;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
@@ -24,8 +25,6 @@ public class ProxyClient extends ProxyCommon {
 
 	@Override
 	public void registerRenderers() {
-		RenderingRegistry.registerEntityRenderingHandler(EntityEnvironementCreature.class, new RenderElysianEnvCreature());
-		
-		
+		EntityHandler.registerRendering();
 	}
 }

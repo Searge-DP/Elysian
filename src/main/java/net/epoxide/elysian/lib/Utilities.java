@@ -86,4 +86,12 @@ public class Utilities {
             super("An attempt to find an available biome ID was made, however no IDs are available.");
         }
     }
+    
+    /**system time used for entity rendering*/
+    private static final long time = System.currentTimeMillis();
+    
+    /**Used in rendering animations elysian entities. Movement and rune essence blinking is done with this. */
+	public static float getSysTimeF() {
+		return (System.currentTimeMillis() - time) / 50F;
+	}
 }
