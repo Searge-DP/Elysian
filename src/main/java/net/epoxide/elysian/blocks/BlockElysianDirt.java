@@ -3,7 +3,6 @@ package net.epoxide.elysian.blocks;
 import net.epoxide.elysian.Elysian;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
 
 public class BlockElysianDirt extends Block {
     

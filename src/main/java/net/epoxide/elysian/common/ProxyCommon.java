@@ -26,10 +26,11 @@ public class ProxyCommon {
     
     }
     
-    /**A sided method used for registering rendering for entities. 
-     * Only the one in ClientProxy should be used, as rendering is client only
+    /**
+     * A sided method used for registering rendering for entities. Only the one in ClientProxy
+     * should be used, as rendering is client only
      */
-    public void registerRenderers(){
-    	
+    public void registerRenderers () {
+    
     }
 }
