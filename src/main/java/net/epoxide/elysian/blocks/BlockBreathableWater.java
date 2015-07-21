@@ -8,14 +8,14 @@ import net.minecraftforge.fluids.BlockFluidClassic;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockElysianWater extends BlockFluidClassic {
+public class BlockBreathableWater extends BlockFluidClassic {
     
     @SideOnly(Side.CLIENT)
     protected IIcon stillIcon;
     @SideOnly(Side.CLIENT)
     protected IIcon flowingIcon;
     
-    public BlockElysianWater() {
+    public BlockBreathableWater() {
     
         super(BlockHandler.water_fluid_stub, BlockHandler.fluid);
         setCreativeTab(Elysian.tabElysian);

@@ -25,7 +25,7 @@ public class BlockHandler {
         
         // water -start
         FluidRegistry.registerFluid(water_fluid_stub);
-        water = new BlockElysianWater();
+        water = new BlockBreathableWater();
         water_fluid_stub.setUnlocalizedName(water.getUnlocalizedName());
         
         GameRegistry.registerBlock(water, "elysianFluid");
