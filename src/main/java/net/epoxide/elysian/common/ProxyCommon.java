@@ -1,6 +1,5 @@
 package net.epoxide.elysian.common;
 
-
 public class ProxyCommon {
     
     /**

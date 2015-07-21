@@ -4,7 +4,6 @@ import net.epoxide.elysian.blocks.BlockHandler;
 import net.epoxide.elysian.common.ProxyCommon;
 import net.epoxide.elysian.common.packet.PacketHandler;
 import net.epoxide.elysian.handler.ConfigurationHandler;
-import net.epoxide.elysian.handler.ElysianEventHandler;
 import net.epoxide.elysian.handler.GuiHandler;
 import net.epoxide.elysian.items.ItemHandler;
 import net.epoxide.elysian.lib.Constants;
@@ -45,9 +44,6 @@ public class Elysian {
         
         DimensionManager.registerProviderType(ConfigurationHandler.dimensionID, WorldProviderElysian.class, true);
         DimensionManager.registerDimension(ConfigurationHandler.dimensionID, ConfigurationHandler.dimensionID);
-        
-        new ElysianEventHandler();
-        
     }
     
     @EventHandler
