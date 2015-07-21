@@ -20,7 +20,7 @@ public class EntityHandler {
 
     private void register() {
 
-    	EntityRegistry.registerGlobalEntityID(EntityEnvironementCreature.class, "ElysianEnvironementEntity", EntityRegistry.findGlobalUniqueEntityId(), 0xf0f0ff, 0x0ff0f0);
+    	EntityRegistry.registerGlobalEntityID(EntityEnvironementCreature.class, "elysianWhisp", EntityRegistry.findGlobalUniqueEntityId(), 0xf0f0ff, 0x0ff0f0);
 
     }
     
