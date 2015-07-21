@@ -15,6 +15,7 @@ import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAIMate;
 import net.minecraft.entity.ai.EntityAIOwnerHurtByTarget;
 import net.minecraft.entity.ai.EntityAIOwnerHurtTarget;
+import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityCreeper;
@@ -25,30 +26,25 @@ import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class EntityRuneGolem extends EntityTameable
 {
-	/** true is the wolf is wet else false */
-	private boolean isShaking;
-	private boolean field_70928_h;
-	/**
-	 * This time increases while wolf is shaking and emitting water particles.
-	 */
-	private float timeWolfIsShaking;
-	private float prevTimeWolfIsShaking;
-
-	public EntityRuneGolem(World par1World)
+	public EntityRuneGolem(World p_i1696_1_)
 	{
-		super(par1World);
-		this.setSize(0.6F, 1.2F);
+		super(p_i1696_1_);
+		this.setSize(0.6F, 0.8F);
 		this.getNavigator().setAvoidsWater(true);
+		this.tasks.addTask(1, new EntityAISwimming(this));
 		this.tasks.addTask(2, this.aiSit);
 		this.tasks.addTask(3, new EntityAILeapAtTarget(this, 0.4F));
 		this.tasks.addTask(4, new EntityAIAttackOnCollide(this, 1.0D, true));
@@ -69,13 +65,9 @@ public class EntityRuneGolem extends EntityTameable
 		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.30000001192092896D);
 
 		if (this.isTamed())
-		{
-			this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(20.0D);
-		}
+			this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25.0D);
 		else
-		{
-			this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(8.0D);
-		}
+			this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(10.0D);
 	}
 
 	/**
@@ -89,18 +81,14 @@ public class EntityRuneGolem extends EntityTameable
 	/**
 	 * Sets the active target the Task system uses for tracking
 	 */
-	public void setAttackTarget(EntityLivingBase par1EntityLivingBase)
+	public void setAttackTarget(EntityLivingBase el)
 	{
-		super.setAttackTarget(par1EntityLivingBase);
+		super.setAttackTarget(el);
 
-		if (par1EntityLivingBase == null)
-		{
+		if (el == null)
 			this.setAngry(false);
-		}
 		else if (!this.isTamed())
-		{
 			this.setAngry(true);
-		}
 	}
 
 	/**
@@ -116,10 +104,10 @@ public class EntityRuneGolem extends EntityTameable
 		super.entityInit();
 		this.dataWatcher.addObject(18, new Float(this.getHealth()));
 		this.dataWatcher.addObject(19, new Byte((byte)0));
-		this.dataWatcher.addObject(20, new Byte((byte)BlockColored.func_150032_b(1)));
 	}
 
-	protected void func_145780_a(int p_145780_1_, int p_145780_2_, int p_145780_3_, Block p_145780_4_)
+	@Override
+	protected void func_145780_a(int x, int y, int z, Block block)
 	{
 		this.playSound("mob.wolf.step", 0.15F, 1.0F);
 	}
@@ -127,19 +115,19 @@ public class EntityRuneGolem extends EntityTameable
 	/**
 	 * (abstract) Protected helper method to write subclass entity data to NBT.
 	 */
-	public void writeEntityToNBT(NBTTagCompound par1NBTTagCompound)
+	public void writeEntityToNBT(NBTTagCompound nbt)
 	{
-		super.writeEntityToNBT(par1NBTTagCompound);
-		par1NBTTagCompound.setBoolean("Angry", this.isAngry());
+		super.writeEntityToNBT(nbt);
+		nbt.setBoolean("Angry", this.isAngry());
 	}
 
 	/**
 	 * (abstract) Protected helper method to read subclass entity data from NBT.
 	 */
-	public void readEntityFromNBT(NBTTagCompound par1NBTTagCompound)
+	public void readEntityFromNBT(NBTTagCompound nbt)
 	{
-		super.readEntityFromNBT(par1NBTTagCompound);
-		this.setAngry(par1NBTTagCompound.getBoolean("Angry"));
+		super.readEntityFromNBT(nbt);
+		this.setAngry(nbt.getBoolean("Angry"));
 	}
 
 	/**
@@ -186,93 +174,70 @@ public class EntityRuneGolem extends EntityTameable
 	public void onLivingUpdate()
 	{
 		super.onLivingUpdate();
-
-		if (!this.worldObj.isRemote && this.isShaking && !this.field_70928_h && !this.hasPath() && this.onGround)
-		{
-			this.field_70928_h = true;
-			this.timeWolfIsShaking = 0.0F;
-			this.prevTimeWolfIsShaking = 0.0F;
-			this.worldObj.setEntityState(this, (byte)8);
-		}
-	}
-
-
-	public boolean getWolfShaking()
-	{
-		return this.isShaking;
 	}
 
 	/**
-	 * Used when calculating the amount of shading to apply while the wolf is shaking.
+	 * Called to update the entity's position/logic.
 	 */
-
-	public float getShadingWhileShaking(float par1)
+	public void onUpdate()
 	{
-		return 0.75F + (this.prevTimeWolfIsShaking + (this.timeWolfIsShaking - this.prevTimeWolfIsShaking) * par1) / 2.0F * 0.25F;
-	}
+		super.onUpdate();
 
-	public float getShakeAngle(float par1, float par2)
-	{
-		float f2 = (this.prevTimeWolfIsShaking + (this.timeWolfIsShaking - this.prevTimeWolfIsShaking) * par1 + par2) / 1.8F;
-
-		if (f2 < 0.0F)
+		if (this.mustChase())
 		{
-			f2 = 0.0F;
+			this.numTicksToChaseTarget = 10;
 		}
-		else if (f2 > 1.0F)
-		{
-			f2 = 1.0F;
-		}
-
-		return MathHelper.sin(f2 * (float)Math.PI) * MathHelper.sin(f2 * (float)Math.PI * 11.0F) * 0.15F * (float)Math.PI;
 	}
 
 	public float getEyeHeight()
 	{
-		return this.height * 1.2F;
+		return this.height * 0.8F;
+	}
+
+	/**
+	 * The speed it takes to move the entityliving's rotationPitch through the faceEntity method. This is only currently
+	 * use in wolves.
+	 */
+	public int getVerticalFaceSpeed()
+	{
+		return this.isSitting() ? 20 : super.getVerticalFaceSpeed();
 	}
 
 	/**
 	 * Called when the entity is attacked.
 	 */
-	public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
+	public boolean attackEntityFrom(DamageSource dmgSource, float dmg)
 	{
 		if (this.isEntityInvulnerable())
-		{
 			return false;
-		}
-		else
-		{
-			Entity entity = par1DamageSource.getEntity();
-			this.aiSit.setSitting(false);
-
+		else{
+			Entity entity = dmgSource.getEntity();
+			setSitting(false);
+			
+			if(entity instanceof EntityCreeper || dmgSource.isExplosion())
+				return false;
+			
 			if (entity != null && !(entity instanceof EntityPlayer) && !(entity instanceof EntityArrow))
-			{
-				par2 = (par2 + 1.0F) / 2.0F;
-			}
+				dmg = (dmg + 1.0F) / 2.0F;
 
-			return super.attackEntityFrom(par1DamageSource, par2);
+			return super.attackEntityFrom(dmgSource, dmg);
 		}
 	}
 
-	public boolean attackEntityAsMob(Entity par1Entity)
+	public boolean attackEntityAsMob(Entity el)
 	{
 		int i = this.isTamed() ? 4 : 2;
-		return par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), i);
+		return el.attackEntityFrom(DamageSource.causeMobDamage(this), (float)i);
 	}
 
-	public void setTamed(boolean par1)
+	public void setTamed(boolean flag)
 	{
-		super.setTamed(par1);
+		super.setTamed(flag);
 
-		if (par1)
-		{
-			this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(20.0D);
-		}
+		if (flag)
+			this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25.0D);
 		else
-		{
-			this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(8.0D);
-		}
+			this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(10.0D);
 	}
 
 	/**
@@ -286,48 +251,41 @@ public class EntityRuneGolem extends EntityTameable
 		{
 			if (itemstack != null)
 			{
-				if(getHealth() < 20.0F){
-					if (Block.getBlockFromItem(itemstack.getItem()).getMaterial().equals(Material.rock))
+				if (itemstack.getItem() instanceof ItemFood)
+				{
+					ItemFood itemfood = (ItemFood)itemstack.getItem();
+
+					if(Block.getBlockFromItem(itemstack.getItem()).getMaterial().equals(Material.rock) && this.dataWatcher.getWatchableObjectFloat(18) < 20.0F)
 					{
 						if (!player.capabilities.isCreativeMode)
-						{
 							--itemstack.stackSize;
-						}
 
 						this.heal(1);
 
 						if (itemstack.stackSize <= 0)
-						{
 							player.inventory.setInventorySlotContents(player.inventory.currentItem, (ItemStack)null);
-						}
 
+						return true;
 					}
-
-					return true;
 				}
 			}
 
-			if (player.getCommandSenderName().equalsIgnoreCase(this.getOwnerName()) && !this.worldObj.isRemote)
+			if (this.func_152114_e(player) && !this.worldObj.isRemote && !this.isBreedingItem(itemstack))
 			{
-				System.out.println(isSitting());
-				setSitting(!isSitting());
+				setSitting(!this.isSitting());
 				this.isJumping = false;
 				this.setPathToEntity((PathEntity)null);
 				this.setTarget((Entity)null);
 				this.setAttackTarget((EntityLivingBase)null);
 			}
 		}
-		else if (itemstack != null && Block.getBlockFromItem(itemstack.getItem()).equals(Blocks.mossy_cobblestone) && !this.isAngry())
+		else if (itemstack != null && Block.getBlockFromItem(itemstack.getItem()) == Blocks.mossy_cobblestone && !this.isAngry())
 		{
 			if (!player.capabilities.isCreativeMode)
-			{
 				--itemstack.stackSize;
-			}
 
 			if (itemstack.stackSize <= 0)
-			{
 				player.inventory.setInventorySlotContents(player.inventory.currentItem, (ItemStack)null);
-			}
 
 			if (!this.worldObj.isRemote)
 			{
@@ -337,10 +295,10 @@ public class EntityRuneGolem extends EntityTameable
 					this.setPathToEntity((PathEntity)null);
 					this.setAttackTarget((EntityLivingBase)null);
 					this.aiSit.setSitting(true);
-					this.setOwner(player.getCommandSenderName());
+					this.setHealth(20.0F);
+					this.func_152115_b(player.getUniqueID().toString());
 					this.playTameEffect(true);
 					this.worldObj.setEntityState(this, (byte)7);
-					this.setHealth(20.0f);
 				}
 				else
 				{
@@ -354,27 +312,34 @@ public class EntityRuneGolem extends EntityTameable
 
 		return super.interact(player);
 	}
-	public void handleHealthUpdate(byte par1)
+
+	@SideOnly(Side.CLIENT)
+	public void handleHealthUpdate(byte p_70103_1_)
 	{
-		if (par1 == 8)
-		{
-			this.field_70928_h = true;
-			this.timeWolfIsShaking = 0.0F;
-			this.prevTimeWolfIsShaking = 0.0F;
-		}
-		else
-		{
-			super.handleHealthUpdate(par1);
-		}
+		super.handleHealthUpdate(p_70103_1_);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public float getTailRotation()
+	{
+		return this.isAngry() ? 1.5393804F : (this.isTamed() ? (0.55F - (20.0F - this.dataWatcher.getWatchableObjectFloat(18)) * 0.02F) * (float)Math.PI : ((float)Math.PI / 5F));
 	}
 
 	/**
 	 * Checks if the parameter is an item which this animal can be fed to breed it (wheat, carrots or seeds depending on
 	 * the animal type)
 	 */
-	public boolean isBreedingItem(ItemStack stack)
+	public boolean isBreedingItem(ItemStack p_70877_1_)
 	{
 		return false;
+	}
+
+	/**
+	 * Will return how many at most can spawn in a chunk at once.
+	 */
+	public int getMaxSpawnedInChunk()
+	{
+		return 8;
 	}
 
 	/**
@@ -388,11 +353,11 @@ public class EntityRuneGolem extends EntityTameable
 	/**
 	 * Sets whether this wolf is angry or not.
 	 */
-	public void setAngry(boolean par1)
+	public void setAngry(boolean flag)
 	{
 		byte b0 = this.dataWatcher.getWatchableObjectByte(16);
 
-		if (par1)
+		if (flag)
 		{
 			this.dataWatcher.updateObject(16, Byte.valueOf((byte)(b0 | 2)));
 		}
@@ -402,7 +367,7 @@ public class EntityRuneGolem extends EntityTameable
 		}
 	}
 
-	public EntityRuneGolem createChild(EntityAgeable par1EntityAgeable)
+	public EntityRuneGolem createChild(EntityAgeable p_90011_1_)
 	{
 		return null;
 	}
@@ -410,9 +375,14 @@ public class EntityRuneGolem extends EntityTameable
 	/**
 	 * Returns true if the mob is currently able to mate with the specified mob.
 	 */
-	public boolean canMateWith(EntityAnimal par1EntityAnimal)
+	public boolean canMateWith(EntityAnimal p_70878_1_)
 	{
 		return false;
+	}
+
+	public boolean mustChase()
+	{
+		return this.dataWatcher.getWatchableObjectByte(19) == 1;
 	}
 
 	/**
@@ -423,38 +393,21 @@ public class EntityRuneGolem extends EntityTameable
 		return !this.isTamed() && this.ticksExisted > 2400;
 	}
 
-	public boolean func_142018_a(EntityLivingBase par1EntityLivingBase, EntityLivingBase par2EntityLivingBase)
+	public boolean func_142018_a(EntityLivingBase victim, EntityLivingBase attacker)
 	{
-		if (!(par1EntityLivingBase instanceof EntityCreeper) && !(par1EntityLivingBase instanceof EntityGhast))
+		if (!(victim instanceof EntityGhast))
 		{
-			if (par1EntityLivingBase instanceof EntityRuneGolem)
+			if (victim instanceof EntityRuneGolem)
 			{
-				EntityRuneGolem EntityRuneGolem = (EntityRuneGolem)par1EntityLivingBase;
+				EntityRuneGolem entitywolf = (EntityRuneGolem)victim;
 
-				if (EntityRuneGolem.isTamed() && EntityRuneGolem.getOwner() == par2EntityLivingBase)
-				{
+				if (entitywolf.isTamed() && entitywolf.getOwner() == attacker)
 					return false;
-				}
 			}
 
-			return par1EntityLivingBase instanceof EntityPlayer && par2EntityLivingBase instanceof EntityPlayer && !((EntityPlayer)par2EntityLivingBase).canAttackPlayer((EntityPlayer)par1EntityLivingBase) ? false : !(par1EntityLivingBase instanceof EntityHorse) || !((EntityHorse)par1EntityLivingBase).isTame();
+			return victim instanceof EntityPlayer && attacker instanceof EntityPlayer && !((EntityPlayer)attacker).canAttackPlayer((EntityPlayer)victim) ? false : !(victim instanceof EntityHorse) || !((EntityHorse)victim).isTame();
 		}
 		else
-		{
 			return false;
-		}
 	}
-	
-	/**overwrite for func_152113_b, which is unmapped
-	 * returns the owner's name, if any set*/
-	public String getOwnerName(){
-		return this.dataWatcher.getWatchableObjectString(17);
-	}
-	
-	/**overwrite for func_152115_b, which is unmapped
-	 * sets the owners name*/
-	public void setOwner(String s){
-		 this.dataWatcher.updateObject(17, s);
-	}
-	
 }
