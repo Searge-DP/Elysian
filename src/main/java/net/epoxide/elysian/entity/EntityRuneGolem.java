@@ -55,7 +55,8 @@ public class EntityRuneGolem extends EntityTameable {
         this.setTamed(false);
     }
     
-    protected void applyEntityAttributes () {
+    @Override
+	protected void applyEntityAttributes () {
     
         super.applyEntityAttributes();
         this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.30000001192092896D);
@@ -69,7 +70,8 @@ public class EntityRuneGolem extends EntityTameable {
     /**
      * Returns true if the newer Entity AI code should be run
      */
-    public boolean isAIEnabled () {
+    @Override
+	public boolean isAIEnabled () {
     
         return true;
     }
@@ -77,7 +79,8 @@ public class EntityRuneGolem extends EntityTameable {
     /**
      * Sets the active target the Task system uses for tracking
      */
-    public void setAttackTarget (EntityLivingBase el) {
+    @Override
+	public void setAttackTarget (EntityLivingBase el) {
     
         super.setAttackTarget(el);
         
@@ -90,12 +93,14 @@ public class EntityRuneGolem extends EntityTameable {
     /**
      * main AI tick function, replaces updateEntityActionState
      */
-    protected void updateAITick () {
+    @Override
+	protected void updateAITick () {
     
         this.dataWatcher.updateObject(18, Float.valueOf(this.getHealth()));
     }
     
-    protected void entityInit () {
+    @Override
+	protected void entityInit () {
     
         super.entityInit();
         this.dataWatcher.addObject(18, new Float(this.getHealth()));
@@ -111,7 +116,8 @@ public class EntityRuneGolem extends EntityTameable {
     /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
-    public void writeEntityToNBT (NBTTagCompound nbt) {
+    @Override
+	public void writeEntityToNBT (NBTTagCompound nbt) {
     
         super.writeEntityToNBT(nbt);
         nbt.setBoolean("Angry", this.isAngry());
@@ -120,7 +126,8 @@ public class EntityRuneGolem extends EntityTameable {
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */
-    public void readEntityFromNBT (NBTTagCompound nbt) {
+    @Override
+	public void readEntityFromNBT (NBTTagCompound nbt) {
     
         super.readEntityFromNBT(nbt);
         this.setAngry(nbt.getBoolean("Angry"));
@@ -129,7 +136,8 @@ public class EntityRuneGolem extends EntityTameable {
     /**
      * Returns the sound this mob makes while it's alive.
      */
-    protected String getLivingSound () {
+    @Override
+	protected String getLivingSound () {
     
         return this.isAngry() ? "mob.wolf.growl" : (this.rand.nextInt(3) == 0 ? (this.isTamed() && this.dataWatcher.getWatchableObjectFloat(18) < 10.0F ? "mob.wolf.whine" : "mob.wolf.panting") : "mob.wolf.bark");
     }
@@ -137,7 +145,8 @@ public class EntityRuneGolem extends EntityTameable {
     /**
      * Returns the sound this mob makes when it is hurt.
      */
-    protected String getHurtSound () {
+    @Override
+	protected String getHurtSound () {
     
         return "mob.wolf.hurt";
     }
@@ -145,7 +154,8 @@ public class EntityRuneGolem extends EntityTameable {
     /**
      * Returns the sound this mob makes on death.
      */
-    protected String getDeathSound () {
+    @Override
+	protected String getDeathSound () {
     
         return "mob.wolf.death";
     }
@@ -153,12 +163,14 @@ public class EntityRuneGolem extends EntityTameable {
     /**
      * Returns the volume for the sounds this mob makes.
      */
-    protected float getSoundVolume () {
+    @Override
+	protected float getSoundVolume () {
     
         return 0.4F;
     }
     
-    protected Item getDropItem () {
+    @Override
+	protected Item getDropItem () {
     
         return Item.getItemById(-1);
     }
@@ -167,7 +179,8 @@ public class EntityRuneGolem extends EntityTameable {
      * Called frequently so the entity can update its state every tick as required. For
      * example, zombies and skeletons use this to react to sunlight and start to burn.
      */
-    public void onLivingUpdate () {
+    @Override
+	public void onLivingUpdate () {
     
         super.onLivingUpdate();
     }
@@ -175,7 +188,8 @@ public class EntityRuneGolem extends EntityTameable {
     /**
      * Called to update the entity's position/logic.
      */
-    public void onUpdate () {
+    @Override
+	public void onUpdate () {
     
         super.onUpdate();
         
@@ -184,7 +198,8 @@ public class EntityRuneGolem extends EntityTameable {
         }
     }
     
-    public float getEyeHeight () {
+    @Override
+	public float getEyeHeight () {
     
         return this.height * 0.8F;
     }
@@ -193,7 +208,8 @@ public class EntityRuneGolem extends EntityTameable {
      * The speed it takes to move the entityliving's rotationPitch through the faceEntity
      * method. This is only currently use in wolves.
      */
-    public int getVerticalFaceSpeed () {
+    @Override
+	public int getVerticalFaceSpeed () {
     
         return this.isSitting() ? 20 : super.getVerticalFaceSpeed();
     }
@@ -201,7 +217,8 @@ public class EntityRuneGolem extends EntityTameable {
     /**
      * Called when the entity is attacked.
      */
-    public boolean attackEntityFrom (DamageSource dmgSource, float dmg) {
+    @Override
+	public boolean attackEntityFrom (DamageSource dmgSource, float dmg) {
     
         if (this.isEntityInvulnerable())
             return false;
@@ -219,13 +236,15 @@ public class EntityRuneGolem extends EntityTameable {
         }
     }
     
-    public boolean attackEntityAsMob (Entity el) {
+    @Override
+	public boolean attackEntityAsMob (Entity el) {
     
         int i = this.isTamed() ? 4 : 2;
-        return el.attackEntityFrom(DamageSource.causeMobDamage(this), (float) i);
+        return el.attackEntityFrom(DamageSource.causeMobDamage(this), i);
     }
     
-    public void setTamed (boolean flag) {
+    @Override
+	public void setTamed (boolean flag) {
     
         super.setTamed(flag);
         
@@ -239,7 +258,8 @@ public class EntityRuneGolem extends EntityTameable {
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the
      * saddle on a pig.
      */
-    public boolean interact (EntityPlayer player) {
+    @Override
+	public boolean interact (EntityPlayer player) {
     
         ItemStack itemstack = player.inventory.getCurrentItem();
         
@@ -296,7 +316,8 @@ public class EntityRuneGolem extends EntityTameable {
         return super.interact(player);
     }
     
-    @SideOnly(Side.CLIENT)
+    @Override
+	@SideOnly(Side.CLIENT)
     public void handleHealthUpdate (byte p_70103_1_) {
     
         super.handleHealthUpdate(p_70103_1_);
@@ -312,7 +333,8 @@ public class EntityRuneGolem extends EntityTameable {
      * Checks if the parameter is an item which this animal can be fed to breed it (wheat,
      * carrots or seeds depending on the animal type)
      */
-    public boolean isBreedingItem (ItemStack p_70877_1_) {
+    @Override
+	public boolean isBreedingItem (ItemStack p_70877_1_) {
     
         return false;
     }
@@ -320,7 +342,8 @@ public class EntityRuneGolem extends EntityTameable {
     /**
      * Will return how many at most can spawn in a chunk at once.
      */
-    public int getMaxSpawnedInChunk () {
+    @Override
+	public int getMaxSpawnedInChunk () {
     
         return 8;
     }
@@ -348,7 +371,8 @@ public class EntityRuneGolem extends EntityTameable {
         }
     }
     
-    public EntityRuneGolem createChild (EntityAgeable p_90011_1_) {
+    @Override
+	public EntityRuneGolem createChild (EntityAgeable p_90011_1_) {
     
         return null;
     }
@@ -356,7 +380,8 @@ public class EntityRuneGolem extends EntityTameable {
     /**
      * Returns true if the mob is currently able to mate with the specified mob.
      */
-    public boolean canMateWith (EntityAnimal p_70878_1_) {
+    @Override
+	public boolean canMateWith (EntityAnimal p_70878_1_) {
     
         return false;
     }
@@ -369,12 +394,14 @@ public class EntityRuneGolem extends EntityTameable {
     /**
      * Determines if an entity can be despawned, used on idle far away entities
      */
-    protected boolean canDespawn () {
+    @Override
+	protected boolean canDespawn () {
     
         return !this.isTamed() && this.ticksExisted > 2400;
     }
     
-    public boolean func_142018_a (EntityLivingBase victim, EntityLivingBase attacker) {
+    @Override
+	public boolean func_142018_a (EntityLivingBase victim, EntityLivingBase attacker) {
     
         if (!(victim instanceof EntityGhast)) {
             if (victim instanceof EntityRuneGolem) {
