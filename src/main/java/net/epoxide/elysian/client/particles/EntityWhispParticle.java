@@ -10,11 +10,13 @@ import net.minecraft.world.biome.BiomeGenBase;
 public class EntityWhispParticle extends EntityFX {
     
     public EntityWhispParticle(World world, double x, double y, double z, double motionX, double motionY, double motionZ) {
-    	super(world, x, y, z, motionX, motionY, motionZ);
-    	init();
+    
+        super(world, x, y, z, motionX, motionY, motionZ);
+        init();
     }
     
     public EntityWhispParticle(World world, double x, double y, double z) {
+    
         super(world, x, y, z);
         init();
     }

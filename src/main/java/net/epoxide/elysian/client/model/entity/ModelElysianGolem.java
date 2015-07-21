@@ -15,7 +15,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class ModelElysianGolem extends ModelBase {
     
-	public ModelRenderer torso;
+    public ModelRenderer torso;
     public ModelRenderer torso_mid;
     public ModelRenderer torso_bot;
     public ModelRenderer hip;
@@ -31,6 +31,7 @@ public class ModelElysianGolem extends ModelBase {
     public ModelRenderer arm_left_top;
     
     public ModelElysianGolem() {
+    
         this(0f);
     }
     
@@ -43,11 +44,11 @@ public class ModelElysianGolem extends ModelBase {
         torso.addBox(-5F, 0F, -2.5F, 10, 4, 5, f);
         torso.setRotationPoint(0F, 9F, 0F);
         torso.setTextureSize(64, 32);
-       
+        
         torso_mid = new ModelRenderer(this, 0, 21);
         torso_mid.addBox(-3F, 4F, -2F, 6, 1, 4, f);
         torso_mid.setTextureSize(64, 32);
-
+        
         torso_bot = new ModelRenderer(this, 20, 21);
         torso_bot.addBox(-2F, 5F, -1F, 4, 2, 2, f);
         torso_bot.setTextureSize(64, 32);
@@ -56,7 +57,7 @@ public class ModelElysianGolem extends ModelBase {
         hip.addBox(-1F, 0F, -1F, 2, 1, 2, f);
         hip.setRotationPoint(0F, 16F, 0F);
         hip.setTextureSize(64, 32);
-
+        
         hip_left = new ModelRenderer(this, 33, 0);
         hip_left.addBox(-2.5F, 1F, -1F, 5, 1, 2, f);
         hip_left.setTextureSize(64, 32);
@@ -65,40 +66,40 @@ public class ModelElysianGolem extends ModelBase {
         hip_right.addBox(-1.5F, 1F, -1F, 3, 1, 2, f);
         hip_right.setRotationPoint(0F, 1F, 0F);
         hip_right.setTextureSize(64, 32);
-
+        
         hip_bot = new ModelRenderer(this, 35, 3);
         hip_bot.addBox(-1F, 1.5F, -1.5F, 2, 1, 3, f);
         hip_bot.setTextureSize(64, 32);
-
+        
         head = new ModelRenderer(this, 0, 0);
         head.addBox(-3F, -6F, -3F, 6, 6, 6, f);
         head.setRotationPoint(0F, 9F, 0F);
         head.setTextureSize(64, 32);
-
+        
         leg_left = new ModelRenderer(this, 52, 23);
         leg_left.addBox(-0.5F, -1.5F, -1.5F, 3, 6, 3, f);
         leg_left.setRotationPoint(1F, 19F, 0F);
         leg_left.setTextureSize(64, 32);
-
+        
         leg_right = new ModelRenderer(this, 40, 23);
         leg_right.addBox(-2.5F, -1.5F, -1.5F, 3, 6, 3, f);
         leg_right.setRotationPoint(-1F, 19F, 0F);
         leg_right.setTextureSize(64, 32);
-
+        
         arm_left = new ModelRenderer(this, 56, 13);
         arm_left.addBox(0F, -1F, -1F, 2, 8, 2, f);
         arm_left.setRotationPoint(5F, 10F, 0F);
         arm_left.setTextureSize(64, 32);
-
+        
         arm_right = new ModelRenderer(this, 48, 13);
         arm_right.addBox(-2F, -1F, -1F, 2, 8, 2, f);
         arm_right.setRotationPoint(-5F, 10F, 0F);
         arm_right.setTextureSize(64, 32);
-
+        
         arm_right_top = new ModelRenderer(this, 54, 0);
         arm_right_top.addBox(-1F, -2F, -2F, 1, 4, 4, f);
         arm_right_top.setTextureSize(64, 32);
-
+        
         arm_left_top = new ModelRenderer(this, 54, 0);
         arm_left_top.addBox(0F, -2F, -2F, 1, 4, 4, f);
         arm_left_top.setTextureSize(64, 32);
@@ -150,8 +151,9 @@ public class ModelElysianGolem extends ModelBase {
         }
     }
     
-    /**to render parts without movement*/
+    /** to render parts without movement */
     public void render (float scale) {
+    
         this.head.render(scale);
         this.torso.render(scale);
         this.leg_left.render(scale);
@@ -161,8 +163,10 @@ public class ModelElysianGolem extends ModelBase {
         this.hip.render(scale);
     }
     
-    /**apperently, once upon a time, I wanted to implement the golem turning to a rock.
-     * i'll leave this code here in the meanwhile*/
+    /**
+     * apperently, once upon a time, I wanted to implement the golem turning to a rock. i'll
+     * leave this code here in the meanwhile
+     */
     public void renderForRocks () {
     
         float scale = 0.0625f;

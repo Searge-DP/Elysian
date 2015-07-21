@@ -28,6 +28,7 @@ public class EntityHandler {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void icons (TextureStitchEvent.Pre evt) {
+    
         if (evt.map.getTextureType() == 0) { // 0 is blocks, 1 items
             whispParticle = evt.map.registerIcon("elysian:particles/particleEnvironement");
         }

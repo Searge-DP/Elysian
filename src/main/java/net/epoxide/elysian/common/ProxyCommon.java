@@ -28,8 +28,12 @@ public class ProxyCommon {
     
     }
     
-    /**used to get minecraft without having to import the client sided minecraft class into classes that can be accesed on smp*/
-    public Minecraft getMinecraft(){
-    	return null;
+    /**
+     * used to get minecraft without having to import the client sided minecraft class into
+     * classes that can be accesed on smp
+     */
+    public Minecraft getMinecraft () {
+    
+        return null;
     }
 }

@@ -7,8 +7,8 @@ import net.minecraft.entity.Entity;
 import org.lwjgl.opengl.GL11;
 
 public class ModelRunicDivingSuit extends ModelBiped {
-   
-	private ModelRenderer helm_base;
+    
+    private ModelRenderer helm_base;
     private ModelRenderer helm_mask;
     private ModelRenderer shoe_right;
     private ModelRenderer shoe_left;
@@ -74,7 +74,7 @@ public class ModelRunicDivingSuit extends ModelBiped {
     public void render (Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
     
         GL11.glPushMatrix();
-        GL11.glEnable(GL11.GL_BLEND);//enables alpha in png textures
+        GL11.glEnable(GL11.GL_BLEND);// enables alpha in png textures
         super.render(entity, f, f1, f2, f3, f4, f5);
         setRotationAngles(f, f1, f2, f3, f4, f5, entity);
         GL11.glDisable(GL11.GL_BLEND);

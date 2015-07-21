@@ -23,7 +23,8 @@ public class ProxyClient extends ProxyCommon {
     }
     
     @Override
-    public Minecraft getMinecraft(){
-    	return Minecraft.getMinecraft();
+    public Minecraft getMinecraft () {
+    
+        return Minecraft.getMinecraft();
     }
 }

@@ -1,10 +1,10 @@
 package net.epoxide.elysian.client.renderer;
 
 import net.epoxide.elysian.client.model.entity.ModelElysianGolem;
-import net.epoxide.elysian.client.renderer.entity.RenderWhisp;
 import net.epoxide.elysian.client.renderer.entity.RenderElysianGolem;
-import net.epoxide.elysian.entity.EntityWhisp;
+import net.epoxide.elysian.client.renderer.entity.RenderWhisp;
 import net.epoxide.elysian.entity.EntityRuneGolem;
+import net.epoxide.elysian.entity.EntityWhisp;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
 public class RenderingHandler {
