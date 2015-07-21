@@ -20,6 +20,7 @@ public class BlockElysianGrass extends Block {
         this.setCreativeTab(Elysian.tabElysian);
         this.setBlockName("elysianGrass");
         this.setBlockTextureName("elysian:grass_top");
+        this.setHardness(0.5f);
         
     }
     
