@@ -15,14 +15,13 @@ public class EntityHandler {
     public EntityHandler() {
     
         MinecraftForge.EVENT_BUS.register(this);
-        register();
+        registerLivingEntities();
     }
     
-    private void register () {
+    private static void registerLivingEntities () {
     
         EntityRegistry.registerGlobalEntityID(EntityEnvironementCreature.class, "elysianWhisp", EntityRegistry.findGlobalUniqueEntityId(), 0xf0f0ff, 0x0ff0f0);
         EntityRegistry.registerGlobalEntityID(EntityRuneGolem.class, "elysianGolem", EntityRegistry.findGlobalUniqueEntityId(), 0xf0ffff, 0x0f00ff);
-        
     }
     
     // TODO this shouldn't be existing

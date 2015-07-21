@@ -73,5 +73,4 @@ public class WorldProviderElysian extends WorldProvider {
     
         return 270.0F;
     }
-    
 }
