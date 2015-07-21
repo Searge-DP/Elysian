@@ -1,6 +1,7 @@
 package net.epoxide.elysian.entity.effects;
 
 import net.epoxide.elysian.entity.EntityHandler;
+import net.epoxide.elysian.lib.ColorObject;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.World;
@@ -30,16 +31,10 @@ public class EntityElysianEnvironementEffect extends EntityFX{
 		noClip = true;
 
 		BiomeGenBase biome = worldObj.getBiomeGenForCoords((int)posX, (int)posZ);
-		int color = biome.color;
-		
-		int r = (color)&0xFF;
-		int g = (color>>8)&0xFF;
-		int b = (color>>16)&0xFF;
-		
-		particleRed = (float)r / 255f;
-		particleGreen = (float)g / 255f;
-		particleBlue = (float)b / 255f;
-
+		ColorObject color = new ColorObject(biome.color);
+		this.particleRed = color.red;
+		this.particleGreen = color.green;
+		this.particleBlue = color.blue;
 		particleMaxAge = 500;
 
 	}
