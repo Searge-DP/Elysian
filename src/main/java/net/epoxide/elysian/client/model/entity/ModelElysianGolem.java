@@ -14,23 +14,23 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ModelElysianGolem extends ModelBase {
-    public ModelRenderer Torso;
-    public ModelRenderer Torso2;
-    public ModelRenderer Torso3;
-    public ModelRenderer Hip;
-    public ModelRenderer Hip2;
-    public ModelRenderer Hip3;
-    public ModelRenderer Hip4;
-    public ModelRenderer Head;
-    public ModelRenderer LegLeft;
-    public ModelRenderer LegRight;
-    public ModelRenderer ArmLeft;
-    public ModelRenderer ArmRight;
-    public ModelRenderer ArmPieceRight;
-    public ModelRenderer ArmPieceLeft;
+    
+	public ModelRenderer torso;
+    public ModelRenderer torso_mid;
+    public ModelRenderer torso_bot;
+    public ModelRenderer hip;
+    public ModelRenderer hip_left;
+    public ModelRenderer hip_right;
+    public ModelRenderer hip_bot;
+    public ModelRenderer head;
+    public ModelRenderer leg_left;
+    public ModelRenderer leg_right;
+    public ModelRenderer arm_left;
+    public ModelRenderer arm_right;
+    public ModelRenderer arm_right_top;
+    public ModelRenderer arm_left_top;
     
     public ModelElysianGolem() {
-    
         this(0f);
     }
     
@@ -39,100 +39,79 @@ public class ModelElysianGolem extends ModelBase {
         textureWidth = 64;
         textureHeight = 32;
         
-        Torso = new ModelRenderer(this, 0, 12);
-        Torso.addBox(-5F, 0F, -2.5F, 10, 4, 5, f);
-        Torso.setRotationPoint(0F, 9F, 0F);
-        Torso.setTextureSize(64, 32);
-        Torso.mirror = true;
-        setRotation(Torso, 0F, 0F, 0F);
-        Torso2 = new ModelRenderer(this, 0, 21);
-        Torso2.addBox(-3F, 4F, -2F, 6, 1, 4, f);
-        Torso2.setRotationPoint(0F, 0F, 0F);
-        Torso2.setTextureSize(64, 32);
-        Torso2.mirror = true;
-        setRotation(Torso2, 0F, 0F, 0F);
-        Torso3 = new ModelRenderer(this, 20, 21);
-        Torso3.addBox(-2F, 5F, -1F, 4, 2, 2, f);
-        Torso3.setRotationPoint(0F, 0F, 0F);
-        Torso3.setTextureSize(64, 32);
-        Torso3.mirror = true;
-        setRotation(Torso3, 0F, 0F, 0F);
-        Hip = new ModelRenderer(this, 0, 26);
-        Hip.addBox(-1F, 0F, -1F, 2, 1, 2, f);
-        Hip.setRotationPoint(0F, 16F, 0F);
-        Hip.setTextureSize(64, 32);
-        Hip.mirror = true;
-        setRotation(Hip, 0F, 0F, 0F);
-        Hip2 = new ModelRenderer(this, 33, 0);
-        Hip2.addBox(-2.5F, 1F, -1F, 5, 1, 2, f);
-        Hip2.setRotationPoint(0F, 0F, 0F);
-        Hip2.setTextureSize(64, 32);
-        Hip2.mirror = true;
-        setRotation(Hip2, 0F, 0F, 0F);
-        Hip3 = new ModelRenderer(this, 35, 7);
-        Hip3.addBox(-1.5F, 1F, -1F, 3, 1, 2, f);
-        Hip3.setRotationPoint(0F, 1F, 0F);
-        Hip3.setTextureSize(64, 32);
-        Hip3.mirror = true;
-        setRotation(Hip3, 0F, 0F, 0F);
-        Hip4 = new ModelRenderer(this, 35, 3);
-        Hip4.addBox(-1F, 1.5F, -1.5F, 2, 1, 3, f);
-        Hip4.setRotationPoint(0F, 0F, 0F);
-        Hip4.setTextureSize(64, 32);
-        Hip4.mirror = true;
-        setRotation(Hip4, 0F, 0F, 0F);
-        Head = new ModelRenderer(this, 0, 0);
-        Head.addBox(-3F, -6F, -3F, 6, 6, 6, f);
-        Head.setRotationPoint(0F, 9F, 0F);
-        Head.setTextureSize(64, 32);
-        Head.mirror = true;
-        setRotation(Head, 0F, 0F, 0F);
-        LegLeft = new ModelRenderer(this, 52, 23);
-        LegLeft.addBox(-0.5F, -1.5F, -1.5F, 3, 6, 3, f);
-        LegLeft.setRotationPoint(1F, 19F, 0F);
-        LegLeft.setTextureSize(64, 32);
-        LegLeft.mirror = true;
-        setRotation(LegLeft, 0F, 0F, 0F);
-        LegRight = new ModelRenderer(this, 40, 23);
-        LegRight.addBox(-2.5F, -1.5F, -1.5F, 3, 6, 3, f);
-        LegRight.setRotationPoint(-1F, 19F, 0F);
-        LegRight.setTextureSize(64, 32);
-        LegRight.mirror = true;
-        setRotation(LegRight, 0F, 0F, 0F);
-        ArmLeft = new ModelRenderer(this, 56, 13);
-        ArmLeft.addBox(0F, -1F, -1F, 2, 8, 2, f);
-        ArmLeft.setRotationPoint(5F, 10F, 0F);
-        ArmLeft.setTextureSize(64, 32);
-        ArmLeft.mirror = true;
-        setRotation(ArmLeft, 0F, 0F, 0F);
-        ArmRight = new ModelRenderer(this, 48, 13);
-        ArmRight.addBox(-2F, -1F, -1F, 2, 8, 2, f);
-        ArmRight.setRotationPoint(-5F, 10F, 0F);
-        ArmRight.setTextureSize(64, 32);
-        ArmRight.mirror = true;
-        setRotation(ArmRight, 0F, 0F, 0F);
-        ArmPieceRight = new ModelRenderer(this, 54, 0);
-        ArmPieceRight.addBox(-1F, -2F, -2F, 1, 4, 4, f);
-        ArmPieceRight.setRotationPoint(0F, 0F, 0F);
-        ArmPieceRight.setTextureSize(64, 32);
-        ArmPieceRight.mirror = true;
-        setRotation(ArmPieceRight, 0F, 0F, 0F);
-        ArmPieceLeft = new ModelRenderer(this, 54, 0);
-        ArmPieceLeft.addBox(0F, -2F, -2F, 1, 4, 4, f);
-        ArmPieceLeft.setRotationPoint(0F, 0F, 0F);
-        ArmPieceLeft.setTextureSize(64, 32);
-        ArmPieceLeft.mirror = true;
-        setRotation(ArmPieceLeft, 0F, 0F, 0F);
+        torso = new ModelRenderer(this, 0, 12);
+        torso.addBox(-5F, 0F, -2.5F, 10, 4, 5, f);
+        torso.setRotationPoint(0F, 9F, 0F);
+        torso.setTextureSize(64, 32);
+       
+        torso_mid = new ModelRenderer(this, 0, 21);
+        torso_mid.addBox(-3F, 4F, -2F, 6, 1, 4, f);
+        torso_mid.setTextureSize(64, 32);
+
+        torso_bot = new ModelRenderer(this, 20, 21);
+        torso_bot.addBox(-2F, 5F, -1F, 4, 2, 2, f);
+        torso_bot.setTextureSize(64, 32);
         
-        Torso.addChild(Torso2);
-        Torso.addChild(Torso3);
+        hip = new ModelRenderer(this, 0, 26);
+        hip.addBox(-1F, 0F, -1F, 2, 1, 2, f);
+        hip.setRotationPoint(0F, 16F, 0F);
+        hip.setTextureSize(64, 32);
+
+        hip_left = new ModelRenderer(this, 33, 0);
+        hip_left.addBox(-2.5F, 1F, -1F, 5, 1, 2, f);
+        hip_left.setTextureSize(64, 32);
         
-        ArmLeft.addChild(ArmPieceLeft);
-        ArmRight.addChild(ArmPieceRight);
+        hip_right = new ModelRenderer(this, 35, 7);
+        hip_right.addBox(-1.5F, 1F, -1F, 3, 1, 2, f);
+        hip_right.setRotationPoint(0F, 1F, 0F);
+        hip_right.setTextureSize(64, 32);
+
+        hip_bot = new ModelRenderer(this, 35, 3);
+        hip_bot.addBox(-1F, 1.5F, -1.5F, 2, 1, 3, f);
+        hip_bot.setTextureSize(64, 32);
+
+        head = new ModelRenderer(this, 0, 0);
+        head.addBox(-3F, -6F, -3F, 6, 6, 6, f);
+        head.setRotationPoint(0F, 9F, 0F);
+        head.setTextureSize(64, 32);
+
+        leg_left = new ModelRenderer(this, 52, 23);
+        leg_left.addBox(-0.5F, -1.5F, -1.5F, 3, 6, 3, f);
+        leg_left.setRotationPoint(1F, 19F, 0F);
+        leg_left.setTextureSize(64, 32);
+
+        leg_right = new ModelRenderer(this, 40, 23);
+        leg_right.addBox(-2.5F, -1.5F, -1.5F, 3, 6, 3, f);
+        leg_right.setRotationPoint(-1F, 19F, 0F);
+        leg_right.setTextureSize(64, 32);
+
+        arm_left = new ModelRenderer(this, 56, 13);
+        arm_left.addBox(0F, -1F, -1F, 2, 8, 2, f);
+        arm_left.setRotationPoint(5F, 10F, 0F);
+        arm_left.setTextureSize(64, 32);
+
+        arm_right = new ModelRenderer(this, 48, 13);
+        arm_right.addBox(-2F, -1F, -1F, 2, 8, 2, f);
+        arm_right.setRotationPoint(-5F, 10F, 0F);
+        arm_right.setTextureSize(64, 32);
+
+        arm_right_top = new ModelRenderer(this, 54, 0);
+        arm_right_top.addBox(-1F, -2F, -2F, 1, 4, 4, f);
+        arm_right_top.setTextureSize(64, 32);
+
+        arm_left_top = new ModelRenderer(this, 54, 0);
+        arm_left_top.addBox(0F, -2F, -2F, 1, 4, 4, f);
+        arm_left_top.setTextureSize(64, 32);
         
-        Hip.addChild(Hip2);
-        Hip.addChild(Hip3);
-        Hip.addChild(Hip4);
+        torso.addChild(torso_mid);
+        torso.addChild(torso_bot);
+        
+        arm_left.addChild(arm_left_top);
+        arm_right.addChild(arm_right_top);
+        
+        hip.addChild(hip_left);
+        hip.addChild(hip_right);
+        hip.addChild(hip_bot);
     }
     
     /**
@@ -147,60 +126,62 @@ public class ModelElysianGolem extends ModelBase {
             float f6 = 2.0F;
             GL11.glPushMatrix();
             GL11.glTranslatef(0F, 7.0F * par7, 0.0F * par7);
-            this.Head.renderWithRotation(par7);
+            this.head.renderWithRotation(par7);
             GL11.glPopMatrix();
             GL11.glPushMatrix();
             GL11.glScalef(1.0F / f6, 1.0F / f6, 1.0F / f6);
             GL11.glTranslatef(0.0F, 24.0F * par7, 0.0F);
-            this.Torso.render(par7);
-            this.LegLeft.render(par7);
-            this.LegRight.render(par7);
-            this.ArmRight.render(par7);
-            this.ArmLeft.render(par7);
-            this.Hip.render(par7);
+            this.torso.render(par7);
+            this.leg_left.render(par7);
+            this.leg_right.render(par7);
+            this.arm_right.render(par7);
+            this.arm_left.render(par7);
+            this.hip.render(par7);
             GL11.glPopMatrix();
         }
         else {
-            this.Head.renderWithRotation(par7);
-            this.Torso.render(par7);
-            this.LegLeft.render(par7);
-            this.LegRight.render(par7);
-            this.ArmRight.render(par7);
-            this.ArmLeft.render(par7);
-            this.Hip.render(par7);
+            this.head.renderWithRotation(par7);
+            this.torso.render(par7);
+            this.leg_left.render(par7);
+            this.leg_right.render(par7);
+            this.arm_right.render(par7);
+            this.arm_left.render(par7);
+            this.hip.render(par7);
         }
     }
     
-    public void render (float par7) {
-    
-        this.Head.render(par7);
-        this.Torso.render(par7);
-        this.LegLeft.render(par7);
-        this.LegRight.render(par7);
-        this.ArmRight.render(par7);
-        this.ArmLeft.render(par7);
-        this.Hip.render(par7);
+    /**to render parts without movement*/
+    public void render (float scale) {
+        this.head.render(scale);
+        this.torso.render(scale);
+        this.leg_left.render(scale);
+        this.leg_right.render(scale);
+        this.arm_right.render(scale);
+        this.arm_left.render(scale);
+        this.hip.render(scale);
     }
     
+    /**apperently, once upon a time, I wanted to implement the golem turning to a rock.
+     * i'll leave this code here in the meanwhile*/
     public void renderForRocks () {
     
-        float par7 = 0.0625f;
-        this.Head.renderWithRotation(par7);
-        this.Torso.render(par7);
-        this.LegLeft.render(par7);
-        this.LegRight.render(par7);
-        this.ArmRight.render(par7);
-        this.ArmLeft.render(par7);
-        this.Hip.render(par7);
+        float scale = 0.0625f;
+        this.head.renderWithRotation(scale);
+        this.torso.render(scale);
+        this.leg_left.render(scale);
+        this.leg_right.render(scale);
+        this.arm_right.render(scale);
+        this.arm_left.render(scale);
+        this.hip.render(scale);
         
-        this.Torso.setRotationPoint(0F, 9F, 0F);
-        this.Hip.setRotationPoint(0f, 16f, 0f);
-        this.Head.setRotationPoint(0, 9, 0);
-        ArmLeft.setRotationPoint(5F, 10F, 0F);
-        ArmRight.setRotationPoint(-5F, 10F, 0F);
-        this.LegLeft.setRotationPoint(1F, 19.0F, 0F);
-        this.LegRight.setRotationPoint(-1F, 19.0F, 0F);
-        LegLeft.rotateAngleX = LegRight.rotateAngleX = 0.0f;
+        this.torso.setRotationPoint(0F, 9F, 0F);
+        this.hip.setRotationPoint(0f, 16f, 0f);
+        this.head.setRotationPoint(0, 9, 0);
+        arm_left.setRotationPoint(5F, 10F, 0F);
+        arm_right.setRotationPoint(-5F, 10F, 0F);
+        this.leg_left.setRotationPoint(1F, 19.0F, 0F);
+        this.leg_right.setRotationPoint(-1F, 19.0F, 0F);
+        leg_left.rotateAngleX = leg_right.rotateAngleX = 0.0f;
     }
     
     /**
@@ -212,31 +193,31 @@ public class ModelElysianGolem extends ModelBase {
         EntityRuneGolem golem = (EntityRuneGolem) par1EntityLivingBase;
         
         if (golem.isSitting()) {
-            this.LegLeft.setRotationPoint(1F, 22.0F, 0F);
-            this.LegLeft.rotateAngleX = ((float) Math.PI * 3F / 2F);
-            this.LegRight.setRotationPoint(-1F, 22.0F, 0F);
-            this.LegRight.rotateAngleX = ((float) Math.PI * 3F / 2F);
-            this.Torso.setRotationPoint(0f, 12f, 0f);
-            this.Hip.setRotationPoint(0f, 19f, 0f);
-            this.Head.setRotationPoint(0, 12, 0);
-            ArmLeft.setRotationPoint(5F, 13F, 0F);
-            ArmRight.setRotationPoint(-5F, 13F, 0F);
-            ArmLeft.rotateAngleX = 0f;
-            ArmRight.rotateAngleX = 0f;
+            this.leg_left.setRotationPoint(1F, 22.0F, 0F);
+            this.leg_left.rotateAngleX = ((float) Math.PI * 3F / 2F);
+            this.leg_right.setRotationPoint(-1F, 22.0F, 0F);
+            this.leg_right.rotateAngleX = ((float) Math.PI * 3F / 2F);
+            this.torso.setRotationPoint(0f, 12f, 0f);
+            this.hip.setRotationPoint(0f, 19f, 0f);
+            this.head.setRotationPoint(0, 12, 0);
+            arm_left.setRotationPoint(5F, 13F, 0F);
+            arm_right.setRotationPoint(-5F, 13F, 0F);
+            arm_left.rotateAngleX = 0f;
+            arm_right.rotateAngleX = 0f;
             
         }
         else {
-            this.Torso.setRotationPoint(0F, 9F, 0F);
-            this.Hip.setRotationPoint(0f, 16f, 0f);
-            this.Head.setRotationPoint(0, 9, 0);
-            ArmLeft.setRotationPoint(5F, 10F, 0F);
-            ArmRight.setRotationPoint(-5F, 10F, 0F);
-            this.LegLeft.setRotationPoint(1F, 19.0F, 0F);
-            this.LegRight.setRotationPoint(-1F, 19.0F, 0F);
-            this.LegLeft.rotateAngleX = MathHelper.cos(par2 * 0.6662F) * 1.4F * par3;
-            this.LegRight.rotateAngleX = MathHelper.cos(par2 * 0.6662F + (float) Math.PI) * 1.4F * par3;
-            this.ArmRight.rotateAngleX = MathHelper.cos(par2 * 0.6662F) * 1.4F * par3;
-            this.ArmLeft.rotateAngleX = MathHelper.cos(par2 * 0.6662F + (float) Math.PI) * 1.4F * par3;
+            this.torso.setRotationPoint(0F, 9F, 0F);
+            this.hip.setRotationPoint(0f, 16f, 0f);
+            this.head.setRotationPoint(0, 9, 0);
+            arm_left.setRotationPoint(5F, 10F, 0F);
+            arm_right.setRotationPoint(-5F, 10F, 0F);
+            this.leg_left.setRotationPoint(1F, 19.0F, 0F);
+            this.leg_right.setRotationPoint(-1F, 19.0F, 0F);
+            this.leg_left.rotateAngleX = MathHelper.cos(par2 * 0.6662F) * 1.4F * par3;
+            this.leg_right.rotateAngleX = MathHelper.cos(par2 * 0.6662F + (float) Math.PI) * 1.4F * par3;
+            this.arm_right.rotateAngleX = MathHelper.cos(par2 * 0.6662F) * 1.4F * par3;
+            this.arm_left.rotateAngleX = MathHelper.cos(par2 * 0.6662F + (float) Math.PI) * 1.4F * par3;
         }
     }
     
@@ -249,8 +230,8 @@ public class ModelElysianGolem extends ModelBase {
     public void setRotationAngles (float par1, float par2, float par3, float par4, float par5, float par6, Entity par7Entity) {
     
         super.setRotationAngles(par1, par2, par3, par4, par5, par6, par7Entity);
-        this.Head.rotateAngleX = par5 / (180F / (float) Math.PI);
-        this.Head.rotateAngleY = par4 / (180F / (float) Math.PI);
+        this.head.rotateAngleX = par5 / (180F / (float) Math.PI);
+        this.head.rotateAngleY = par4 / (180F / (float) Math.PI);
     }
     
     private void setRotation (ModelRenderer model, float x, float y, float z) {
