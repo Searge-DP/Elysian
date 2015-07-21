@@ -41,6 +41,16 @@ public class ColorObject {
     }
     
     /**
+     * Converts a String based hexadecimal representation of a color into a ColorObject.
+     * 
+     * @param hexColor: The hexadecimal color as a string. It is expected that a # is included.
+     */
+    public ColorObject(String hexColor) {
+    
+        this(Integer.valueOf(hexColor.substring(1, 3), 16), Integer.valueOf(hexColor.substring(3, 5), 16), Integer.valueOf(hexColor.substring(5, 7), 16));
+    }
+    
+    /**
      * Creates a new ColorObject using integers which will be converted back into floats. The
      * alpha value is automatically set to 1. (0-255)
      * 
@@ -108,17 +118,43 @@ public class ColorObject {
     }
     
     /**
-     * Converts a ColorObject to a decimal color value. This is most notably used by Mojang for
-     * item overlay colors.
+     * Provides an Integer based decimal representation of this ColorObject. This is used by
+     * Mojang for several things such as Biome colors and ItemStack colors. This method returns
+     * the same value as getHexIntFromColor.
      * 
-     * @return int: An Integer which represents all of the color data.
+     * @return int: An Integer which represents the decimal value of this ColorObject.
      */
-    public int getIntFromColor () {
+    public int getDecimalFromColor () {
     
         int rgb = (int) (this.red * 255);
         rgb = (rgb << 8) + (int) (this.green * 255);
         rgb = (rgb << 8) + (int) (this.blue * 255);
         return rgb;
+    }
+    
+    /**
+     * Provides a String based hexadecimal representation of this ColorObject. Alpha values are
+     * ignored.
+     * 
+     * @return String: A String based hexadecimal representation of this ColorObject. Example:
+     *         #99FF99
+     */
+    public String getHexStringFromColor () {
+    
+        return String.format("#%02X%02X%02X", (int) (this.red * 255), (int) (this.green * 255), (int) (this.blue * 255));
+    }
+    
+    /**
+     * Provides an integer based hexadecimal representation of this ColorObject. The output of
+     * this method is the same as getDecimalFromColor. This is used by Mojang for several
+     * things such as Biome colors and ItemStack colors.
+     * 
+     * @return int: An integer based hexadecimal representation of the color represented by
+     *         this ColorObject. Example: 10092441
+     */
+    public int getHexIntFromColor () {
+    
+        return Integer.parseInt(getHexStringFromColor().substring(1), 16);
     }
     
     /**
