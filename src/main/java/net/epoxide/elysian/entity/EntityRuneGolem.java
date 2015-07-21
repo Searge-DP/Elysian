@@ -278,9 +278,9 @@ public class EntityRuneGolem extends EntityTameable
 	/**
 	 * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
 	 */
-	public boolean interact(EntityPlayer par1EntityPlayer)
+	public boolean interact(EntityPlayer player)
 	{
-		ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
+		ItemStack itemstack = player.inventory.getCurrentItem();
 
 		if (this.isTamed())
 		{
@@ -289,7 +289,7 @@ public class EntityRuneGolem extends EntityTameable
 				if(getHealth() < 20.0F){
 					if (Block.getBlockFromItem(itemstack.getItem()).getMaterial().equals(Material.rock))
 					{
-						if (!par1EntityPlayer.capabilities.isCreativeMode)
+						if (!player.capabilities.isCreativeMode)
 						{
 							--itemstack.stackSize;
 						}
@@ -298,7 +298,7 @@ public class EntityRuneGolem extends EntityTameable
 
 						if (itemstack.stackSize <= 0)
 						{
-							par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, (ItemStack)null);
+							player.inventory.setInventorySlotContents(player.inventory.currentItem, (ItemStack)null);
 						}
 
 					}
@@ -307,9 +307,10 @@ public class EntityRuneGolem extends EntityTameable
 				}
 			}
 
-			if (par1EntityPlayer.getCommandSenderName().equalsIgnoreCase(this.getOwnerName()) && !this.worldObj.isRemote && !this.isBreedingItem(itemstack))
+			if (player.getCommandSenderName().equalsIgnoreCase(this.getOwnerName()) && !this.worldObj.isRemote)
 			{
-				this.aiSit.setSitting(!this.isSitting());
+				System.out.println(isSitting());
+				setSitting(!isSitting());
 				this.isJumping = false;
 				this.setPathToEntity((PathEntity)null);
 				this.setTarget((Entity)null);
@@ -318,14 +319,14 @@ public class EntityRuneGolem extends EntityTameable
 		}
 		else if (itemstack != null && Block.getBlockFromItem(itemstack.getItem()).equals(Blocks.mossy_cobblestone) && !this.isAngry())
 		{
-			if (!par1EntityPlayer.capabilities.isCreativeMode)
+			if (!player.capabilities.isCreativeMode)
 			{
 				--itemstack.stackSize;
 			}
 
 			if (itemstack.stackSize <= 0)
 			{
-				par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, (ItemStack)null);
+				player.inventory.setInventorySlotContents(player.inventory.currentItem, (ItemStack)null);
 			}
 
 			if (!this.worldObj.isRemote)
@@ -336,7 +337,7 @@ public class EntityRuneGolem extends EntityTameable
 					this.setPathToEntity((PathEntity)null);
 					this.setAttackTarget((EntityLivingBase)null);
 					this.aiSit.setSitting(true);
-					this.setOwner(par1EntityPlayer.getCommandSenderName());
+					this.setOwner(player.getCommandSenderName());
 					this.playTameEffect(true);
 					this.worldObj.setEntityState(this, (byte)7);
 					this.setHealth(20.0f);
@@ -351,7 +352,7 @@ public class EntityRuneGolem extends EntityTameable
 			return true;
 		}
 
-		return super.interact(par1EntityPlayer);
+		return super.interact(player);
 	}
 	public void handleHealthUpdate(byte par1)
 	{
@@ -371,7 +372,7 @@ public class EntityRuneGolem extends EntityTameable
 	 * Checks if the parameter is an item which this animal can be fed to breed it (wheat, carrots or seeds depending on
 	 * the animal type)
 	 */
-	public boolean isBreedingItem(ItemStack par1ItemStack)
+	public boolean isBreedingItem(ItemStack stack)
 	{
 		return false;
 	}
