@@ -1,4 +1,4 @@
-package net.epoxide.elysian.entity.render;
+package net.epoxide.elysian.client.renderer.entity;
 
 import net.epoxide.elysian.entity.EntityEnvironementCreature;
 import net.minecraft.client.model.ModelBiped;

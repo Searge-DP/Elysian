@@ -36,15 +36,15 @@ public class Elysian {
     public void preInit (FMLPreInitializationEvent pre) {
     
         proxy.preInit();
-        proxy.registerRenderers();
+        
         new ConfigurationHandler(pre.getSuggestedConfigurationFile());
-        NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
         new PacketHandler();
         new BlockHandler();
         new ItemHandler();
         new EntityHandler();
         new BiomeHandler();
         
+        NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
         DimensionManager.registerProviderType(ConfigurationHandler.dimensionID, WorldProviderElysian.class, true);
         DimensionManager.registerDimension(ConfigurationHandler.dimensionID, ConfigurationHandler.dimensionID);
     }

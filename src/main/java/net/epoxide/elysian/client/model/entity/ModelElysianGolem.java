@@ -1,4 +1,4 @@
-package net.epoxide.elysian.entity.model;
+package net.epoxide.elysian.client.model.entity;
 
 import net.epoxide.elysian.entity.EntityRuneGolem;
 import net.minecraft.client.model.ModelBase;

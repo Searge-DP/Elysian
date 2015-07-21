@@ -1,6 +1,6 @@
 package net.epoxide.elysian.entity;
 
-import net.epoxide.elysian.entity.effects.EntityElysianEnvironementEffect;
+import net.epoxide.elysian.client.particles.EntityElysianEnvironementEffect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;

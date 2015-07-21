@@ -1,7 +1,7 @@
-package net.epoxide.elysian.entity.render;
+package net.epoxide.elysian.client.renderer.entity;
 
+import net.epoxide.elysian.client.model.entity.ModelElysianGolem;
 import net.epoxide.elysian.entity.EntityRuneGolem;
-import net.epoxide.elysian.entity.model.ModelElysianGolem;
 import net.epoxide.elysian.lib.Utilities;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;

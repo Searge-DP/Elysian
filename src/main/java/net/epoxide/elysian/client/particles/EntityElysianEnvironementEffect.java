@@ -1,4 +1,4 @@
-package net.epoxide.elysian.entity.effects;
+package net.epoxide.elysian.client.particles;
 
 import net.epoxide.elysian.entity.EntityHandler;
 import net.epoxide.elysian.lib.ColorObject;

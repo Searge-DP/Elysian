@@ -1,12 +1,8 @@
 package net.epoxide.elysian.entity;
 
-import net.epoxide.elysian.entity.model.ModelElysianGolem;
-import net.epoxide.elysian.entity.render.RenderElysianEnvCreature;
-import net.epoxide.elysian.entity.render.RenderElysianGolem;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
-import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -29,6 +25,7 @@ public class EntityHandler {
         
     }
     
+    // TODO this shouldn't be existing
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void icons (TextureStitchEvent.Pre evt) {
@@ -36,12 +33,5 @@ public class EntityHandler {
         if (evt.map.getTextureType() == 0) { // 0 is blocks, 1 items
             entity = evt.map.registerIcon("elysian:particles/particleEnvironement");
         }
-    }
-    
-    /** registers the rendering for our entities to the main renderer map trough Forge */
-    public static void registerRendering () {
-    
-        RenderingRegistry.registerEntityRenderingHandler(EntityRuneGolem.class, new RenderElysianGolem(new ModelElysianGolem(), 0.0f));
-        RenderingRegistry.registerEntityRenderingHandler(EntityEnvironementCreature.class, new RenderElysianEnvCreature());
     }
 }
