@@ -7,14 +7,15 @@ import net.minecraft.entity.Entity;
 import org.lwjgl.opengl.GL11;
 
 public class ModelRunicDivingSuit extends ModelBiped {
-    private ModelRenderer HelmBase;
-    private ModelRenderer HelmMask;
-    private ModelRenderer Shoe;
-    private ModelRenderer Shoe2;
-    private ModelRenderer ShellTop;
-    private ModelRenderer ShellBase;
-    private ModelRenderer KneePad1;
-    private ModelRenderer KneePad2;
+   
+	private ModelRenderer helm_base;
+    private ModelRenderer helm_mask;
+    private ModelRenderer shoe_right;
+    private ModelRenderer shoe_left;
+    private ModelRenderer shell_top;
+    private ModelRenderer shell_base;
+    private ModelRenderer float_right;
+    private ModelRenderer floater_left;
     
     /**
      * defining every modelpart in here : size, texture place, rotation point, adding child
@@ -24,56 +25,56 @@ public class ModelRunicDivingSuit extends ModelBiped {
     
         super(scale, 0, 128, 64);
         
-        HelmBase = new ModelRenderer(this, 0, 52);
-        HelmBase.addBox(-5F, -1.5F, -5F, 10, 2, 10);
-        HelmBase.setTextureSize(128, 64);
+        helm_base = new ModelRenderer(this, 0, 52);
+        helm_base.addBox(-5F, -1.5F, -5F, 10, 2, 10);
+        helm_base.setTextureSize(128, 64);
         
-        HelmMask = new ModelRenderer(this, 0, 32);
-        HelmMask.addBox(-4.5F, -8.5F, -4.5F, 9, 8, 9);
-        HelmMask.setTextureSize(128, 64);
+        helm_mask = new ModelRenderer(this, 0, 32);
+        helm_mask.addBox(-4.5F, -8.5F, -4.5F, 9, 8, 9);
+        helm_mask.setTextureSize(128, 64);
         
-        Shoe = new ModelRenderer(this, 40, 53);
-        Shoe.addBox(-2.5F, 6F, -2.5F, 5, 6, 5);
-        Shoe.setTextureSize(128, 64);
+        shoe_right = new ModelRenderer(this, 40, 53);
+        shoe_right.addBox(-2.5F, 6F, -2.5F, 5, 6, 5);
+        shoe_right.setTextureSize(128, 64);
         
-        Shoe2 = new ModelRenderer(this, 40, 53);
-        Shoe2.addBox(-2.5F, 6F, -2.5F, 5, 6, 5);
-        Shoe2.setTextureSize(128, 64);
+        shoe_left = new ModelRenderer(this, 40, 53);
+        shoe_left.addBox(-2.5F, 6F, -2.5F, 5, 6, 5);
+        shoe_left.setTextureSize(128, 64);
         
-        ShellTop = new ModelRenderer(this, 56, 0);
-        ShellTop.addBox(-5.5F, -2F, 2F, 11, 14, 4);
-        ShellTop.setTextureSize(128, 64);
+        shell_top = new ModelRenderer(this, 56, 0);
+        shell_top.addBox(-5.5F, -2F, 2F, 11, 14, 4);
+        shell_top.setTextureSize(128, 64);
         
-        ShellBase = new ModelRenderer(this, 56, 18);
-        ShellBase.addBox(-6F, -2.5F, 2F, 12, 15, 1);
-        ShellBase.setTextureSize(128, 64);
+        shell_base = new ModelRenderer(this, 56, 18);
+        shell_base.addBox(-6F, -2.5F, 2F, 12, 15, 1);
+        shell_base.setTextureSize(128, 64);
         
-        KneePad1 = new ModelRenderer(this, 18, 32);
-        KneePad1.addBox(-1.5F, 2F, -3F, 3, 3, 1);
-        KneePad1.setTextureSize(128, 64);
+        float_right = new ModelRenderer(this, 18, 32);
+        float_right.addBox(-1.5F, 2F, -3F, 3, 3, 1);
+        float_right.setTextureSize(128, 64);
         
-        KneePad2 = new ModelRenderer(this, 18, 32);
-        KneePad2.addBox(-1.5F, 2F, -3F, 3, 3, 1);
-        KneePad2.setTextureSize(128, 64);
+        floater_left = new ModelRenderer(this, 18, 32);
+        floater_left.addBox(-1.5F, 2F, -3F, 3, 3, 1);
+        floater_left.setTextureSize(128, 64);
         
-        bipedHead.addChild(HelmBase);
-        bipedHead.addChild(HelmMask);
+        bipedHead.addChild(helm_base);
+        bipedHead.addChild(helm_mask);
         
-        bipedBody.addChild(ShellBase);
-        bipedBody.addChild(ShellTop);
+        bipedBody.addChild(shell_base);
+        bipedBody.addChild(shell_top);
         
-        bipedRightLeg.addChild(KneePad1);
-        bipedLeftLeg.addChild(KneePad2);
+        bipedRightLeg.addChild(float_right);
+        bipedLeftLeg.addChild(floater_left);
         
-        bipedRightLeg.addChild(Shoe);
-        bipedLeftLeg.addChild(Shoe2);
+        bipedRightLeg.addChild(shoe_right);
+        bipedLeftLeg.addChild(shoe_left);
     }
     
     @Override
     public void render (Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
     
         GL11.glPushMatrix();
-        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_BLEND);//enables alpha in png textures
         super.render(entity, f, f1, f2, f3, f4, f5);
         setRotationAngles(f, f1, f2, f3, f4, f5, entity);
         GL11.glDisable(GL11.GL_BLEND);
