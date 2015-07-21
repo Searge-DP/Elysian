@@ -212,6 +212,17 @@ public class ItemRunicDivingSuit extends ItemArmor {
                 suit.bipedHead.rotationPointY = main.bipedHead.rotationPointY;
                 GL11.glDisable(GL11.GL_BLEND);
                 GL11.glPopMatrix();
+                
+                GL11.glPushMatrix();
+                GL11.glEnable(GL11.GL_BLEND);
+                Minecraft.getMinecraft().renderEngine.bindTexture(armor_Overlay);
+                GL11.glColor4f(1, 0, 1, 0.5f);
+                suit.bipedHead.render(0.0625f);
+                suit.bipedHead.rotateAngleX = main.bipedHead.rotateAngleX;
+                suit.bipedHead.rotateAngleY = main.bipedHead.rotateAngleY;
+                suit.bipedHead.rotationPointY = main.bipedHead.rotationPointY;
+                GL11.glDisable(GL11.GL_BLEND);
+                GL11.glPopMatrix();
             }
             
             if (evt.stack != null && evt.stack.getItem().equals(ItemHandler.runicDivingSuit)) {
