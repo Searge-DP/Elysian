@@ -3,6 +3,7 @@ package net.epoxide.elysian;
 import net.epoxide.elysian.blocks.BlockHandler;
 import net.epoxide.elysian.common.ProxyCommon;
 import net.epoxide.elysian.common.packet.PacketHandler;
+import net.epoxide.elysian.entity.EntityHandler;
 import net.epoxide.elysian.handler.ConfigurationHandler;
 import net.epoxide.elysian.handler.GuiHandler;
 import net.epoxide.elysian.items.ItemHandler;
@@ -35,11 +36,13 @@ public class Elysian {
     public void preInit (FMLPreInitializationEvent pre) {
     
         proxy.preInit();
+        proxy.registerRenderers();
         new ConfigurationHandler(pre.getSuggestedConfigurationFile());
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
         new PacketHandler();
         new BlockHandler();
         new ItemHandler();
+        new EntityHandler();
         new BiomeHandler();
         
         DimensionManager.registerProviderType(ConfigurationHandler.dimensionID, WorldProviderElysian.class, true);
