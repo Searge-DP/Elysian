@@ -212,11 +212,11 @@ public class EntityRuneGolem extends EntityTameable
 			return false;
 		else{
 			Entity entity = dmgSource.getEntity();
-			setSitting(false);
-			
+			this.aiSit.setSitting(false);
+
 			if(entity instanceof EntityCreeper || dmgSource.isExplosion())
 				return false;
-			
+
 			if (entity != null && !(entity instanceof EntityPlayer) && !(entity instanceof EntityArrow))
 				dmg = (dmg + 1.0F) / 2.0F;
 
@@ -251,28 +251,23 @@ public class EntityRuneGolem extends EntityTameable
 		{
 			if (itemstack != null)
 			{
-				if (itemstack.getItem() instanceof ItemFood)
+				if(Block.getBlockFromItem(itemstack.getItem()).getMaterial().equals(Material.rock) && this.dataWatcher.getWatchableObjectFloat(18) < 20.0F)
 				{
-					ItemFood itemfood = (ItemFood)itemstack.getItem();
+					if (!player.capabilities.isCreativeMode)
+						--itemstack.stackSize;
 
-					if(Block.getBlockFromItem(itemstack.getItem()).getMaterial().equals(Material.rock) && this.dataWatcher.getWatchableObjectFloat(18) < 20.0F)
-					{
-						if (!player.capabilities.isCreativeMode)
-							--itemstack.stackSize;
+					this.heal(1);
 
-						this.heal(1);
+					if (itemstack.stackSize <= 0)
+						player.inventory.setInventorySlotContents(player.inventory.currentItem, (ItemStack)null);
 
-						if (itemstack.stackSize <= 0)
-							player.inventory.setInventorySlotContents(player.inventory.currentItem, (ItemStack)null);
-
-						return true;
-					}
+					return true;
 				}
 			}
 
 			if (this.func_152114_e(player) && !this.worldObj.isRemote && !this.isBreedingItem(itemstack))
 			{
-				setSitting(!this.isSitting());
+				this.aiSit.setSitting(!this.isSitting());
 				this.isJumping = false;
 				this.setPathToEntity((PathEntity)null);
 				this.setTarget((Entity)null);
