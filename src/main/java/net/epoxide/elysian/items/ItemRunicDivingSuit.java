@@ -4,7 +4,7 @@ import java.util.List;
 
 import net.epoxide.elysian.Elysian;
 import net.epoxide.elysian.client.model.ModelHandler;
-import net.epoxide.elysian.client.model.armor.ModelTurtleSuit;
+import net.epoxide.elysian.client.model.armor.ModelRunicDivingSuit;
 import net.epoxide.elysian.lib.Utilities;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -191,7 +191,7 @@ public class ItemRunicDivingSuit extends ItemArmor {
         }
     }
     
-    ModelTurtleSuit suit = new ModelTurtleSuit(1.0f);
+    ModelRunicDivingSuit suit = new ModelRunicDivingSuit(1.0f);
     
     @SubscribeEvent
     public void onPlayerRenderArmor (RenderPlayerEvent.SetArmorModel evt) {

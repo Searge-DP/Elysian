@@ -1,14 +1,14 @@
 package net.epoxide.elysian.client.model;
 
-import net.epoxide.elysian.client.model.armor.ModelTurtleSuit;
+import net.epoxide.elysian.client.model.armor.ModelRunicDivingSuit;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class ModelHandler {
     
-    public static ModelBiped runicScubaTop = new ModelTurtleSuit(0.7f);
-    public static ModelBiped runicScubaBottom = new ModelTurtleSuit(0.3f);
+    public static ModelBiped runicScubaTop = new ModelRunicDivingSuit(0.7f);
+    public static ModelBiped runicScubaBottom = new ModelRunicDivingSuit(0.3f);
     
     /**
      * Updates a ModelBiped to reflect the characteristics of an EntityLivingBase. This will

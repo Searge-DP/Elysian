@@ -10,7 +10,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class EntityHandler {
     
-    public static IIcon entity;
+    public static IIcon whispParticle;
     
     public EntityHandler() {
     
@@ -20,7 +20,7 @@ public class EntityHandler {
     
     private static void registerLivingEntities () {
     
-        EntityRegistry.registerGlobalEntityID(EntityEnvironementCreature.class, "elysianWhisp", EntityRegistry.findGlobalUniqueEntityId(), 0xf0f0ff, 0x0ff0f0);
+        EntityRegistry.registerGlobalEntityID(EntityWhisp.class, "elysianWhisp", EntityRegistry.findGlobalUniqueEntityId(), 0xf0f0ff, 0x0ff0f0);
         EntityRegistry.registerGlobalEntityID(EntityRuneGolem.class, "elysianGolem", EntityRegistry.findGlobalUniqueEntityId(), 0xf0ffff, 0x0f00ff);
     }
     
@@ -28,9 +28,8 @@ public class EntityHandler {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void icons (TextureStitchEvent.Pre evt) {
-    
         if (evt.map.getTextureType() == 0) { // 0 is blocks, 1 items
-            entity = evt.map.registerIcon("elysian:particles/particleEnvironement");
+            whispParticle = evt.map.registerIcon("elysian:particles/particleEnvironement");
         }
     }
 }

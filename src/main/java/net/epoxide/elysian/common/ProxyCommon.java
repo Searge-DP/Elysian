@@ -1,5 +1,7 @@
 package net.epoxide.elysian.common;
 
+import net.minecraft.client.Minecraft;
+
 public class ProxyCommon {
     
     /**
@@ -24,5 +26,10 @@ public class ProxyCommon {
      */
     public void postInit () {
     
+    }
+    
+    /**used to get minecraft without having to import the client sided minecraft class into classes that can be accesed on smp*/
+    public Minecraft getMinecraft(){
+    	return null;
     }
 }

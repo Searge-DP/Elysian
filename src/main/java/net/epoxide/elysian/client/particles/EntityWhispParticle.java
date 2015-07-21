@@ -7,23 +7,21 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
-public class EntityElysianEnvironementEffect extends EntityFX {
+public class EntityWhispParticle extends EntityFX {
     
-    public EntityElysianEnvironementEffect(World par1World, double par2, double par4, double par6, double par8, double par10, double par12) {
-    
-        super(par1World, par2, par4, par6, par8, par10, par12);
-        init();
+    public EntityWhispParticle(World world, double x, double y, double z, double motionX, double motionY, double motionZ) {
+    	super(world, x, y, z, motionX, motionY, motionZ);
+    	init();
     }
     
-    public EntityElysianEnvironementEffect(World par1World, double par2, double par4, double par6) {
-    
-        super(par1World, par2, par4, par6);
+    public EntityWhispParticle(World world, double x, double y, double z) {
+        super(world, x, y, z);
         init();
     }
     
     private void init () {
     
-        setParticleIcon(EntityHandler.entity);
+        setParticleIcon(EntityHandler.whispParticle);
         
         this.motionX = 0;
         this.motionY = 0;

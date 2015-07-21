@@ -6,7 +6,7 @@ import net.minecraft.entity.Entity;
 
 import org.lwjgl.opengl.GL11;
 
-public class ModelTurtleSuit extends ModelBiped {
+public class ModelRunicDivingSuit extends ModelBiped {
     private ModelRenderer HelmBase;
     private ModelRenderer HelmMask;
     private ModelRenderer Shoe;
@@ -20,7 +20,7 @@ public class ModelTurtleSuit extends ModelBiped {
      * defining every modelpart in here : size, texture place, rotation point, adding child
      * parts, ...
      */
-    public ModelTurtleSuit(float scale) {
+    public ModelRunicDivingSuit(float scale) {
     
         super(scale, 0, 128, 64);
         
