@@ -16,7 +16,7 @@ public class ItemElysianBucket extends ItemBucket {
     
     public ItemElysianBucket() {
     
-        super(BlockHandler.water);
+        super(BlockHandler.breathableWater);
         setCreativeTab(Elysian.tabElysian);
         setUnlocalizedName("elysian.waterBucket");
         setTextureName("elysian:bucket_water");

@@ -13,7 +13,7 @@ public class BiomeTest3 extends BiomeGenElysian {
         this.setBiomeName("Elysian test 3 Biome");
         this.barrier = Blocks.planks;
         this.fillerBlock = BlockHandler.dirt;
-        this.fluid = BlockHandler.water;
+        this.fluid = BlockHandler.breathableWater;
         this.topBlock = Blocks.gravel;
         this.waterColorMultiplier = 0x64441c;
         this.setColor(0x64441c);

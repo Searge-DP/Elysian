@@ -4,6 +4,7 @@ import net.epoxide.elysian.blocks.BlockHandler;
 import net.epoxide.elysian.common.ProxyCommon;
 import net.epoxide.elysian.common.packet.PacketHandler;
 import net.epoxide.elysian.entity.EntityHandler;
+import net.epoxide.elysian.fluids.FluidHandler;
 import net.epoxide.elysian.handler.ConfigurationHandler;
 import net.epoxide.elysian.handler.GuiHandler;
 import net.epoxide.elysian.items.ItemHandler;
@@ -39,6 +40,7 @@ public class Elysian {
         
         new ConfigurationHandler(pre.getSuggestedConfigurationFile());
         new PacketHandler();
+        new FluidHandler();
         new BlockHandler();
         new ItemHandler();
         new EntityHandler();

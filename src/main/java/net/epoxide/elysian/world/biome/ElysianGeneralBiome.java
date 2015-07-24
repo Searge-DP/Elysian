@@ -13,7 +13,7 @@ public class ElysianGeneralBiome extends BiomeGenElysian {
         this.setBiomeName("Elysian General Biome");
         this.barrier = Blocks.clay;
         this.fillerBlock = BlockHandler.dirt;
-        this.fluid = BlockHandler.water;
+        this.fluid = BlockHandler.breathableWater;
         this.topBlock = BlockHandler.grass;
         this.waterColorMultiplier = 0x4443c9;
         this.setColor(0x4443c9);

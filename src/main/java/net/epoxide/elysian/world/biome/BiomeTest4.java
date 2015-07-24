@@ -13,7 +13,7 @@ public class BiomeTest4 extends BiomeGenElysian {
         this.setBiomeName("Elysian test 4 Biome");
         this.barrier = Blocks.glass;
         this.fillerBlock = BlockHandler.dirt;
-        this.fluid = BlockHandler.water;
+        this.fluid = BlockHandler.breathableWater;
         this.topBlock = Blocks.packed_ice;
         this.waterColorMultiplier = 0x305d4f;
         this.setColor(0x305d4f);
