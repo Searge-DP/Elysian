@@ -7,6 +7,7 @@ import java.util.Random;
 
 import net.epoxide.elysian.blocks.BlockHandler;
 import net.epoxide.elysian.world.biome.BiomeGenElysian;
+import net.epoxide.elysian.world.biome.BiomeHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.material.Material;
@@ -30,56 +31,37 @@ import net.minecraftforge.event.terraingen.TerrainGen;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 
 public class ChunkProviderElysian implements IChunkProvider {
+    
     private Random rand;
     
-    /** A NoiseGeneratorOctaves used in generating nether terrain, now in ours */
     private NoiseGeneratorOctaves elysianNoiseGen1;
     private NoiseGeneratorOctaves elysianNoiseGen2;
     private NoiseGeneratorOctaves elysianNoiseGen3;
-    
-    /** Determines whether topBlocks can be generated at a location */
-    private NoiseGeneratorOctaves topBlockNoiseGen; // noise 4
-    /** Determines whether something other than the fillerblock can be generated at a location */
-    private NoiseGeneratorOctaves fillerBlockNoiseGen; // noise 5
-    
-    public NoiseGeneratorOctaves elysianNoiseGen6;
-    public NoiseGeneratorOctaves elysianNoiseGen7;
-    /** Is the world that the elysian is getting generated in. */
+    private NoiseGeneratorOctaves topBlockNoiseGen;
+    private NoiseGeneratorOctaves fillerBlockNoiseGen;
+    private NoiseGeneratorOctaves elysianNoiseGen6;
+    private NoiseGeneratorOctaves elysianNoiseGen7;
     private World worldObj;
     private double[] noiseField;
-    /**
-     * Holds the noise used to determine whether something other than topBlocks can be
-     * generated at a location
-     */
     private double[] exclusivelyFillerNoise = new double[256];
-    
     private MapGenBase caveGenerator = new MapGenCavesHell();
-    /** Holds the noise used to determine whether topBlocks can be generated at a location */
     private double[] topBlockNoise = new double[256];
-    /** Holds the noise used to determine whether fillerBlocks can be generated at a location */
     private double[] fillerNoise = new double[256];
-    /** contains the noise data for elysianNoiseGen1 */
-    double[] noiseData1;
-    /** contains the noise data for elysianNoiseGen2 */
-    double[] noiseData2;
-    /** contains the noise data for elysianNoiseGen3 */
-    double[] noiseData3;
-    /** contains the noise data for elysianNoiseGen6 */
-    double[] noiseData6;
-    /** contains the noise data for elysianNoiseGen7 */
-    double[] noiseData7;
+    private Object theBiomeDecorator;
+    private Block fallbackFiller = BlockHandler.dirt;
+    private Block fallbackFluid = Blocks.water;
     
-    /** The biomes that are used to generate the chunk */
+    /**
+     * List of biomes which can be used for generating this chunk.
+     */
     private BiomeGenBase[] biomesForGeneration;
     
-    private Object theBiomeDecorator;
+    double[] noiseData1;
+    double[] noiseData2;
+    double[] noiseData3;
+    double[] noiseData6;
+    double[] noiseData7;
     
-    /** Block Base for fillers. will be replaced by biome's filler later */
-    private Block generalFiller = BlockHandler.dirt;
-    /** Block Base for fluid. will be replaced by biome's fluid later (if implemented) */
-    private Block generalWater = Blocks.water;
-    
-    private static final String __OBFID = "CL_00000392";
     {
         caveGenerator = TerrainGen.getModdedMapGen(caveGenerator, NETHER_CAVE);
     }
@@ -108,62 +90,51 @@ public class ChunkProviderElysian implements IChunkProvider {
     }
     
     /**
-     * initializes noisefields, calculates size of the noisefields with other noisefields, uses
-     * default blocks to start generation
-     * */
-    public void prepareChunk (int posX, int posZ, Block[] chunkBlocks) {
+     * Prepares a chunk with a list of all the blocks for a chunk.
+     * 
+     * @param chunkX: The X position of the chunk.
+     * @param chunkZ: The Y position of the chunk.
+     * @param chunkBlocks: The list of blocks which makes up the chunk.
+     */
+    public void prepareChunk (int chunkX, int chunkZ, Block[] chunkBlocks) {
     
-        byte four = 4;
+        byte chunkOffset = 4;
         byte waterLevel = 70;
-        int five_a = four + 1;
-        byte sevenTeen = 33;
-        int five_b = four + 1;
+        int posX = 5;
+        int posZ = 5;
+        byte noise = 33;
         
-        BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(five_a + 16, five_b + 16);
+        BiomeGenBase biome = this.worldObj.getBiomeGenForCoords(posX + 16, posZ + 16);
+        float temperature = biome.getFloatTemperature(posX, 16, posZ);
+        this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, chunkX * 4 - 2, chunkZ * 4 - 2, 10, 10);
+        this.noiseField = this.initializeNoiseField(this.noiseField, chunkX * chunkOffset, 0, chunkZ * chunkOffset, posX, noise, posZ);
         
-        BiomeGenElysian biome = null;
-        
-        if (biomegenbase instanceof BiomeGenElysian)
-            biome = (BiomeGenElysian) biomegenbase;
-        
-        if (biome == null) {
-            System.out.println("skipped " + five_a + " " + five_b + " chunk because biome wasnt our elysian biome");
-            return;
-        }
-        
-        float t = biomegenbase.getFloatTemperature(five_a, 16, five_b);
-        this.biomesForGeneration = this.worldObj.getWorldChunkManager().getBiomesForGeneration(this.biomesForGeneration, posX * 4 - 2, posZ * 4 - 2, 10, 10);
-        /** takes as argument empty noise aray, position, and size */
-        
-        this.noiseField = this.initializeNoiseField(this.noiseField, posX * four, 0, posZ * four, five_a, sevenTeen, five_b);
-        
-        // 4*4 = 16 ! it's a chunk size
-        for (int xSize = 0; xSize < four; ++xSize) {
-            for (int zSize = 0; zSize < four; ++zSize) {
+        for (int xSize = 0; xSize < chunkOffset; ++xSize) {
+            for (int zSize = 0; zSize < chunkOffset; ++zSize) {
                 for (int chunkSize = 0; chunkSize < 32; ++chunkSize) {
                     
-                    double d = 0.125D;
-                    double sizeNoise1 = this.noiseField[((xSize + 0) * five_b + zSize + 0) * sevenTeen + chunkSize + 0];
-                    double sizeNoise2 = this.noiseField[((xSize + 0) * five_b + zSize + 1) * sevenTeen + chunkSize + 0];
-                    double sizeNoise3 = this.noiseField[((xSize + 1) * five_b + zSize + 0) * sevenTeen + chunkSize + 0];
-                    double sizeNoise4 = this.noiseField[((xSize + 1) * five_b + zSize + 1) * sevenTeen + chunkSize + 0];
-                    double sizeNoise5 = (this.noiseField[((xSize + 0) * five_b + zSize + 0) * sevenTeen + chunkSize + 1] - sizeNoise1) * d;
-                    double sizeNoise6 = (this.noiseField[((xSize + 0) * five_b + zSize + 1) * sevenTeen + chunkSize + 1] - sizeNoise2) * d;
-                    double sizeNoise7 = (this.noiseField[((xSize + 1) * five_b + zSize + 0) * sevenTeen + chunkSize + 1] - sizeNoise3) * d;
-                    double sizeNoise8 = (this.noiseField[((xSize + 1) * five_b + zSize + 1) * sevenTeen + chunkSize + 1] - sizeNoise4) * d;
+                    double noiseOffset = 0.125D;
+                    double sizeNoise1 = this.noiseField[((xSize + 0) * posZ + zSize + 0) * noise + chunkSize + 0];
+                    double sizeNoise2 = this.noiseField[((xSize + 0) * posZ + zSize + 1) * noise + chunkSize + 0];
+                    double sizeNoise3 = this.noiseField[((xSize + 1) * posZ + zSize + 0) * noise + chunkSize + 0];
+                    double sizeNoise4 = this.noiseField[((xSize + 1) * posZ + zSize + 1) * noise + chunkSize + 0];
+                    double sizeNoise5 = (this.noiseField[((xSize + 0) * posZ + zSize + 0) * noise + chunkSize + 1] - sizeNoise1) * noiseOffset;
+                    double sizeNoise6 = (this.noiseField[((xSize + 0) * posZ + zSize + 1) * noise + chunkSize + 1] - sizeNoise2) * noiseOffset;
+                    double sizeNoise7 = (this.noiseField[((xSize + 1) * posZ + zSize + 0) * noise + chunkSize + 1] - sizeNoise3) * noiseOffset;
+                    double sizeNoise8 = (this.noiseField[((xSize + 1) * posZ + zSize + 1) * noise + chunkSize + 1] - sizeNoise4) * noiseOffset;
                     
-                    for (int loopNr = 0; loopNr < 8; ++loopNr) {
+                    for (int noiseNumber = 0; noiseNumber < 8; ++noiseNumber) {
                         
-                        double d9 = 0.25D;
+                        double compactNoiseOffset = 0.25D;
                         double sN1 = sizeNoise1;
                         double sN2 = sizeNoise2;
-                        double compactNoiseDouble3n1 = (sizeNoise3 - sizeNoise1) * d9;
-                        double compactNoiseDouble4n2 = (sizeNoise4 - sizeNoise2) * d9;
+                        double compactNoiseDouble3n1 = (sizeNoise3 - sizeNoise1) * compactNoiseOffset;
+                        double compactNoiseDouble4n2 = (sizeNoise4 - sizeNoise2) * compactNoiseOffset;
                         
                         for (int xSize_bis = 0; xSize_bis < 4; ++xSize_bis) {
                             
-                            int zSise_bis = xSize_bis + xSize * 4 << 12 | 0 + zSize * 4 << 8 | chunkSize * 8 + loopNr;
-                            short worldHeight = 256; // total world height
+                            int zSise_bis = xSize_bis + xSize * 4 << 12 | 0 + zSize * 4 << 8 | chunkSize * 8 + noiseNumber;
+                            short worldHeight = 256;
                             double d14 = 0.25D;
                             double sn1_bis = sN1;
                             double d16 = (sN2 - sN1) * d14; // TODO name these !
@@ -172,11 +143,11 @@ public class ChunkProviderElysian implements IChunkProvider {
                                 
                                 Block block = null;
                                 
-                                if (chunkSize * 8 + loopNr < waterLevel)
-                                    block = generalWater;
+                                if (chunkSize * 8 + noiseNumber < waterLevel)
+                                    block = fallbackFluid;
                                 
                                 if (sn1_bis > 0.0D)
-                                    block = generalFiller;
+                                    block = fallbackFiller;
                                 
                                 chunkBlocks[zSise_bis] = block;
                                 zSise_bis += worldHeight;
@@ -198,9 +169,14 @@ public class ChunkProviderElysian implements IChunkProvider {
     }
     
     /**
-     * replaces blocks for biomes they are in currently contains a check for blocks bellow
-     * water and above water
-     * */
+     * Replaces biomes in a chunk with those from a specific biome.
+     * 
+     * @param posX: The X position for the chunk.
+     * @param posZ: The Z position for the chunk.
+     * @param chunkBlocks: All of the blocks within the chunk.
+     * @param meta: All of the corresponding meta values within the chunk.
+     * @param biomes: Biomes within the chunk.
+     */
     public void replaceBiomeBlocks (int posX, int posZ, Block[] chunkBlocks, byte[] meta, BiomeGenBase[] biomes) {
     
         ChunkProviderEvent.ReplaceBiomeBlocks event = new ChunkProviderEvent.ReplaceBiomeBlocks(this, posX, posZ, chunkBlocks, meta, biomes, this.worldObj);
@@ -216,7 +192,7 @@ public class ChunkProviderElysian implements IChunkProvider {
         this.fillerNoise = this.topBlockNoiseGen.generateNoiseOctaves(this.fillerNoise, posX * 16, 109, posZ * 16, 16, 1, 16, noiseScale, 1.0D, noiseScale);
         this.exclusivelyFillerNoise = this.fillerBlockNoiseGen.generateNoiseOctaves(this.exclusivelyFillerNoise, posX * 16, posZ * 16, 0, 16, 16, 1, noiseScale * 2.0D, noiseScale * 2.0D, noiseScale * 2.0D);
         
-        for (int chunkX = 0; chunkX < 16; ++chunkX) { // Z and X could be other way around ...
+        for (int chunkX = 0; chunkX < 16; ++chunkX) {
             for (int chunkZ = 0; chunkZ < 16; ++chunkZ) {
                 
                 BiomeGenBase biomegenbase = biomesForGeneration[chunkZ + chunkX * 16];
@@ -227,6 +203,7 @@ public class ChunkProviderElysian implements IChunkProvider {
                     biome = (BiomeGenElysian) biomegenbase;
                 
                 if (biome == null) {
+                    
                     System.out.println("skipped " + chunkX + " " + chunkZ + " chunk because biome wasnt our elysian biome");
                     return;
                 }
@@ -250,9 +227,7 @@ public class ChunkProviderElysian implements IChunkProvider {
                         
                         if (block2 != null && block2.getMaterial() != Material.air) {
                             
-                            generateDifferentWaterSources();
-                            
-                            if (block2 == generalFiller) {
+                            if (block2 == fallbackFiller) {
                                 if (minusOne == -1) {
                                     if (fillerExclusiveNoise <= 0) {
                                         block = null;
@@ -284,10 +259,6 @@ public class ChunkProviderElysian implements IChunkProvider {
                                     --minusOne;
                                     chunkBlocks[chunkSize] = block1;
                                 }
-                                /**
-                                 * this is a fix for the topblock under the barrier block on
-                                 * the upper edge of the world
-                                 */
                                 if (height == totalWorldHeight - 1) {
                                     int chunkSize2 = (chunkZ * 16 + chunkX) * (totalWorldHeight) + (height - 1);
                                     chunkBlocks[chunkSize2] = biome.fillerBlock;
@@ -305,37 +276,12 @@ public class ChunkProviderElysian implements IChunkProvider {
         }
     }
     
-    @Deprecated
-    /**allows for multi watersources, one per biome. suffers from extreme lag. has to be improved*/
-    private void generateDifferentWaterSources () {
-    
-        // TODO : feature > uncheck this if we want multi fluids to be enabled
-        // WARNING/!\ it lags a shit ton and doen't allow us to properly use the dimension
-        // if(block2 == generalWater){
-        // if (j1 == -1){
-        // if(k1 <= waterLevel)
-        // chunkBlocks[l1] = biome.fluid;
-        // }
-        // else if (j1 > 0){
-        // --j1;
-        // chunkBlocks[l1] = biome.fluid;
-        // }
-        // }
-    }
-    
-    /**
-     * loads or generates the chunk at the chunk location specified
-     */
     @Override
     public Chunk loadChunk (int posX, int posZ) {
     
         return this.provideChunk(posX, posZ);
     }
     
-    /**
-     * Will return back a chunk, if it doesn't exist and its not a MP client it will generates
-     * all the blocks for the specified chunk from the map seed and chunk seed
-     */
     @Override
     public Chunk provideChunk (int chunkX, int chunkZ) {
     
@@ -358,19 +304,27 @@ public class ChunkProviderElysian implements IChunkProvider {
     }
     
     /**
-     * generates a subset of the level's terrain data. Takes 7 arguments: the [empty] noise
-     * array, the position, and the size.
+     * Initialized the noise field for the chunk generation.
+     * 
+     * @param noiseField: The noise field to initialize.
+     * @param posX: The X position.
+     * @param posY: The Y position.
+     * @param posZ: The Z position.
+     * @param sizeX: The size of the X axis.
+     * @param sizeY: The size on the Y axis.
+     * @param sizeZ: The size on the Z axis.
+     * @return double[]: An initialized noise field.
      */
-    private double[] initializeNoiseField (double[] noiseArray, int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ) {
+    private double[] initializeNoiseField (double[] noiseField, int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ) {
     
-        ChunkProviderEvent.InitNoiseField event = new ChunkProviderEvent.InitNoiseField(this, noiseArray, posX, posY, posZ, sizeX, sizeY, sizeZ);
+        ChunkProviderEvent.InitNoiseField event = new ChunkProviderEvent.InitNoiseField(this, noiseField, posX, posY, posZ, sizeX, sizeY, sizeZ);
         MinecraftForge.EVENT_BUS.post(event);
         
         if (event.getResult() == Result.DENY)
             return event.noisefield;
         
-        if (noiseArray == null)
-            noiseArray = new double[sizeX * sizeY * sizeZ];
+        if (noiseField == null)
+            noiseField = new double[sizeX * sizeY * sizeZ];
         
         double noiseScaleZX = 684.412D;
         double noiseScaleY = 2053.236D;
@@ -481,103 +435,77 @@ public class ChunkProviderElysian implements IChunkProvider {
                         adouble = adouble * (1.0D - d11) + -10.0D * d11;
                     }
                     
-                    noiseArray[noiseIndex_1_2_3] = adouble;
+                    noiseField[noiseIndex_1_2_3] = adouble;
                     ++noiseIndex_1_2_3;
                 }
             }
         }
         
-        return noiseArray;
+        return noiseField;
     }
     
-    /**
-     * Checks to see if a chunk exists at x, y
-     */
     @Override
     public boolean chunkExists (int posX, int posZ) {
     
         return true;
     }
     
-    /**
-     * Populates chunk with ores etc etc
-     */
     @Override
     public void populate (IChunkProvider provider, int posX, int posZ) {
     
+        int chunkX = posX * 16;
+        int chunkZ = posZ * 16;
+        BiomeGenBase biome = this.worldObj.getBiomeGenForCoords(chunkX + 16, chunkZ + 16);
+        
         BlockFalling.fallInstantly = true;
         
         MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Pre(provider, worldObj, rand, posX, posZ, false));
-        
-        int x = posX * 16;
-        int z = posZ * 16;
-        BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(x + 16, z + 16);
-        
-        MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(worldObj, rand, x, z));
-        
-        // mineables here
-        
-        MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Post(worldObj, rand, x, z));
+        MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(worldObj, rand, chunkX, chunkZ));
+        // TODO Add worldgen here.
+        MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Post(worldObj, rand, chunkX, chunkZ));
         MinecraftForge.EVENT_BUS.post(new PopulateChunkEvent.Post(provider, worldObj, rand, posX, posZ, false));
         
         BlockFalling.fallInstantly = false;
     }
     
-    /**
-     * Two modes of operation: if passed true, save all Chunks in one go. If passed false, save
-     * up to two chunks. Return true if all chunks have been saved.
-     */
     @Override
     public boolean saveChunks (boolean flag, IProgressUpdate progressUpdate) {
     
         return true;
     }
     
-    /**
-     * Save extra data not associated with any Chunk. Not saved during autosave, only during
-     * world unload. Currently unimplemented.
-     */
     @Override
     public void saveExtraData () {
     
     }
     
-    /**
-     * Unloads chunks that are marked to be unloaded. This is not guaranteed to unload every
-     * such chunk.
-     */
     @Override
     public boolean unloadQueuedChunks () {
     
         return false;
     }
     
-    /**
-     * Returns if the IChunkProvider supports saving.
-     */
     @Override
     public boolean canSave () {
     
         return true;
     }
     
-    /**
-     * Converts the instance data to a readable string.
-     */
     @Override
     public String makeString () {
     
-        return "SoulForestLevelSource";
+        return "ElysianLevelSource";
     }
     
-    /**
-     * Returns a list of creatures of the specified type that can spawn at the given location.
-     */
     @Override
     public List getPossibleCreatures (EnumCreatureType creatureType, int posX, int posY, int posZ) {
     
-        BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(posX, posZ);
-        return biomegenbase == null ? null : biomegenbase.getSpawnableList(creatureType);
+        BiomeGenBase biome = this.worldObj.getBiomeGenForCoords(posX, posZ);
+        
+        if (biome == null || !(biome instanceof BiomeGenElysian))
+            biome = BiomeHandler.elysianTest1;
+        
+        return biome.getSpawnableList(creatureType);
     }
     
     @Override
