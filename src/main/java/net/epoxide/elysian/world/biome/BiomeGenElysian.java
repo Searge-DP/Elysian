@@ -32,14 +32,14 @@ public class BiomeGenElysian extends BiomeGenBase {
     
     @Override
     @SideOnly(Side.CLIENT)
-    public int getBiomeGrassColor (int p_150558_1_, int p_150558_2_, int p_150558_3_) {
+    public int getBiomeGrassColor (int posX, int posY, int posZ) {
     
         return this.color;
     }
     
     @Override
     @SideOnly(Side.CLIENT)
-    public int getBiomeFoliageColor (int p_150571_1_, int p_150571_2_, int p_150571_3_) {
+    public int getBiomeFoliageColor (int posX, int posY, int posZ) {
     
         return this.color;
     }

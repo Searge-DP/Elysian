@@ -10,7 +10,7 @@ public class BiomeTest3 extends BiomeGenElysian {
     
         super(ConfigurationHandler.biomeTestID3);
         
-        this.setBiomeName("Elysian test 3 Biome");
+        this.setBiomeName("Test3");
         this.barrier = Blocks.planks;
         this.fillerBlock = BlockHandler.dirt;
         this.fluid = BlockHandler.breathableWater;

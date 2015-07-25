@@ -10,8 +10,8 @@ public class BiomeHandler {
     
     public static ArrayList<BiomeGenBase> elysianBiomes = new ArrayList<BiomeGenBase>();
     
-    public static BiomeGenBase elysianTest1 = new BiomeElysianPlains();
-    public static BiomeGenBase elysianTest2 = new ElysianGeneralBiome();
+    public static BiomeGenBase elysianTest1 = new BiomeTest1();
+    public static BiomeGenBase elysianTest2 = new BiomeTest2();
     public static BiomeGenBase elysianTest3 = new BiomeTest3();
     public static BiomeGenBase elysianTest4 = new BiomeTest4();
     

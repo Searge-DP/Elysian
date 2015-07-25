@@ -4,13 +4,13 @@ import net.epoxide.elysian.blocks.BlockHandler;
 import net.epoxide.elysian.handler.ConfigurationHandler;
 import net.minecraft.init.Blocks;
 
-public class ElysianGeneralBiome extends BiomeGenElysian {
+public class BiomeTest2 extends BiomeGenElysian {
     
-    public ElysianGeneralBiome() {
+    public BiomeTest2() {
     
         super(ConfigurationHandler.biomeTestID2);
         
-        this.setBiomeName("Elysian General Biome");
+        this.setBiomeName("Test2");
         this.barrier = Blocks.clay;
         this.fillerBlock = BlockHandler.dirt;
         this.fluid = BlockHandler.breathableWater;
