@@ -245,25 +245,56 @@ public class ColorObject {
     
     public static enum VanillaColor {
         
-        BLACK("dyeBlack", new ColorObject(25, 25, 25)), RED("dyeRed", new ColorObject(153, 51, 51)), GREEN("dyeGreen", new ColorObject(102, 127, 51)), BROWN("dyeBrown", new ColorObject(102, 76, 51)), BLUE("dyeBlue", new ColorObject(51, 76, 178)), PURPLE("dyePurple", new ColorObject(127, 63, 178)), CYAN("dyeCyan", new ColorObject(76, 127, 153)), LIGHT_GRAY("dyeLightGray", new ColorObject(153, 153, 153)), GRAY("dyeGray", new ColorObject(76, 76, 76)), PINK("dyePink", new ColorObject(242, 127, 165)), LIME("dyeLime", new ColorObject(127, 204, 25)), YELLOW("dyeYellow", new ColorObject(229, 229, 51)), LIGHT_BLUE("dyeLightBlue", new ColorObject(102, 153, 216)), MAGENTAG("dyeMagenta", new ColorObject(178, 76, 216)), ORANGE("dyeOrange", new ColorObject(216, 127, 5)), WHITE("dyeWhite", new ColorObject(255, 255, 255));
+        BLACK("Black", new ColorObject(25, 25, 25)), RED("Red", new ColorObject(153, 51, 51)), GREEN("Green", new ColorObject(102, 127, 51)), BROWN("Brown", new ColorObject(102, 76, 51)), BLUE("Blue", new ColorObject(51, 76, 178)), PURPLE("Purple", new ColorObject(127, 63, 178)), CYAN("Cyan", new ColorObject(76, 127, 153)), LIGHT_GRAY("LightGray", new ColorObject(153, 153, 153)), GRAY("Gray", new ColorObject(76, 76, 76)), PINK("Pink", new ColorObject(242, 127, 165)), LIME("Lime", new ColorObject(127, 204, 25)), YELLOW("Yellow", new ColorObject(229, 229, 51)), LIGHT_BLUE("LightBlue", new ColorObject(102, 153, 216)), MAGENTAG("Magenta", new ColorObject(178, 76, 216)), ORANGE("Orange", new ColorObject(216, 127, 5)), WHITE("White", new ColorObject(255, 255, 255));
         
         public String colorName;
         public ColorObject colorObj;
         
         /**
-         * A simple enumeration of all vanilla minecraft colors. Contains a ColorObject
-         * representation of the color, and a string name for the color which is consistent
-         * with the ore dictionary entry for the associated dye item.
+         * A simple enumeration of all the vanilla Minecraft colors. This contains a string
+         * representation of the color, which is mostly used for Ore Dictionary stuff, and a
+         * ColorObject which holds all the color data for the color.
          * 
-         * @param name: A name which is associated with this color. This name will be
-         *            consistent with Forge's ore dictionary entry for the dye of the same
-         *            color.
-         * @param color: A ColorObject which represents one of the 16 vanilla colors.
+         * @param name: A name which represents the color within Minecraft. Example: Gray
+         * @param color: A ColorObject which holds the RGB value for this color.
          */
         VanillaColor(String name, ColorObject color) {
         
             colorName = name;
             colorObj = color;
+        }
+        
+        /**
+         * Provides the OreDictionary name for the dye item associated with this color.
+         * 
+         * @return String: A string which represents the associated dye within the
+         *         OreDictionary.
+         */
+        public String getDyeName () {
+        
+            return "dye" + colorName;
+        }
+        
+        /**
+         * Provides the OreDictionary name for the Dyed Glass Pane associated with this color.
+         * 
+         * @return String: A string which represents the associated Dyed Glass Pane within the
+         *         OreDictionary.
+         */
+        public String getGlassPaneName () {
+        
+            return "paneGlass" + colorName;
+        }
+        
+        /**
+         * Provides the OreDictionary name for the Dyed Glass Block associated with this color.
+         * 
+         * @return String: A String which represents the associated Dyed Glass Block within the
+         *         OreDictionary.
+         */
+        public String getGlassBlockName () {
+        
+            return "blockGlass" + colorName;
         }
     }
 }
