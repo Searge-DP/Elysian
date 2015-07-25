@@ -9,6 +9,7 @@ import net.epoxide.elysian.handler.ConfigurationHandler;
 import net.epoxide.elysian.handler.GuiHandler;
 import net.epoxide.elysian.items.ItemHandler;
 import net.epoxide.elysian.lib.Constants;
+import net.epoxide.elysian.recipe.RecipeHandler;
 import net.epoxide.elysian.world.WorldProviderElysian;
 import net.epoxide.elysian.world.biome.BiomeHandler;
 import net.minecraft.creativetab.CreativeTabs;
@@ -45,6 +46,7 @@ public class Elysian {
         new ItemHandler();
         new EntityHandler();
         new BiomeHandler();
+        new RecipeHandler();
         
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
         DimensionManager.registerProviderType(ConfigurationHandler.dimensionID, WorldProviderElysian.class, true);
