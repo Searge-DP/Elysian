@@ -2,7 +2,6 @@ package net.epoxide.elysian.client.renderer.entity;
 
 import net.epoxide.elysian.client.model.entity.ModelElysianGolem;
 import net.epoxide.elysian.entity.EntityRuneGolem;
-import net.epoxide.elysian.lib.Utilities;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
@@ -49,8 +48,8 @@ public class RenderElysianGolem extends RenderLiving {
             this.setRenderPassModel(modelPass);
             bindTexture(glow);
             
-            float time = (float) Math.cos(Utilities.getSysTimeF() / 20f);
-            float angry = (float) Math.cos(Utilities.getSysTimeF() / 2f);
+            float time = 15f; // (float) Math.cos(Utilities.getSysTimeF() / 20f);
+            float angry = 3f; // (float) Math.cos(Utilities.getSysTimeF() / 2f);
             
             if (golem.isTamed()) {
                 if (golem.getHealth() < golem.getMaxHealth() / 2f)
