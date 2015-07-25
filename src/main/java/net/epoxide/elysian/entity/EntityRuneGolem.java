@@ -35,9 +35,10 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class EntityRuneGolem extends EntityTameable {
-    public EntityRuneGolem(World p_i1696_1_) {
     
-        super(p_i1696_1_);
+    public EntityRuneGolem(World world) {
+    
+        super(world);
         this.setSize(0.6F, 0.8F);
         this.getNavigator().setAvoidsWater(true);
         this.tasks.addTask(1, new EntityAISwimming(this));
@@ -66,35 +67,30 @@ public class EntityRuneGolem extends EntityTameable {
             this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(10.0D);
     }
     
-    /**
-     * Returns true if the newer Entity AI code should be run
-     */
+    @Override
     public boolean isAIEnabled () {
     
         return true;
     }
     
-    /**
-     * Sets the active target the Task system uses for tracking
-     */
-    public void setAttackTarget (EntityLivingBase el) {
+    @Override
+    public void setAttackTarget (EntityLivingBase target) {
     
-        super.setAttackTarget(el);
+        super.setAttackTarget(target);
         
-        if (el == null)
+        if (target == null)
             this.setAngry(false);
         else if (!this.isTamed())
             this.setAngry(true);
     }
     
-    /**
-     * main AI tick function, replaces updateEntityActionState
-     */
+    @Override
     protected void updateAITick () {
     
         this.dataWatcher.updateObject(18, Float.valueOf(this.getHealth()));
     }
     
+    @Override
     protected void entityInit () {
     
         super.entityInit();
@@ -108,137 +104,115 @@ public class EntityRuneGolem extends EntityTameable {
         this.playSound("mob.wolf.step", 0.15F, 1.0F);
     }
     
-    /**
-     * (abstract) Protected helper method to write subclass entity data to NBT.
-     */
+    @Override
     public void writeEntityToNBT (NBTTagCompound nbt) {
     
         super.writeEntityToNBT(nbt);
         nbt.setBoolean("Angry", this.isAngry());
     }
     
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
+    @Override
     public void readEntityFromNBT (NBTTagCompound nbt) {
     
         super.readEntityFromNBT(nbt);
         this.setAngry(nbt.getBoolean("Angry"));
     }
     
-    /**
-     * Returns the sound this mob makes while it's alive.
-     */
+    @Override
     protected String getLivingSound () {
     
         return this.isAngry() ? "mob.wolf.growl" : (this.rand.nextInt(3) == 0 ? (this.isTamed() && this.dataWatcher.getWatchableObjectFloat(18) < 10.0F ? "mob.wolf.whine" : "mob.wolf.panting") : "mob.wolf.bark");
     }
     
-    /**
-     * Returns the sound this mob makes when it is hurt.
-     */
+    @Override
     protected String getHurtSound () {
     
         return "mob.wolf.hurt";
     }
     
-    /**
-     * Returns the sound this mob makes on death.
-     */
+    @Override
     protected String getDeathSound () {
     
         return "mob.wolf.death";
     }
     
-    /**
-     * Returns the volume for the sounds this mob makes.
-     */
+    @Override
     protected float getSoundVolume () {
     
         return 0.4F;
     }
     
+    @Override
     protected Item getDropItem () {
     
-        return Item.getItemById(-1);
+        return Item.getItemFromBlock(Blocks.stone);
     }
     
-    /**
-     * Called frequently so the entity can update its state every tick as required. For
-     * example, zombies and skeletons use this to react to sunlight and start to burn.
-     */
+    @Override
     public void onLivingUpdate () {
     
         super.onLivingUpdate();
     }
     
-    /**
-     * Called to update the entity's position/logic.
-     */
+    @Override
     public void onUpdate () {
     
         super.onUpdate();
         
-        if (this.mustChase()) {
+        if (this.mustChase())
             this.numTicksToChaseTarget = 10;
-        }
     }
     
+    @Override
     public float getEyeHeight () {
     
         return this.height * 0.8F;
     }
     
-    /**
-     * The speed it takes to move the entityliving's rotationPitch through the faceEntity
-     * method. This is only currently use in wolves.
-     */
+    @Override
     public int getVerticalFaceSpeed () {
     
         return this.isSitting() ? 20 : super.getVerticalFaceSpeed();
     }
     
-    /**
-     * Called when the entity is attacked.
-     */
-    public boolean attackEntityFrom (DamageSource dmgSource, float dmg) {
+    @Override
+    public boolean attackEntityFrom (DamageSource source, float amount) {
     
         if (this.isEntityInvulnerable())
             return false;
         else {
-            Entity entity = dmgSource.getEntity();
+            Entity entity = source.getEntity();
             this.aiSit.setSitting(false);
             
-            if (entity instanceof EntityCreeper || dmgSource.isExplosion())
+            if (entity instanceof EntityCreeper || source.isExplosion())
                 return false;
             
             if (entity != null && !(entity instanceof EntityPlayer) && !(entity instanceof EntityArrow))
-                dmg = (dmg + 1.0F) / 2.0F;
+                amount = (amount + 1.0F) / 2.0F;
             
-            return super.attackEntityFrom(dmgSource, dmg);
+            return super.attackEntityFrom(source, amount);
         }
     }
     
-    public boolean attackEntityAsMob (Entity el) {
+    @Override
+    public boolean attackEntityAsMob (Entity entity) {
     
         int i = this.isTamed() ? 4 : 2;
-        return el.attackEntityFrom(DamageSource.causeMobDamage(this), (float) i);
+        return entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) i);
     }
     
-    public void setTamed (boolean flag) {
+    @Override
+    public void setTamed (boolean isTamed) {
     
-        super.setTamed(flag);
+        super.setTamed(isTamed);
         
-        if (flag)
+        if (isTamed)
             this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25.0D);
         else
             this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(10.0D);
     }
     
-    /**
-     * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the
-     * saddle on a pig.
-     */
+    @Override
     public boolean interact (EntityPlayer player) {
     
         ItemStack itemstack = player.inventory.getCurrentItem();
@@ -296,37 +270,29 @@ public class EntityRuneGolem extends EntityTameable {
         return super.interact(player);
     }
     
+    @Override
     @SideOnly(Side.CLIENT)
-    public void handleHealthUpdate (byte p_70103_1_) {
+    public void handleHealthUpdate (byte updateByte) {
     
-        super.handleHealthUpdate(p_70103_1_);
+        super.handleHealthUpdate(updateByte);
     }
     
-    @SideOnly(Side.CLIENT)
-    public float getTailRotation () {
-    
-        return this.isAngry() ? 1.5393804F : (this.isTamed() ? (0.55F - (20.0F - this.dataWatcher.getWatchableObjectFloat(18)) * 0.02F) * (float) Math.PI : ((float) Math.PI / 5F));
-    }
-    
-    /**
-     * Checks if the parameter is an item which this animal can be fed to breed it (wheat,
-     * carrots or seeds depending on the animal type)
-     */
-    public boolean isBreedingItem (ItemStack p_70877_1_) {
+    @Override
+    public boolean isBreedingItem (ItemStack stack) {
     
         return false;
     }
     
-    /**
-     * Will return how many at most can spawn in a chunk at once.
-     */
+    @Override
     public int getMaxSpawnedInChunk () {
     
         return 8;
     }
     
     /**
-     * Determines whether this wolf is angry or not.
+     * Checks if the entity is angry at the player.
+     * 
+     * @return boolean: True if it is angry.
      */
     public boolean isAngry () {
     
@@ -334,13 +300,15 @@ public class EntityRuneGolem extends EntityTameable {
     }
     
     /**
-     * Sets whether this wolf is angry or not.
+     * Sets if the entity is angry or not.
+     * 
+     * @param isAngry: Is the wolf angry or not.
      */
-    public void setAngry (boolean flag) {
+    public void setAngry (boolean isAngry) {
     
         byte b0 = this.dataWatcher.getWatchableObjectByte(16);
         
-        if (flag) {
+        if (isAngry) {
             this.dataWatcher.updateObject(16, Byte.valueOf((byte) (b0 | 2)));
         }
         else {
@@ -348,32 +316,35 @@ public class EntityRuneGolem extends EntityTameable {
         }
     }
     
-    public EntityRuneGolem createChild (EntityAgeable p_90011_1_) {
+    @Override
+    public EntityRuneGolem createChild (EntityAgeable entity) {
     
         return null;
     }
     
-    /**
-     * Returns true if the mob is currently able to mate with the specified mob.
-     */
-    public boolean canMateWith (EntityAnimal p_70878_1_) {
+    @Override
+    public boolean canMateWith (EntityAnimal partner) {
     
         return false;
     }
     
+    /**
+     * Should this entity chase.
+     * 
+     * @return boolean: true if it will, false if it won't.
+     */
     public boolean mustChase () {
     
         return this.dataWatcher.getWatchableObjectByte(19) == 1;
     }
     
-    /**
-     * Determines if an entity can be despawned, used on idle far away entities
-     */
+    @Override
     protected boolean canDespawn () {
     
         return !this.isTamed() && this.ticksExisted > 2400;
     }
     
+    @Override
     public boolean func_142018_a (EntityLivingBase victim, EntityLivingBase attacker) {
     
         if (!(victim instanceof EntityGhast)) {
