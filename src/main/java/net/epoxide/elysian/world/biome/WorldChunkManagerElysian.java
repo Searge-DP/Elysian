@@ -16,8 +16,6 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.WorldChunkManager;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class WorldChunkManagerElysian extends WorldChunkManager {
     
@@ -60,64 +58,18 @@ public class WorldChunkManagerElysian extends WorldChunkManager {
     }
     
     @Override
-    public float[] getRainfall (float[] listToReuse, int x, int z, int width, int length) {
+    public BiomeGenBase[] getBiomesForGeneration (BiomeGenBase[] biomesArray, int posX, int posz, int width, int height) {
     
         IntCache.resetIntCache();
         
-        if (listToReuse == null || listToReuse.length < width * length) {
-            listToReuse = new float[width * length];
-        }
+        if (biomesArray == null || biomesArray.length < width * height)
+            biomesArray = new BiomeGenBase[width * height];
         
-        int[] aint = this.biomeIndexLayer.getInts(x, z, width, length);
-        
-        for (int i1 = 0; i1 < width * length; ++i1) {
-            try {
-                float f = BiomeGenBase.getBiome(aint[i1]).getIntRainfall() / 65536.0F;
-                
-                if (f > 1.0F) {
-                    f = 1.0F;
-                }
-                
-                listToReuse[i1] = f;
-            }
-            catch (Throwable throwable) {
-                CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Invalid Biome id");
-                CrashReportCategory crashreportcategory = crashreport.makeCategory("DownfallBlock");
-                crashreportcategory.addCrashSection("biome id", Integer.valueOf(i1));
-                crashreportcategory.addCrashSection("downfalls[] size", Integer.valueOf(listToReuse.length));
-                crashreportcategory.addCrashSection("x", Integer.valueOf(x));
-                crashreportcategory.addCrashSection("z", Integer.valueOf(z));
-                crashreportcategory.addCrashSection("w", Integer.valueOf(width));
-                crashreportcategory.addCrashSection("h", Integer.valueOf(length));
-                throw new ReportedException(crashreport);
-            }
-        }
-        
-        return listToReuse;
-    }
-    
-    @Override
-    @SideOnly(Side.CLIENT)
-    public float getTemperatureAtHeight (float par1, int par2) {
-    
-        return par1;
-    }
-    
-    @Override
-    public BiomeGenBase[] getBiomesForGeneration (BiomeGenBase[] biomesArray, int par2, int par3, int par4, int par5) {
-    
-        IntCache.resetIntCache();
-        
-        if (biomesArray == null || biomesArray.length < par4 * par5) {
-            biomesArray = new BiomeGenBase[par4 * par5];
-        }
-        
-        int[] aint = this.genBiomes.getInts(par2, par3, par4, par5);
+        int[] aint = this.genBiomes.getInts(posX, posz, width, height);
         
         try {
-            for (int i = 0; i < par4 * par5; ++i) {
-                biomesArray[i] = BiomeGenBase.getBiome(aint[i]);
-            }
+            for (int biomeID = 0; biomeID < width * height; ++biomeID)
+                biomesArray[biomeID] = BiomeGenBase.getBiome(aint[biomeID]);
             
             return biomesArray;
         }
@@ -125,10 +77,10 @@ public class WorldChunkManagerElysian extends WorldChunkManager {
             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Invalid Biome id");
             CrashReportCategory crashreportcategory = crashreport.makeCategory("RawBiomeBlock");
             crashreportcategory.addCrashSection("biomes[] size", Integer.valueOf(biomesArray.length));
-            crashreportcategory.addCrashSection("x", Integer.valueOf(par2));
-            crashreportcategory.addCrashSection("z", Integer.valueOf(par3));
-            crashreportcategory.addCrashSection("w", Integer.valueOf(par4));
-            crashreportcategory.addCrashSection("h", Integer.valueOf(par5));
+            crashreportcategory.addCrashSection("x", Integer.valueOf(posX));
+            crashreportcategory.addCrashSection("z", Integer.valueOf(posz));
+            crashreportcategory.addCrashSection("w", Integer.valueOf(width));
+            crashreportcategory.addCrashSection("h", Integer.valueOf(height));
             throw new ReportedException(crashreport);
         }
     }
@@ -164,7 +116,7 @@ public class WorldChunkManagerElysian extends WorldChunkManager {
     }
     
     @Override
-    public boolean areBiomesViable (int x, int y, int z, List par4List) {
+    public boolean areBiomesViable (int x, int y, int z, List allowedBiomes) {
     
         IntCache.resetIntCache();
         int l = x - z >> 2;
@@ -179,7 +131,7 @@ public class WorldChunkManagerElysian extends WorldChunkManager {
             for (int j2 = 0; j2 < l1 * i2; ++j2) {
                 BiomeGenBase biomegenbase = BiomeGenBase.getBiome(aint[j2]);
                 
-                if (!par4List.contains(biomegenbase)) {
+                if (!allowedBiomes.contains(biomegenbase)) {
                     return false;
                 }
             }
@@ -193,7 +145,7 @@ public class WorldChunkManagerElysian extends WorldChunkManager {
             crashreportcategory.addCrashSection("x", Integer.valueOf(x));
             crashreportcategory.addCrashSection("z", Integer.valueOf(y));
             crashreportcategory.addCrashSection("radius", Integer.valueOf(z));
-            crashreportcategory.addCrashSection("allowed", par4List);
+            crashreportcategory.addCrashSection("allowed", allowedBiomes);
             throw new ReportedException(crashreport);
         }
     }
@@ -224,11 +176,5 @@ public class WorldChunkManagerElysian extends WorldChunkManager {
         }
         
         return chunkposition;
-    }
-    
-    @Override
-    public void cleanupCache () {
-    
-        this.biomeCache.cleanupCache();
     }
 }
